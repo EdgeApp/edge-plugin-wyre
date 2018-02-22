@@ -1,0 +1,44 @@
+{
+  "name": "edge-plugin-simplex",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "babel-eslint": "^7.1.1",
+    "babel-jest": "^20.0.3",
+    "eslint": "^4.12.1",
+    "eslint-config-standard": "^11.0.0-beta.0",
+    "eslint-plugin-flowtype": "^2.35.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-react": "^7.3.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "flow-bin": "^0.66.0",
+    "husky": "^0.14.3",
+    "react-scripts": "1.1.1",
+    "rimraf": "^2.6.2"
+  },
+  "dependencies": {
+    "edge-libplugin": "https://github.com/teneighty/edge-libplugin.git",
+    "rc-form": "^2.1.7",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-router-dom": "^4.2.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "clean": "rimraf target build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "edge": "edge-ify -o target -s build",
+    "lint": "eslint --parser babel-eslint ./src",
+    "lint:fix": "npm run lint -- --fix",
+    "flow:0": "flow; exit 0",
+    "flow": "flow"
+  },
+  "files": [
+    "target/index.html",
+    "manifest.json"
+  ]
+}
