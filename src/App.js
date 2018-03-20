@@ -2,18 +2,18 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { HashRouter as Router, Route } from 'react-router-dom'
 import { createForm } from 'rc-form'
-import { core, ui } from 'edge-libplugin'
+// import { ui } from 'edge-libplugin'
 
 import './inline.css'
 
-const USER_INFO_KEY = 'simplex-userinfo'
-
-const readProfile = () => {
-  return core.readData(USER_INFO_KEY)
-}
+// const USER_INFO_KEY = 'simplex-userinfo'
 
 let PROFILE = {
   personal_first_name: 'Timbo'
+}
+
+const readProfile = () => {
+  return Promise.resolve(PROFILE) // core.readData(USER_INFO_KEY)
 }
 
 const updateProfile = async (data) => {
@@ -25,20 +25,22 @@ const updateProfile = async (data) => {
   } else {
     profile = data
   }
-  await core.writeData(USER_INFO_KEY, profile)
+  // await core.writeData(USER_INFO_KEY, profile)
   PROFILE = profile
 }
 
 class StartScene extends React.Component {
   componentWillMount () {
-    ui.title('Simplex')
+    // ui.title('Simplex')
   }
   _start = async () => {
-    const isSetup = await core.readData('setup') === true
+    const isSetup = false // await core.readData('setup') === true
     if (isSetup) {
       this.props.history.push('/fullView/')
+      // ui.navStackPush('/fullView/')
     } else {
       this.props.history.push('/personalInfo/')
+      // ui.navStackPush('/personalInfo/')
     }
   }
   render () {
@@ -210,7 +212,7 @@ _PersonalInfoForm.propTypes = {
 const PersonalInfoForm = createForm()(_PersonalInfoForm)
 class PersonalInfoScene extends React.Component {
   async componentWillMount () {
-    ui.title('Personal Information')
+    // ui.title('Personal Information')
   }
   _next = () => {
     this.form.getForm().validateFields((error, value) => {
@@ -224,6 +226,7 @@ class PersonalInfoScene extends React.Component {
         })
         // serialize form
         this.props.history.push('/paymentInfo/')
+        // ui.navStackPush('/paymentInfo/')
       }
     })
   }
@@ -274,7 +277,7 @@ _PaymentInfoForm.propTypes = {
 const PaymentInfoForm = createForm()(_PaymentInfoForm)
 class PaymentInfoScene extends React.Component {
   componentWillMount () {
-    ui.title('Payment Information')
+    // ui.title('Payment Information')
   }
   _next = () => {
     this.form.getForm().validateFields((error, value) => {
@@ -287,6 +290,7 @@ class PaymentInfoScene extends React.Component {
           billing_ccv: value['CCV']
         })
         this.props.history.push('/billingAddressScene/')
+        // ui.navStackPush('/billingAddressScene/')
       }
     })
   }
@@ -337,7 +341,7 @@ _BillingAddressForm.propTypes = {
 const BillingAddressForm = createForm()(_BillingAddressForm)
 class BillingAddressScene extends React.Component {
   componentWillMount () {
-    ui.title('Billing Address')
+    // ui.title('Billing Address')
   }
   _next = () => {
     this.form.getForm().validateFields((error, value) => {
@@ -350,6 +354,7 @@ class BillingAddressScene extends React.Component {
           billing_country: value['Country']
         })
         this.props.history.push('/uploadId/')
+        // ui.navStackPush('/uploadId/')
       }
     })
   }
@@ -369,13 +374,13 @@ BillingAddressScene.propTypes = {
 
 class UploadIdScene extends React.Component {
   componentWillMount () {
-    ui.title('I.D. Upload')
+    // ui.title('I.D. Upload')
   }
   _upload = async () => {
     try {
-      await core.requestFile()
+      // await core.requestFile()
       window.alert('Thanks for the fish. One day I will upload it to simplex!')
-      await core.writeData('setup', true)
+      // await core.writeData('setup', true)
       this.props.history.push('https://www.simplex.com/')
     } catch (e) {
       console.log(e)
@@ -404,10 +409,11 @@ UploadIdScene.propTypes = {
 
 class FullViewScene extends React.Component {
   componentWillMount () {
-    ui.title('Personal Information')
+    // ui.title('Personal Information')
   }
   _edit = () => {
     this.props.history.push('/fullEdit/')
+    // ui.navStackPush('/fullEdit/')
   }
   _next = () => {
     this.props.history.push('https://www.simplex.com/')
@@ -433,7 +439,7 @@ FullViewScene.propTypes = {
 
 class FullEditScene extends React.Component {
   componentWillMount () {
-    ui.title('Edit Information')
+    // ui.title('Edit Information')
   }
   _save = () => {
     this.props.history.goBack()
