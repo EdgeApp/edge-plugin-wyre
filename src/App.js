@@ -1,37 +1,112 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { HashRouter as Router, Route } from 'react-router-dom'
-import { createForm } from 'rc-form'
+// import { createForm } from 'rc-form'
+import { withStyles, createMuiTheme } from 'material-ui/styles'
+import Button from 'material-ui/Button'
+import Card, { CardActions, CardContent } from 'material-ui/Card'
+// import Grid from 'material-ui/Grid'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import TextField from 'material-ui/TextField'
-import Grid from 'material-ui/Grid'
+import { InputAdornment } from 'material-ui/Input'
+import Typography from 'material-ui/Typography'
+
+import Dialog, {
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
+} from 'material-ui/Dialog'
 
 // import { ui } from 'edge-libplugin'
 
 import './inline.css'
 
-// const USER_INFO_KEY = 'simplex-userinfo'
-
-let PROFILE = {
-  personal_first_name: 'Timbo'
-}
-
-const readProfile = () => {
-  return Promise.resolve(PROFILE) // core.readData(USER_INFO_KEY)
-}
-
-const updateProfile = async (data) => {
-  let profile = await readProfile()
-  if (profile) {
-    Object.keys(data).forEach(k => {
-      profile[k] = data[k]
-    })
-  } else {
-    profile = data
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      light: '#4876a4',
+      main: '#0e4b75',
+      dark: '#002449',
+      contrastText: '#fff'
+    }
+  },
+  typography: {
+    fontFamily: "'Source Sans Pro', sans-serif !important"
   }
-  // await core.writeData(USER_INFO_KEY, profile)
-  PROFILE = profile
+})
+
+const limitThemes = theme => ({
+  p: {
+    fontColor: theme.palette.primary.main,
+    backgroundColor: '#d9e3ec',
+    textAlign: 'center',
+    padding: '10px 0',
+    margin: '5px 0'
+  }
+})
+
+const _DailyLimits = (props) => {
+  return (
+    <Typography component="p" className={props.classes.p}>
+      Daily Limit: $1,000 / Monthly Limit: $5,0000
+    </Typography>
+  )
 }
+
+_DailyLimits.propTypes = {
+  classes: PropTypes.objects
+}
+
+const DailyLimit = withStyles(limitThemes)(_DailyLimits)
+
+const supportThemes = theme => ({
+  p: {
+    textAlign: 'center',
+    padding: '0 0 20px 0'
+  }
+})
+
+const SupportLink = (props) => {
+  return (<a href="mailto:support@simplex.com">support@simplex.com</a>)
+}
+
+const _Support = (props) => {
+  return (
+    <Typography component="p" className={props.classes.p}>
+      For support, please contact <SupportLink />.
+    </Typography>
+  )
+}
+
+_Support.propTypes = {
+  classes: PropTypes.object
+}
+
+const Support = withStyles(supportThemes)(_Support)
+
+const powerThemes = theme => ({
+  p: {
+    backgroundColor: '#d9e3ec',
+    fontColor: theme.palette.primary.main,
+    textAlign: 'center',
+    padding: '20px 0'
+  }
+})
+
+const _PoweredBy = (props) => {
+  return (
+    <Typography component="p" className={props.classes.p}>
+      Powered by Simplex
+    </Typography>
+  )
+}
+
+_PoweredBy.propTypes = {
+  classes: PropTypes.objects
+}
+
+const PoweredBy = withStyles(powerThemes)(_PoweredBy)
 
 class StartScene extends React.Component {
   componentWillMount () {
@@ -43,8 +118,8 @@ class StartScene extends React.Component {
       this.props.history.push('/fullView/')
       // ui.navStackPush('/fullView/')
     } else {
-      this.props.history.push('/personalInfo/')
-      // ui.navStackPush('/personalInfo/')
+      this.props.history.push('/buy/')
+      // ui.navStackPush('/buy/')
     }
   }
   render () {
@@ -53,39 +128,33 @@ class StartScene extends React.Component {
         <div className="text-center">
           <div className="iconLogo" />
         </div>
-        <div className="block">
-          <h3>Simplex</h3>
-          <p>
+        <Block title="Simplex">
+          <Typography component="p">
             Simplex is a Edge Wallet bank card processing partner. It is the
             service which allows you to purchase Bitcoin safely and quickly in just a
             few short minutes.
-          </p>
-        </div>
-        <div className="block">
-          <h3>Fee</h3>
-          <p>
+          </Typography>
+        </Block>
+        <Block title="Fee">
+          <Typography component="p">
             Please note that additional fees will be charged, on top of the above Bitcoin / $ rate at checkout. Those fees are as follows:
-          </p>
-          <ul>
-            <li>Edge Wallet 5%</li>
-            <li>Credit Card processing by Simplex 5% ($10 min)</li>
-          </ul>
-        </div>
-        <div className="block">
-          <h3>Time</h3>
-          <p>
+          </Typography>
+        </Block>
+        <Block title="Time">
+          <Typography component="p">
             Estimated transaction time is about 10-30min.
-          </p>
-        </div>
-        <div className="block">
-          <h3>Support</h3>
-          <p>
-            For support, please contact <a href="mailto:support@simplex.com">support@simplex.com</a>.
-          </p>
-        </div>
-        <div className="block text-center">
-          <button onClick={this._start}>Choose Wallet to Receive Bitcoin</button>
-        </div>
+          </Typography>
+        </Block>
+        <Block title="Support">
+          <Typography component="p">
+            For support, please contact <SupportLink />.
+          </Typography>
+        </Block>
+        <Block>
+          <CardActions>
+            <Button variant="raised" color="primary" fullWidth onClick={this._start}>Next</Button>
+          </CardActions>
+        </Block>
       </div>
     )
   }
@@ -95,423 +164,227 @@ StartScene.propTypes = {
   history: PropTypes.object
 }
 
-const Block = (props) => {
+const blockStyles = theme => ({
+  card: {
+    margin: '100px 0px',
+    padding: '5px 10px'
+  }
+})
+
+const _Block = (props) => {
   return (
-    <div>
-      <div className="text-center">
-        <div className={props.iconClassName} />
-        <h3>{props.title}</h3>
-      </div>
-      <div className="block">{props.children}</div>
-    </div>
+    <Card>
+      <CardContent>
+        { props.iconClassName &&
+          <div className={props.iconClassName} />
+        }
+        <Typography variant="headline" component="h3">
+          {props.title}
+        </Typography>
+        { props.children }
+      </CardContent>
+    </Card>
   )
 }
 
-Block.propTypes = {
+_Block.propTypes = {
   title: PropTypes.string,
   iconClassName: PropTypes.string,
   children: PropTypes.node.isRequired
 }
 
-const ErrorElement = (props) => {
-  if (props.errors) {
-    return (
-      <div className="error">
-        {props.errors.join(',')}
-      </div>
-    )
-  } else {
-    return null
+const Block = withStyles(blockStyles)(_Block)
+
+const confirmStyles = (theme) => ({
+  title: {
+    textAlign: 'center'
   }
+})
+
+const _ConfirmDialog = (props) => {
+  return (
+    <Dialog
+      open={props.open}
+      onClose={props.onClose}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description" >
+      <DialogTitle id="alert-dialog-title" className={props.classes.title}>
+        Confirm Purchase Details
+      </DialogTitle>
+      <DialogContent>
+        <DialogContentText id="alert-dialog-description">
+          Are you sure you want to buy $500 worth of BTC, with a fee of $39.50?
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={props.onClose} color="primary">
+          Agree
+        </Button>
+        <Button onClick={props.onClose} color="default" autoFocus>
+          Cancel
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
 }
 
-ErrorElement.propTypes = {
-  errors: PropTypes.array
+_ConfirmDialog.propTypes = {
+  open: PropTypes.boolean,
+  onClose: PropTypes.object,
+  classes: PropTypes.object
 }
 
-class ValidatedInput extends React.Component {
-  componentWillMount () {
-    const optional = this.props.optional && this.props.optional === true
-    this.decorator = this.props.form.getFieldDecorator(
-      this.props.name, {
-        rules: [{required: !optional}]
-      })
-  }
-  render () {
-    const errors = this.props.form.getFieldError(this.props.name)
-    const hasErrors = errors && errors.length > 0
-    const helperText = hasErrors ? errors.join(',') : ''
-    return this.decorator(
-      <TextField
-        id={this.props.name}
-        type={this.props.type}
-        label={this.props.name}
-        helperText={helperText}
-        defaultValue={this.props.value}
-        error={hasErrors}
-        margin="none"
-        fullWidth
-      />
-    )
-  }
-}
+const ConfirmDialog = withStyles(confirmStyles)(_ConfirmDialog)
 
-ValidatedInput.propTypes = {
-  optional: PropTypes.bool,
-  form: PropTypes.object,
-  name: PropTypes.string,
-  type: PropTypes.string,
-  value: PropTypes.string
-}
-
-class _PersonalInfoForm extends React.Component {
-  render () {
-    return (
-      <Grid container spacing={24}>
-        <Grid item xs={12}>
-          <ValidatedInput
-            name="First Name"
-            form={this.props.form}
-            value={PROFILE.personal_first_name}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <ValidatedInput
-            name="Last Name"
-            form={this.props.form}
-            value={PROFILE.personal_last_name || ''}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <ValidatedInput
-            name="Email"
-            form={this.props.form}
-            type="email"
-            value={PROFILE.personal_email}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <ValidatedInput
-            name="Mobile Phone"
-            form={this.props.form}
-            type="phone"
-            value={PROFILE.personal_mobile_phone} />
-        </Grid>
-        <Grid item xs={6}>
-          <ValidatedInput
-            name="Date of Birth"
-            form={this.props.form}
-            type="date"
-            value={PROFILE.personal_date_of_birth}
-          />
-        </Grid>
-      </Grid>
-    )
+const buyStyles = theme => ({
+  card: {
+    margin: '20px 0px',
+    padding: '0px 10px'
+  },
+  h3: {
+    color: theme.palette.primary.main,
+    padding: 0,
+    margin: '10px 0',
+    fontSize: '16px'
+  },
+  p: {
+    color: '#999',
+    paddingBottom: '10px',
+    textAlign: 'center'
   }
-}
+})
 
-_PersonalInfoForm.propTypes = {
-  form: PropTypes.object
-}
-
-const PersonalInfoForm = createForm()(_PersonalInfoForm)
-class PersonalInfoScene extends React.Component {
-  async componentWillMount () {
-    // ui.title('Personal Information')
-  }
-  _next = () => {
-    this.form.getForm().validateFields((error, value) => {
-      if (!error) {
-        updateProfile({
-          personal_first_name: value['First Name'],
-          personal_last_name: value['Last Name'],
-          personal_email: value['Email'],
-          personal_mobile_phone: value['Mobile Phone'],
-          personal_date_of_birth: value['Date of Birth']
-        })
-        // serialize form
-        this.props.history.push('/paymentInfo/')
-        // ui.navStackPush('/paymentInfo/')
-      }
-    })
-  }
-  render () {
-    return (
-      <Block iconClassName="iconProfile" title="Personal Info">
-        <PersonalInfoForm ref={(el) => { this.form = el }}/>
-        <button onClick={this._next}>Next</button>
-      </Block>
-    )
-  }
-}
-
-PersonalInfoScene.propTypes = {
-  history: PropTypes.object
-}
-
-class _PaymentInfoForm extends React.Component {
-  render () {
-    return (
-      <div>
-        <div className="w-100">
-          <ValidatedInput name="First Name" form={this.props.form} />
-        </div>
-        <div className="w-100">
-          <ValidatedInput name="Last Name" form={this.props.form} />
-        </div>
-        <div className="w-100">
-          <ValidatedInput name="Card Number" form={this.props.form} />
-        </div>
-        <div>
-          <div className="w-50 p-2">
-            <ValidatedInput name="Expiration Date" form={this.props.form} />
-          </div>
-          <div className="w-50 p-2">
-            <ValidatedInput name="CCV" form={this.props.form} />
-          </div>
-        </div>
-      </div>
-    )
-  }
-}
-
-_PaymentInfoForm.propTypes = {
-  form: PropTypes.object
-}
-
-const PaymentInfoForm = createForm()(_PaymentInfoForm)
-class PaymentInfoScene extends React.Component {
-  componentWillMount () {
-    // ui.title('Payment Information')
-  }
-  _next = () => {
-    this.form.getForm().validateFields((error, value) => {
-      if (!error) {
-        updateProfile({
-          billing_first_name: value['First Name'],
-          billing_last_name: value['Last Name'],
-          billing_card_number: value['Card Number'],
-          billing_expiration_date: value['Expiration Date'],
-          billing_ccv: value['CCV']
-        })
-        this.props.history.push('/billingAddressScene/')
-        // ui.navStackPush('/billingAddressScene/')
-      }
-    })
-  }
-  render () {
-    return (
-      <Block iconClassName="iconPayment" title="Personal Info">
-        <PaymentInfoForm ref={(el) => { this.form = el }} />
-        <button onClick={this._next}>Next</button>
-      </Block>
-    )
-  }
-}
-
-PaymentInfoScene.propTypes = {
-  history: PropTypes.object
-}
-
-class _BillingAddressForm extends React.Component {
-  render () {
-    return (
-      <div>
-        <div className="w-100">
-          <ValidatedInput name="Address" form={this.props.form} />
-        </div>
-        <div className="w-100">
-          <ValidatedInput name="Address 2 (optional)" optional form={this.props.form} />
-        </div>
-        <div>
-          <div className="w-50 p-2">
-            <ValidatedInput name="City" form={this.props.form} />
-          </div>
-          <div className="w-50 p-2">
-            <ValidatedInput name="Postal Code" form={this.props.form} />
-          </div>
-        </div>
-        <div className="w-100">
-          <ValidatedInput name="Country" form={this.props.form} />
-        </div>
-      </div>
-    )
-  }
-}
-
-_BillingAddressForm.propTypes = {
-  form: PropTypes.object
-}
-
-const BillingAddressForm = createForm()(_BillingAddressForm)
-class BillingAddressScene extends React.Component {
-  componentWillMount () {
-    // ui.title('Billing Address')
-  }
-  _next = () => {
-    this.form.getForm().validateFields((error, value) => {
-      if (!error) {
-        updateProfile({
-          billing_address_1: value['Address'],
-          billing_address_2: value['Address 2'],
-          billing_city: value['City'],
-          billing_postal_code: value['Postal Code'],
-          billing_country: value['Country']
-        })
-        this.props.history.push('/uploadId/')
-        // ui.navStackPush('/uploadId/')
-      }
-    })
-  }
-  render () {
-    return (
-      <Block iconClassName="iconPayment" title="Billing Address">
-        <BillingAddressForm ref={(el) => { this.form = el }} />
-        <button onClick={this._next}>Next</button>
-      </Block>
-    )
-  }
-}
-
-BillingAddressScene.propTypes = {
-  history: PropTypes.object.required
-}
-
-class UploadIdScene extends React.Component {
-  componentWillMount () {
-    // ui.title('I.D. Upload')
-  }
-  _upload = async () => {
-    try {
-      // await core.requestFile()
-      window.alert('Thanks for the fish. One day I will upload it to simplex!')
-      // await core.writeData('setup', true)
-      this.props.history.push('https://www.simplex.com/')
-    } catch (e) {
-      console.log(e)
+class _BuyScene extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      dialogOpen: false
     }
   }
-  render () {
-    return (
-      <div>
-        <div className="text-center">
-          <div className="iconId" />
-          <h3>Upload your I.D.</h3>
-          <p>Please upload a valid government issues I.D.</p>
-          <p>Image must be a colored, high quality copy with the expiry date cleary visible. The file must be smaller than 4MB.</p>
-        </div>
-        <div className="block text-center">
-          <button onClick={this._upload}>Attach Photo</button>
-        </div>
-      </div>
-    )
-  }
-}
-
-UploadIdScene.propTypes = {
-  history: PropTypes.object.required
-}
-
-class FullViewScene extends React.Component {
-  componentWillMount () {
-    // ui.title('Personal Information')
-  }
-  _edit = () => {
-    this.props.history.push('/fullEdit/')
-    // ui.navStackPush('/fullEdit/')
+  async componentWillMount () {
+    // ui.title('Buy Bitcoin')
   }
   _next = () => {
-    this.props.history.push('https://www.simplex.com/')
+    this.setState({
+      dialogOpen: true
+    })
+  }
+  _handleClose = () => {
+    this.setState({
+      dialogOpen: false
+    })
   }
   render () {
+    const { classes } = this.props
     return (
       <div>
-        <div className="text-center">
-          <div className="iconId" />
-        </div>
-        <div className="block text-center">
-          <button className="w-50" onClick={this._edit}>Edit</button>
-          <button className="w-50" onClick={this._next}>Next</button>
-        </div>
+        <ConfirmDialog
+          open={this.state.dialogOpen}
+          onClose={this._handleClose} />
+        <Card className={classes.card}>
+          <CardContent>
+            <Typography
+              component="h3"
+              className={classes.h3}>
+              Conversion Rate
+            </Typography>
+            <Typography component="p">
+              1BTC = $ 10,488.25
+            </Typography>
+          </CardContent>
+        </Card>
+
+        <Card className={classes.card}>
+          <CardContent>
+            <Typography
+              variant="headline"
+              component="h3"
+              className={classes.h3}>
+              Destination Wallet
+            </Typography>
+            <Button size="large" variant="raised" color="primary" fullWidth>
+              Choose Destination Wallet
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className={classes.card}>
+          <CardContent>
+            <Typography
+              variant="headline"
+              component="h3"
+              className={classes.h3}>
+              Purchase Amount
+            </Typography>
+
+            <TextField id="id-btc" type="number" label="Enter Amount"
+              margin="none" fullWidth
+              InputProps={{
+                endAdornment: <InputAdornment position="end">BTC</InputAdornment>
+              }}
+            />
+
+            <TextField id="id-usd" type="number" label="Enter Amount"
+              margin="none" fullWidth
+              InputProps={{
+                endAdornment: <InputAdornment position="end">USD</InputAdornment>
+              }}
+            />
+
+            <DailyLimit />
+          </CardContent>
+        </Card>
+
+        <Card className={classes.card}>
+          <CardContent>
+            <Typography component="p" className={classes.p}>
+              You will see a confirmation screen before you buy.
+            </Typography>
+            <Button size="large"
+              variant="raised"
+              color="primary"
+              fullWidth
+              onClick={this._next}>Next</Button>
+            <Button size="large" fullWidth>Cancel</Button>
+          </CardContent>
+        </Card>
+
+        <Support />
+        <PoweredBy />
       </div>
     )
   }
 }
 
-FullViewScene.propTypes = {
-  history: PropTypes.object.required
+_BuyScene.propTypes = {
+  classes: PropTypes.object
 }
 
-class FullEditScene extends React.Component {
-  componentWillMount () {
-    // ui.title('Edit Information')
-  }
-  _save = () => {
-    this.props.history.goBack()
-  }
-  render () {
-    return (
-      <div>
-        <div className="text-center">
-          <div className="iconId" />
-        </div>
-        <div className="block text-center">
-          <button onClick={this._save}>Save</button>
-        </div>
-      </div>
-    )
-  }
-}
-
-FullEditScene.propTypes = {
-  history: PropTypes.object.required
-}
+const BuyScene = withStyles(buyStyles)(_BuyScene)
 
 export const routes = [{
   path: '/',
   main: StartScene,
   exact: true
 }, {
-  path: '/personalInfo/',
-  main: PersonalInfoScene,
-  exact: true
-}, {
-  path: '/paymentInfo/',
-  main: PaymentInfoScene,
-  exact: true
-}, {
-  path: '/billingAddressScene/',
-  main: BillingAddressScene,
-  exact: true
-}, {
-  path: '/uploadId/',
-  main: UploadIdScene,
-  exact: true
-}, {
-  path: '/fullView/',
-  main: FullViewScene,
-  exact: true
-}, {
-  path: '/fullEdit/',
-  main: FullEditScene,
+  path: '/buy/',
+  main: BuyScene,
   exact: true
 }]
 
-class App extends React.Component {
-  componentWillMount () {
-    readProfile()
-      .then((data) => {
-        PROFILE = data
-      })
-      .catch((err) => {
-        window.alert(err)
-      })
+const appStyles = (theme) => ({
+  content: {
+    height: '100%',
+    paddingBottom: '20px'
   }
+})
+
+class App extends React.Component {
   render () {
     return (
-      <MuiThemeProvider>
+      <MuiThemeProvider theme={theme}>
         <Router>
-          <div id='content'>
+          <div className={this.props.classes.content}>
             {routes.map((route, index) => (
               <Route
                 key={index}
@@ -527,4 +400,8 @@ class App extends React.Component {
   }
 }
 
-export default App
+App.propTypes = {
+  classes: PropTypes.object
+}
+
+export default withStyles(appStyles)(App)
