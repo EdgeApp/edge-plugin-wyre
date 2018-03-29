@@ -5,20 +5,17 @@ import { HashRouter as Router, Route } from 'react-router-dom'
 import { withStyles, createMuiTheme } from 'material-ui/styles'
 import Button from 'material-ui/Button'
 import Card, { CardActions, CardContent } from 'material-ui/Card'
-// import Grid from 'material-ui/Grid'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import TextField from 'material-ui/TextField'
 import { InputAdornment } from 'material-ui/Input'
 import Typography from 'material-ui/Typography'
-
 import Dialog, {
-  DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle
 } from 'material-ui/Dialog'
 
-// import { ui } from 'edge-libplugin'
+import { ui } from 'edge-libplugin'
 
 import './inline.css'
 
@@ -110,7 +107,7 @@ const PoweredBy = withStyles(powerThemes)(_PoweredBy)
 
 class StartScene extends React.Component {
   componentWillMount () {
-    // ui.title('Simplex')
+    ui.title('Buy Bitcoin with Simplex')
   }
   _start = async () => {
     const isSetup = false // await core.readData('setup') === true
@@ -198,6 +195,9 @@ const Block = withStyles(blockStyles)(_Block)
 const confirmStyles = (theme) => ({
   title: {
     textAlign: 'center'
+  },
+  button: {
+    margin: '5px 0'
   }
 })
 
@@ -215,15 +215,25 @@ const _ConfirmDialog = (props) => {
         <DialogContentText id="alert-dialog-description">
           Are you sure you want to buy $500 worth of BTC, with a fee of $39.50?
         </DialogContentText>
+        <Button size="large"
+          variant="raised"
+          color="primary" fullWidth
+          onClick={props.onClose}
+          className={props.classes.button}>
+          Yes, go to payment
+        </Button>
+        <div>
+          <Button
+            size="large"
+            variant="raised"
+            color="default"
+            autoFocus fullWidth
+            onClick={props.onClose}
+            className={props.classes.button}>
+            Cancel
+          </Button>
+        </div>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={props.onClose} color="primary">
-          Agree
-        </Button>
-        <Button onClick={props.onClose} color="default" autoFocus>
-          Cancel
-        </Button>
-      </DialogActions>
     </Dialog>
   )
 }
@@ -261,8 +271,8 @@ class _BuyScene extends React.Component {
       dialogOpen: false
     }
   }
-  async componentWillMount () {
-    // ui.title('Buy Bitcoin')
+  componentWillMount () {
+    ui.title('Buy Bitcoin')
   }
   _next = () => {
     this.setState({
