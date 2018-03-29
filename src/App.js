@@ -55,7 +55,7 @@ const _DailyLimits = (props) => {
 }
 
 _DailyLimits.propTypes = {
-  classes: PropTypes.objects
+  classes: PropTypes.object
 }
 
 const DailyLimit = withStyles(limitThemes)(_DailyLimits)
@@ -103,7 +103,7 @@ const _PoweredBy = (props) => {
 }
 
 _PoweredBy.propTypes = {
-  classes: PropTypes.objects
+  classes: PropTypes.object
 }
 
 const PoweredBy = withStyles(powerThemes)(_PoweredBy)
@@ -229,8 +229,8 @@ const _ConfirmDialog = (props) => {
 }
 
 _ConfirmDialog.propTypes = {
-  open: PropTypes.boolean,
-  onClose: PropTypes.object,
+  open: PropTypes.bool,
+  onClose: PropTypes.func.isRequired,
   classes: PropTypes.object
 }
 
