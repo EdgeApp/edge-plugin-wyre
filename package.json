@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "edge-libplugin": "https://github.com/teneighty/edge-libplugin.git",
+    "material-ui": "^1.0.0-beta.39",
     "rc-form": "^2.1.7",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",

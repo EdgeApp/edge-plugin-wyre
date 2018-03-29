@@ -2,6 +2,10 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { HashRouter as Router, Route } from 'react-router-dom'
 import { createForm } from 'rc-form'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import TextField from 'material-ui/TextField'
+import Grid from 'material-ui/Grid'
+
 // import { ui } from 'edge-libplugin'
 
 import './inline.css'
@@ -134,17 +138,20 @@ class ValidatedInput extends React.Component {
       })
   }
   render () {
-    return (
-      <div>
-        {this.decorator(
-          <input
-            type={this.props.type || 'text'}
-            placeholder={this.props.name}
-            defaultValue={this.props.value}
-          />
-        )}
-        <ErrorElement errors={this.props.form.getFieldError(this.props.name)} />
-      </div>
+    const errors = this.props.form.getFieldError(this.props.name)
+    const hasErrors = errors && errors.length > 0
+    const helperText = hasErrors ? errors.join(',') : ''
+    return this.decorator(
+      <TextField
+        id={this.props.name}
+        type={this.props.type}
+        label={this.props.name}
+        helperText={helperText}
+        defaultValue={this.props.value}
+        error={hasErrors}
+        margin="none"
+        fullWidth
+      />
     )
   }
 }
@@ -160,47 +167,45 @@ ValidatedInput.propTypes = {
 class _PersonalInfoForm extends React.Component {
   render () {
     return (
-      <div>
-        <div className="w-100">
+      <Grid container spacing={24}>
+        <Grid item xs={12}>
           <ValidatedInput
             name="First Name"
             form={this.props.form}
             value={PROFILE.personal_first_name}
           />
-        </div>
-        <div className="w-100">
+        </Grid>
+        <Grid item xs={12}>
           <ValidatedInput
             name="Last Name"
             form={this.props.form}
             value={PROFILE.personal_last_name || ''}
           />
-        </div>
-        <div className="w-100">
+        </Grid>
+        <Grid item xs={12}>
           <ValidatedInput
             name="Email"
             form={this.props.form}
             type="email"
             value={PROFILE.personal_email}
           />
-        </div>
-        <div>
-          <div className="w-50 p-2">
-            <ValidatedInput
-              name="Mobile Phone"
-              form={this.props.form}
-              type="phone"
-              value={PROFILE.personal_mobile_phone} />
-          </div>
-          <div className="w-50 p-2">
-            <ValidatedInput
-              name="Date of Birth"
-              form={this.props.form}
-              type="date"
-              value={PROFILE.personal_date_of_birth}
-            />
-          </div>
-        </div>
-      </div>
+        </Grid>
+        <Grid item xs={6}>
+          <ValidatedInput
+            name="Mobile Phone"
+            form={this.props.form}
+            type="phone"
+            value={PROFILE.personal_mobile_phone} />
+        </Grid>
+        <Grid item xs={6}>
+          <ValidatedInput
+            name="Date of Birth"
+            form={this.props.form}
+            type="date"
+            value={PROFILE.personal_date_of_birth}
+          />
+        </Grid>
+      </Grid>
     )
   }
 }
@@ -504,18 +509,20 @@ class App extends React.Component {
   }
   render () {
     return (
-      <Router>
-        <div id='content'>
-          {routes.map((route, index) => (
-            <Route
-              key={index}
-              path={route.path}
-              exact={route.exact}
-              component={route.main}
-            />
-          ))}
-        </div>
-      </Router>
+      <MuiThemeProvider>
+        <Router>
+          <div id='content'>
+            {routes.map((route, index) => (
+              <Route
+                key={index}
+                path={route.path}
+                exact={route.exact}
+                component={route.main}
+              />
+            ))}
+          </div>
+        </Router>
+      </MuiThemeProvider>
     )
   }
 }
