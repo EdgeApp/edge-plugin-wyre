@@ -9,13 +9,14 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import TextField from 'material-ui/TextField'
 import { InputAdornment } from 'material-ui/Input'
 import Typography from 'material-ui/Typography'
+import Drawer from 'material-ui/Drawer'
 import Dialog, {
   DialogContent,
   DialogContentText,
   DialogTitle
 } from 'material-ui/Dialog'
 
-import { ui } from 'edge-libplugin'
+import { core, ui } from 'edge-libplugin'
 
 import './inline.css'
 
@@ -30,7 +31,8 @@ const theme = createMuiTheme({
   },
   typography: {
     fontFamily: "'Source Sans Pro', sans-serif !important"
-  }
+  },
+  shadows: ['none']
 })
 
 const limitThemes = theme => ({
@@ -246,6 +248,43 @@ _ConfirmDialog.propTypes = {
 
 const ConfirmDialog = withStyles(confirmStyles)(_ConfirmDialog)
 
+class WalletDrawer extends React.Component {
+  renderWallet = (wallet) => {
+    return (
+      <Button
+        size="large"
+        key={wallet.id}
+        onClick={this.props.selectWallet}
+        fullWidth>{wallet.name}</Button>
+    )
+  }
+  render () {
+    return (
+      <Drawer
+        anchor="bottom"
+        open={this.props.open}
+        onClose={this.props.onClose}>
+        <div>
+          <Button
+            variant="raised"
+            color="primary"
+            onClick={this.props.onHeaderClick}
+            fullWidth>Choose Destination Wallet</Button>
+          {this.props.wallets.map((wallet) => this.renderWallet(wallet))}
+        </div>
+      </Drawer>
+    )
+  }
+}
+
+WalletDrawer.propTypes = {
+  open: PropTypes.bool,
+  selectWallet: PropTypes.func.isRequired,
+  onHeaderClick: PropTypes.func,
+  onClose: PropTypes.func,
+  wallets: PropTypes.array
+}
+
 const buyStyles = theme => ({
   card: {
     margin: '20px 0px',
@@ -268,11 +307,26 @@ class _BuyScene extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      dialogOpen: false
+      dialogOpen: false,
+      drawerOpen: false,
+      wallets: []
     }
   }
   componentWillMount () {
     ui.title('Buy Bitcoin')
+    this.loadWallets()
+  }
+  loadWallets = () => {
+    core.wallets()
+      .then((data) => {
+        this.setState({
+          wallets: data
+        })
+      })
+      .catch(() => {
+        ui.showAlert(false, 'Error', 'Unable to fetch wallets. Please try again later.')
+        core.exit()
+      })
   }
   _next = () => {
     this.setState({
@@ -283,6 +337,22 @@ class _BuyScene extends React.Component {
     this.setState({
       dialogOpen: false
     })
+  }
+  openWallets = () => {
+    this.setState({
+      drawerOpen: true
+    })
+  }
+
+  closeWallets = () => {
+    this.setState({
+      drawerOpen: false
+    })
+  }
+
+  selectWallet = (event) => {
+    console.log(event)
+    this.closeWallets()
   }
   render () {
     const { classes } = this.props
@@ -312,7 +382,8 @@ class _BuyScene extends React.Component {
               className={classes.h3}>
               Destination Wallet
             </Typography>
-            <Button size="large" variant="raised" color="primary" fullWidth>
+            <Button size="large" variant="raised" color="primary" fullWidth
+              onClick={this.openWallets}>
               Choose Destination Wallet
             </Button>
           </CardContent>
@@ -361,6 +432,12 @@ class _BuyScene extends React.Component {
 
         <Support />
         <PoweredBy />
+        <WalletDrawer
+          open={this.state.drawerOpen}
+          selectWallet={this.selectWallet}
+          onHeaderClick={this.closeWallets}
+          onClose={this.closeWallets}
+          wallets={this.state.wallets} />
       </div>
     )
   }
