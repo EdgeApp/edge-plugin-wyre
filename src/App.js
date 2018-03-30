@@ -4,12 +4,13 @@ import { HashRouter as Router, Route } from 'react-router-dom'
 // import { createForm } from 'rc-form'
 import { withStyles, createMuiTheme } from 'material-ui/styles'
 import Button from 'material-ui/Button'
-import Card, { CardActions, CardContent } from 'material-ui/Card'
+import Card, { CardContent } from 'material-ui/Card'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import TextField from 'material-ui/TextField'
 import { InputAdornment } from 'material-ui/Input'
 import Typography from 'material-ui/Typography'
 import Drawer from 'material-ui/Drawer'
+import Divider from 'material-ui/Divider'
 import Dialog, {
   DialogContent,
   DialogContentText,
@@ -66,6 +67,28 @@ const supportThemes = theme => ({
   }
 })
 
+const EdgeButton = (props) => {
+  return (
+    <Button
+      variant="raised"
+      color={props.color || 'default'}
+      onClick={props.onClick}
+      style={{
+        textTransform: 'none',
+        margin: '5px 0'
+      }}
+      fullWidth>
+      {props.children}
+    </Button>
+  )
+}
+
+EdgeButton.propTypes = {
+  color: PropTypes.string,
+  onClick: PropTypes.func.isRequired,
+  children: PropTypes.node.isRequired
+}
+
 const SupportLink = (props) => {
   return (<a href="mailto:support@simplex.com">support@simplex.com</a>)
 }
@@ -107,133 +130,145 @@ _PoweredBy.propTypes = {
 
 const PoweredBy = withStyles(powerThemes)(_PoweredBy)
 
-class StartScene extends React.Component {
+const startStyles = (theme) => ({
+  container: {
+    backgroundColor: '#FFF',
+    padding: '20px'
+  },
+  h3: {
+    color: theme.palette.primary.main,
+    fontSize: '17pt',
+    padding: '5px 0'
+  },
+  p: {
+    fontSize: '14pt'
+  },
+  divider: {
+    margin: '15px 0',
+    height: '2px'
+  },
+  feeList: {
+    listStyleType: '-'
+  }
+})
+
+const StartHeader = (props) => {
+  return (
+    <Typography variant="headline" component="h3" className={props.classes.h3}>
+      {props.text}
+    </Typography>
+  )
+}
+
+StartHeader.propTypes = {
+  classes: PropTypes.object,
+  text: PropTypes.string
+}
+
+const StartParagraph = (props) => {
+  return (
+    <Typography component="p" className={props.classes.p}>
+      {props.children}
+    </Typography>
+  )
+}
+
+StartParagraph.propTypes = {
+  classes: PropTypes.object.isRequired,
+  children: PropTypes.node.isRequired
+}
+
+class _StartScene extends React.Component {
   componentWillMount () {
     ui.title('Buy Bitcoin with Simplex')
   }
-  _start = async () => {
-    const isSetup = false // await core.readData('setup') === true
-    if (isSetup) {
-      this.props.history.push('/fullView/')
-      // ui.navStackPush('/fullView/')
-    } else {
-      this.props.history.push('/buy/')
-      // ui.navStackPush('/buy/')
-    }
+  _start = () => {
+    this.props.history.push('/buy/')
+    ui.navStackPush('/buy/')
   }
   render () {
+    const classes = this.props.classes
     return (
-      <div>
+      <div className={classes.container}>
         <div className="text-center">
           <div className="iconLogo" />
         </div>
-        <Block title="Simplex">
-          <Typography component="p">
+        <div>
+          <StartHeader text="Simplex" classes={classes} />
+          <StartParagraph classes={classes}>
             Simplex is a Edge Wallet bank card processing partner. It is the
             service which allows you to purchase Bitcoin safely and quickly in just a
             few short minutes.
-          </Typography>
-        </Block>
-        <Block title="Fee">
-          <Typography component="p">
+          </StartParagraph>
+        </div>
+        <Divider className={classes.divider} />
+        <div>
+          <StartHeader text="Fee" classes={classes} />
+          <StartParagraph classes={classes}>
             Please note that additional fees will be charged, on top of the above Bitcoin / $ rate at checkout. Those fees are as follows:
-          </Typography>
-        </Block>
-        <Block title="Time">
-          <Typography component="p">
+          </StartParagraph>
+          <ul className={classes.feeList}>
+            <li>Edge Wallet 5%</li>
+            <li>Credit Card processing by Simplex 5% ($10 min)</li>
+          </ul>
+        </div>
+        <Divider className={classes.divider} />
+        <div>
+          <StartHeader text="Time" classes={classes} />
+          <StartParagraph classes={classes}>
             Estimated transaction time is about 10-30min.
-          </Typography>
-        </Block>
-        <Block title="Support">
-          <Typography component="p">
+          </StartParagraph>
+        </div>
+        <Divider className={classes.divider} />
+        <div>
+          <StartHeader text="Support" classes={classes} />
+          <StartParagraph classes={classes}>
             For support, please contact <SupportLink />.
-          </Typography>
-        </Block>
-        <Block>
-          <CardActions>
-            <Button variant="raised" color="primary" fullWidth onClick={this._start}>Next</Button>
-          </CardActions>
-        </Block>
+          </StartParagraph>
+        </div>
+        <Divider className={classes.divider} />
+        <div>
+          <EdgeButton color="primary" onClick={this._start}>Next</EdgeButton>
+        </div>
       </div>
     )
   }
 }
 
-StartScene.propTypes = {
-  history: PropTypes.object
+_StartScene.propTypes = {
+  history: PropTypes.object,
+  classes: PropTypes.object
 }
 
-const blockStyles = theme => ({
-  card: {
-    margin: '100px 0px',
-    padding: '5px 10px'
-  }
-})
-
-const _Block = (props) => {
-  return (
-    <Card>
-      <CardContent>
-        { props.iconClassName &&
-          <div className={props.iconClassName} />
-        }
-        <Typography variant="headline" component="h3">
-          {props.title}
-        </Typography>
-        { props.children }
-      </CardContent>
-    </Card>
-  )
-}
-
-_Block.propTypes = {
-  title: PropTypes.string,
-  iconClassName: PropTypes.string,
-  children: PropTypes.node.isRequired
-}
-
-const Block = withStyles(blockStyles)(_Block)
+const StartScene = withStyles(startStyles)(_StartScene)
 
 const confirmStyles = (theme) => ({
   title: {
-    textAlign: 'center'
-  },
-  button: {
-    margin: '5px 0'
+    textAlign: 'center',
+    color: theme.palette.primary.main,
+    fontSize: '18pt'
   }
 })
 
 const _ConfirmDialog = (props) => {
   return (
-    <Dialog
-      open={props.open}
-      onClose={props.onClose}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description" >
-      <DialogTitle id="alert-dialog-title" className={props.classes.title}>
-        Confirm Purchase Details
+    <Dialog open={props.open} onClose={props.onClose}>
+      <DialogTitle id="alert-confirm-title" disableTypography>
+        <Typography component="h2" className={props.classes.title}>
+          Confirm Purchase Details
+        </Typography>
       </DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
           Are you sure you want to buy $500 worth of BTC, with a fee of $39.50?
         </DialogContentText>
-        <Button size="large"
-          variant="raised"
-          color="primary" fullWidth
-          onClick={props.onClose}
-          className={props.classes.button}>
+        <EdgeButton color="primary" onClick={props.onClose}>
           Yes, go to payment
-        </Button>
+        </EdgeButton>
         <div>
-          <Button
-            size="large"
-            variant="raised"
-            color="default"
-            autoFocus fullWidth
-            onClick={props.onClose}
-            className={props.classes.button}>
+          <EdgeButton color="default" onClick={props.onClose}>
             Cancel
-          </Button>
+          </EdgeButton>
         </div>
       </DialogContent>
     </Dialog>
@@ -251,11 +286,9 @@ const ConfirmDialog = withStyles(confirmStyles)(_ConfirmDialog)
 class WalletDrawer extends React.Component {
   renderWallet = (wallet) => {
     return (
-      <Button
-        size="large"
-        key={wallet.id}
-        onClick={this.props.selectWallet}
-        fullWidth>{wallet.name}</Button>
+      <EdgeButton key={wallet.id} onClick={this.props.selectWallet}>
+        {wallet.name}
+      </EdgeButton>
     )
   }
   render () {
@@ -265,11 +298,9 @@ class WalletDrawer extends React.Component {
         open={this.props.open}
         onClose={this.props.onClose}>
         <div>
-          <Button
-            variant="raised"
-            color="primary"
-            onClick={this.props.onHeaderClick}
-            fullWidth>Choose Destination Wallet</Button>
+          <EdgeButton color="primary" onClick={this.props.onHeaderClick}>
+            Choose Destination Wallet
+          </EdgeButton>
           {this.props.wallets.map((wallet) => this.renderWallet(wallet))}
         </div>
       </Drawer>
@@ -294,7 +325,12 @@ const buyStyles = theme => ({
     color: theme.palette.primary.main,
     padding: 0,
     margin: '10px 0',
-    fontSize: '16px'
+    fontSize: '16px',
+    fontWeight: 'bold'
+  },
+  conversion: {
+    fontSize: '24pt',
+    color: theme.palette.primary.main
   },
   p: {
     color: '#999',
@@ -309,6 +345,9 @@ class _BuyScene extends React.Component {
     this.state = {
       dialogOpen: false,
       drawerOpen: false,
+      rate: 10488.25,
+      fiatValue: '',
+      cryptoValue: '',
       wallets: []
     }
   }
@@ -328,12 +367,16 @@ class _BuyScene extends React.Component {
         core.exit()
       })
   }
-  _next = () => {
+  next = () => {
     this.setState({
       dialogOpen: true
     })
   }
-  _handleClose = () => {
+  cancel = () => {
+    this.props.history.goBack()
+    ui.navStackPop()
+  }
+  handleClose = () => {
     this.setState({
       dialogOpen: false
     })
@@ -354,13 +397,49 @@ class _BuyScene extends React.Component {
     console.log(event)
     this.closeWallets()
   }
+
+  formatRate = (rate) => {
+    return rate.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    })
+  }
+
+  calcFiat = (event) => {
+    if (event.target.value) {
+      this.setState({
+        fiatValue: (parseFloat(event.target.value) * this.state.rate).toFixed(2),
+        cryptoValue: event.target.value
+      })
+    } else {
+      this.setState({
+        fiatValue: '',
+        cryptoValue: ''
+      })
+    }
+  }
+
+  calcCrypto = (event) => {
+    if (event.target.value) {
+      this.setState({
+        fiatValue: event.target.value,
+        cryptoValue: (parseFloat(event.target.value) / this.state.rate).toFixed(5)
+      })
+    } else {
+      this.setState({
+        fiatValue: '',
+        cryptoValue: ''
+      })
+    }
+  }
+
   render () {
     const { classes } = this.props
     return (
       <div>
         <ConfirmDialog
           open={this.state.dialogOpen}
-          onClose={this._handleClose} />
+          onClose={this.handleClose} />
         <Card className={classes.card}>
           <CardContent>
             <Typography
@@ -368,8 +447,8 @@ class _BuyScene extends React.Component {
               className={classes.h3}>
               Conversion Rate
             </Typography>
-            <Typography component="p">
-              1BTC = $ 10,488.25
+            <Typography component="p" className={classes.conversion}>
+              1BTC = $ {this.formatRate(this.state.rate)}
             </Typography>
           </CardContent>
         </Card>
@@ -382,10 +461,9 @@ class _BuyScene extends React.Component {
               className={classes.h3}>
               Destination Wallet
             </Typography>
-            <Button size="large" variant="raised" color="primary" fullWidth
-              onClick={this.openWallets}>
+            <EdgeButton color="primary" onClick={this.openWallets}>
               Choose Destination Wallet
-            </Button>
+            </EdgeButton>
           </CardContent>
         </Card>
 
@@ -403,6 +481,8 @@ class _BuyScene extends React.Component {
               InputProps={{
                 endAdornment: <InputAdornment position="end">BTC</InputAdornment>
               }}
+              value={this.state.cryptoValue}
+              onChange={this.calcFiat}
             />
 
             <TextField id="id-usd" type="number" label="Enter Amount"
@@ -410,6 +490,8 @@ class _BuyScene extends React.Component {
               InputProps={{
                 endAdornment: <InputAdornment position="end">USD</InputAdornment>
               }}
+              value={this.state.fiatValue}
+              onChange={this.calcCrypto}
             />
 
             <DailyLimit />
@@ -421,12 +503,10 @@ class _BuyScene extends React.Component {
             <Typography component="p" className={classes.p}>
               You will see a confirmation screen before you buy.
             </Typography>
-            <Button size="large"
-              variant="raised"
-              color="primary"
-              fullWidth
-              onClick={this._next}>Next</Button>
-            <Button size="large" fullWidth>Cancel</Button>
+            <EdgeButton color="primary" onClick={this.next}>
+              Next
+            </EdgeButton>
+            <EdgeButton onClick={this.cancel}>Cancel</EdgeButton>
           </CardContent>
         </Card>
 
@@ -444,7 +524,8 @@ class _BuyScene extends React.Component {
 }
 
 _BuyScene.propTypes = {
-  classes: PropTypes.object
+  classes: PropTypes.object,
+  history: PropTypes.object
 }
 
 const BuyScene = withStyles(buyStyles)(_BuyScene)
@@ -461,8 +542,7 @@ export const routes = [{
 
 const appStyles = (theme) => ({
   content: {
-    height: '100%',
-    paddingBottom: '20px'
+    height: '100%'
   }
 })
 
