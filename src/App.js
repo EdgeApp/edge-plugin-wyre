@@ -4,8 +4,8 @@ import { HashRouter as Router, Route } from 'react-router-dom'
 import { withStyles, createMuiTheme } from 'material-ui/styles'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
-import StartScene from './startScene'
-import BuyScene from './buyScene'
+import StartScene from './StartScene'
+import BuyScene from './BuyScene'
 
 const theme = createMuiTheme({
   palette: {
