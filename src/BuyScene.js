@@ -19,6 +19,31 @@ import {
 
 import './inline.css'
 
+const SimplexForm = (props) => {
+  return (
+    <form id='payment_form' action={props.simplexUrl} method='POST' target='_self'>
+      <input type='hidden' name='version' value={props.quote.version} />
+      <input type='hidden' name='partner' value={props.quote.partner} />
+      <input type='hidden' name='payment_flow_type' value={props.quote.payment_flow_type} />
+      <input type='hidden' name='return_url' value={props.quote.return_url} />
+      <input type='hidden' name='quote_id' value={props.quote.quote_id} />
+      <input type='hidden' name='payment_id' value={props.quote.payment_id} />
+      <input type='hidden' name='user_id' value={props.quote.user_id} />
+      <input type='hidden' name='destination_wallet[address]' value={props.quote.address} />
+      <input type='hidden' name='destination_wallet[currency]' value={props.quote.currency} />
+      <input type='hidden' name='fiat_total_amount[amount]' value={props.quote.fiat_total_amount_amount} />
+      <input type='hidden' name='fiat_total_amount[currency]' value={props.quote.fiat_total_amount_currency} />
+      <input type='hidden' name='digital_total_amount[amount]' value={props.quote.digital_amount} />
+      <input type='hidden' name='digital_total_amount[currency]' value={props.quote.digital_currency} />
+    </form>
+  )
+}
+
+SimplexForm.propTypes = {
+  simplexUrl: PropTypes.string.isRequired,
+  quote: PropTypes.object.isRequired
+}
+
 const buyStyles = theme => ({
   card: {
     margin: '20px 0px',
@@ -50,15 +75,13 @@ class BuyScene extends React.Component {
       ? 'https://simplex-sandbox-api.edgesecure.co/quote'
       : 'https://simplex-api.edgesecure.co/quote'
     this.simplexUrl = true
-      ? 'https://checkout.test-simplexcc.com/payments/new'
+      ? 'https://sandbox.test-simplexcc.com/mock/partner/deposit'
       : 'https://checkout.simplexcc.com/payments/new'
     this.state = {
       dialogOpen: false,
       drawerOpen: false,
-      rate: 10488.25,
-      fiatValue: '',
-      cryptoValue: '',
-      wallets: []
+      wallets: [],
+      quote: null
     }
   }
   componentWillMount () {
@@ -85,6 +108,12 @@ class BuyScene extends React.Component {
   cancel = () => {
     this.props.history.goBack()
     ui.navStackPop()
+  }
+  handleAccept = () => {
+    this.setState({
+      dialogOpen: false
+    })
+    document.getElementById('payment_form').submit()
   }
   handleClose = () => {
     this.setState({
@@ -120,11 +149,11 @@ class BuyScene extends React.Component {
   }
 
   request = (requested, amount) => {
-    core.debugLevel(0, this.edgeUrl)
+    /* core.debugLevel(0, this.edgeUrl) */
     // Abort any active requests
     this.requestAbort()
     const data = {
-      signal: this.abortController.signal,
+      /* signal: this.abortController.signal, */
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -138,7 +167,7 @@ class BuyScene extends React.Component {
         client_id: 'asfasfasdasdfadsf'
       })
     }
-    core.debugLevel(0, JSON.stringify(data))
+    /* core.debugLevel(0, JSON.stringify(data)) */
     // Issue a new request
     return window.fetch(this.edgeUrl, data)
   }
@@ -151,77 +180,74 @@ class BuyScene extends React.Component {
       return_url: 'https://www.edgesecure.co',
       quote_id: quote.quote_id,
       wallet_id: quote.wallet_id,
-      payment_id: '',
+      payment_id: '12123123',
       user_id: quote.user_id,
-      address: '',
-      currency: ''
+      address: '1BnT87d7jeqmT7kr49kLMUsNzCeKQq2mBT',
+      currency: 'USD'
     }
-    if (quote.fiat_money.total_amount) {
-      o.fiat_total_amount_amount = quote.fiat_money.total_amount
-      o.fiat_total_amount_currency = quote.fiat_money.currency
-    } else {
-      o.digital_total_amount_amount = quote.digital_money.total_amount
-      o.digital_total_amount_currency = quote.digital_money.currency
-    }
+    o.fiat_total_amount_amount = quote.fiat_money.total_amount
+    o.fiat_total_amount_currency = quote.fiat_money.currency
+    o.fee = quote.fiat_money.total_amount - quote.fiat_money.base_amount
+    o.fiat_amount = quote.fiat_money.base_amount
+    o.digital_amount = quote.digital_money.amount
+    o.digital_currency = quote.digital_money.currency
     return o
   }
 
   calcFiat = (event) => {
     if (event.target.value) {
       this.setState({
-        cryptoValue: event.target.value,
         cryptoLoading: false,
         fiatLoading: true
       })
-      this.request('USD', event.target.value)
-        .then(data => {
-          const r = data.json()
+      this.request('BTC', event.target.value)
+        .then(data => data.json())
+        .then(r => {
           this.setState({
-            fiatValue: parseFloat(r.res.fiat_money.base_amount).toFixed(2),
             fiatLoading: false,
             quote: this.buildObject(r.res)
           })
+          document.getElementById('fiatInput').value = r.res.fiat_money.base_amount
         })
         .catch(err => {
-          core.debugLevel(0, JSON.stringify(err))
+          console.log(err)
+          /* core.debugLevel(0, JSON.stringify(err)) */
         })
     } else {
       this.requestAbort()
       this.setState({
-        fiatValue: '',
+        quote: null,
         fiatLoading: false,
-        cryptoValue: '',
         cryptoLoading: false
       })
     }
   }
 
   calcCrypto = async (event) => {
+    console.log(event)
     if (event.target.value) {
       this.setState({
-        fiatValue: event.target.value,
         fiatLoading: false,
-        cryptoLoading: true,
-        loading: true
+        cryptoLoading: true
       })
-      this.request('BTC', event.target.value)
-        .then(data => {
-          const r = data.json()
+      this.request('USD', event.target.value)
+        .then(data => data.json())
+        .then(r => {
           this.setState({
-            cryptoValue: parseFloat(r.res.digital_currency.base_amount).toFixed(5),
             cryptoLoading: false,
             quote: this.buildObject(r.res)
           })
+          document.getElementById('cryptoInput').value = r.res.digital_money.amount
         })
         .catch(err => {
-          core.debugLevel(0, JSON.stringify(err))
+          console.log(err)
+          /* core.debugLevel(0, JSON.stringify(err)) */
         })
     } else {
       this.requestAbort()
       this.setState({
-        fiatValue: '',
+        quote: null,
         fiatLoading: false,
-        cryptoValue: '',
         cryptoLoading: false
       })
     }
@@ -231,9 +257,14 @@ class BuyScene extends React.Component {
     const { classes } = this.props
     return (
       <div>
-        <ConfirmDialog
-          open={this.state.dialogOpen}
-          onClose={this.handleClose} />
+        {this.state.quote && (
+          <ConfirmDialog
+            fiatAmount={this.state.quote.fiat_amount.toFixed(2)}
+            fee={this.state.quote.fee.toFixed(2)}
+            open={this.state.dialogOpen}
+            onAccept={this.handleAccept}
+            onClose={this.handleClose} />
+        )}
         <Card className={classes.card}>
           <CardContent>
             <Typography
@@ -241,11 +272,11 @@ class BuyScene extends React.Component {
               className={classes.h3}>
               Conversion Rate
             </Typography>
-            (this.state.quote && (
+            {this.state.quote && (
               <Typography component="p" className={classes.conversion}>
                 1BTC = $ TODO
               </Typography>
-            ))
+            )}
           </CardContent>
         </Card>
 
@@ -272,22 +303,23 @@ class BuyScene extends React.Component {
               Purchase Amount
             </Typography>
 
-            <TextField id="id-btc" type="number" label="Enter Amount"
-              margin="none" fullWidth
+            <TextField id="cryptoInput" type="number" label="Enter Amount"
+              margin="none"
+              fullWidth
+              disabled={this.state.cryptoLoading}
               InputProps={{
                 endAdornment: <InputAdornment position="end">BTC</InputAdornment>
               }}
-              value={this.state.cryptoValue}
-              onChange={this.calcFiat}
+              onKeyUp={this.calcFiat}
             />
 
-            <TextField id="id-usd" type="number" label="Enter Amount"
+            <TextField id="fiatInput" type="number" label="Enter Amount"
               margin="none" fullWidth
+              disabled={this.state.fiatLoading}
               InputProps={{
                 endAdornment: <InputAdornment position="end">USD</InputAdornment>
               }}
-              value={this.state.fiatValue}
-              onChange={this.calcCrypto}
+              onKeyUp={this.calcCrypto}
             />
 
             <DailyLimit />
@@ -299,30 +331,18 @@ class BuyScene extends React.Component {
             <Typography component="p" className={classes.p}>
               You will see a confirmation screen before you buy.
             </Typography>
-            <EdgeButton color="primary" onClick={this.next}>
+            <EdgeButton
+              color="primary"
+              onClick={this.next}
+              disabled={this.state.quote === null}>
               Next
             </EdgeButton>
             <EdgeButton onClick={this.cancel}>Cancel</EdgeButton>
           </CardContent>
         </Card>
 
-        (this.state.selectedQuote && (
-        <form id='payment_form' action={this.simplexUrl} method='POST' target='_self'>
-          <input type='hidden' name='version' value={this.state.quote.version} />
-          <input type='hidden' name='partner' value={this.state.quote.partner} />
-          <input type='hidden' name='payment_flow_type' value={this.state.quote.payment_flow_type} />
-          <input type='hidden' name='return_url' value={this.state.quote.return_url} />
-          <input type='hidden' name='quote_id' value={this.state.quote.quote_id} />
-          <input type='hidden' name='payment_id' value={this.state.quote.payment_id} />
-          <input type='hidden' name='user_id' value={this.state.quote.user_id} />
-          <input type='hidden' name='destination_wallet[address]' value={this.state.quote.address} />
-          <input type='hidden' name='destination_wallet[currency]' value={this.state.quote.currency} />
-          <input type='hidden' name='fiat_total_amount[amount]' value={this.state.quote.fiat_total_amount_amount} />
-          <input type='hidden' name='fiat_total_amount[currency]' value={this.state.quote.fiat_total_amount_currency} />
-          <input type='hidden' name='digital_total_amount[amount]' value={this.state.quote.digital_total_amount_amount} />
-          <input type='hidden' name='digital_total_amount[currency]' value={this.state.quote.digital_total_amount_currency} />
-        </form>
-        ))
+        {this.state.quote &&
+          <SimplexForm simplexUrl={this.simplexUrl} quote={this.state.quote} />}
 
         <Support />
         <PoweredBy />

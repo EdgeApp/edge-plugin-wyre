@@ -38,6 +38,7 @@ export const EdgeButton = (props) => {
       variant="raised"
       color={props.color || 'default'}
       onClick={props.onClick}
+      disabled={props.disabled | false}
       style={{
         textTransform: 'none',
         margin: '5px 0'
@@ -51,7 +52,8 @@ export const EdgeButton = (props) => {
 EdgeButton.propTypes = {
   color: PropTypes.string,
   onClick: PropTypes.func.isRequired,
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
+  disabled: PropTypes.bool
 }
 
 export const SupportLink = (props) => {
@@ -119,9 +121,9 @@ export const ConfirmDialog = withStyles(confirmStyles)((props) => {
       </DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description" className={props.classes.p}>
-          Are you sure you want to buy $500 worth of BTC, with a fee of $39.50?
+          Are you sure you want to buy {props.fiatAmount} worth of BTC, with a fee of {props.fee}?
         </DialogContentText>
-        <EdgeButton color="primary" onClick={props.onClose}>
+        <EdgeButton color="primary" onClick={props.onAccept}>
           Yes, go to payment
         </EdgeButton>
         <div>
@@ -137,7 +139,10 @@ export const ConfirmDialog = withStyles(confirmStyles)((props) => {
 ConfirmDialog.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func.isRequired,
-  classes: PropTypes.object
+  onAccept: PropTypes.func.isRequired,
+  classes: PropTypes.object,
+  fiatAmount: PropTypes.string,
+  fee: PropTypes.string
 }
 
 export class WalletDrawer extends React.Component {
