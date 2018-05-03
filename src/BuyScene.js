@@ -306,7 +306,7 @@ class BuyScene extends React.Component {
                     {!this.state.cryptoLoading && this.state.selectedWallet.currency}
                   </InputAdornment>)
               }}
-              onKeyUp={this.calcFiat}
+              onChange={this.calcFiat}
             />
 
             <TextField id="fiatInput" type="number" label="Enter Amount"
@@ -319,7 +319,7 @@ class BuyScene extends React.Component {
                     {!this.state.fiatLoading && FIAT_CURRENCY}
                   </InputAdornment>)
               }}
-              onKeyUp={this.calcCrypto}
+              onChange={this.calcCrypto}
             />
 
             <DailyLimit dailyLimit="$20,000" monthlyLimit="$50,000" />
