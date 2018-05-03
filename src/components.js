@@ -23,13 +23,15 @@ const limitStyles = theme => ({
 export const DailyLimit = withStyles(limitStyles)((props) => {
   return (
     <Typography component="p" className={props.classes.p}>
-      Daily Limit: $1,000 / Monthly Limit: $5,0000
+      Daily Limit: {props.dailyLimit} / Monthly Limit: {props.monthlyLimit}
     </Typography>
   )
 })
 
 DailyLimit.propTypes = {
-  classes: PropTypes.object
+  classes: PropTypes.object,
+  dailyLimit: PropTypes.string,
+  monthlyLimit: PropTypes.string
 }
 
 export const EdgeButton = (props) => {

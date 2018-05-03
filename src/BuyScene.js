@@ -5,9 +5,10 @@ import Card, { CardContent } from 'material-ui/Card'
 import TextField from 'material-ui/TextField'
 import { InputAdornment } from 'material-ui/Input'
 import Typography from 'material-ui/Typography'
-import AbortController from 'abort-controller'
+import uuidv1 from 'uuid/v1'
 
 import { core, ui } from 'edge-libplugin'
+import { requestAbort, requestConfirm, requestQuote, FIAT_CURRENCY, SimplexForm } from './api'
 import {
   DailyLimit,
   EdgeButton,
@@ -19,29 +20,11 @@ import {
 
 import './inline.css'
 
-const SimplexForm = (props) => {
-  return (
-    <form id='payment_form' action={props.simplexUrl} method='POST' target='_self'>
-      <input type='hidden' name='version' value={props.quote.version} />
-      <input type='hidden' name='partner' value={props.quote.partner} />
-      <input type='hidden' name='payment_flow_type' value={props.quote.payment_flow_type} />
-      <input type='hidden' name='return_url' value={props.quote.return_url} />
-      <input type='hidden' name='quote_id' value={props.quote.quote_id} />
-      <input type='hidden' name='payment_id' value={props.quote.payment_id} />
-      <input type='hidden' name='user_id' value={props.quote.user_id} />
-      <input type='hidden' name='destination_wallet[address]' value={props.quote.address} />
-      <input type='hidden' name='destination_wallet[currency]' value={props.quote.currency} />
-      <input type='hidden' name='fiat_total_amount[amount]' value={props.quote.fiat_total_amount_amount} />
-      <input type='hidden' name='fiat_total_amount[currency]' value={props.quote.fiat_total_amount_currency} />
-      <input type='hidden' name='digital_total_amount[amount]' value={props.quote.digital_amount} />
-      <input type='hidden' name='digital_total_amount[currency]' value={props.quote.digital_currency} />
-    </form>
-  )
-}
-
-SimplexForm.propTypes = {
-  simplexUrl: PropTypes.string.isRequired,
-  quote: PropTypes.object.isRequired
+const formatRate = (rate, symbol) => {
+  return symbol + rate.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })
 }
 
 const buyStyles = theme => ({
@@ -70,17 +53,21 @@ const buyStyles = theme => ({
 class BuyScene extends React.Component {
   constructor (props) {
     super(props)
-    this.abortController = new AbortController()
-    this.edgeUrl = true
-      ? 'https://simplex-sandbox-api.edgesecure.co/quote'
-      : 'https://simplex-api.edgesecure.co/quote'
-    this.simplexUrl = true
-      ? 'https://sandbox.test-simplexcc.com/mock/partner/deposit'
-      : 'https://checkout.simplexcc.com/payments/new'
+    /* sessionId can be regenerated each time we come to this form */
+    this.sessionId = uuidv1()
+    /* this should be written to the encrypted storage */
+    this.userId = window.localStorage.getItem('simplex_user_id') || uuidv1()
+    /* this only needs to persist with an install. localStorage will do */
+    this.uaid = window.localStorage.getItem('simplex_install_id') || uuidv1()
+    window.localStorage.setItem('simplex_install_id', this.uaid)
+
     this.state = {
       dialogOpen: false,
       drawerOpen: false,
       wallets: [],
+      selectedWallet: {
+        currency: 'BTC'
+      },
       quote: null
     }
   }
@@ -113,7 +100,18 @@ class BuyScene extends React.Component {
     this.setState({
       dialogOpen: false
     })
-    document.getElementById('payment_form').submit()
+    requestConfirm(
+      this.userId, this.sessionId,
+      this.uaid, this.state.quote)
+      .then((data) => data.json())
+      .then((data) => {
+        // document.getElementById('payment_form').submit()
+        console.log(data)
+      })
+      .catch((err) => {
+        /* Tell the user dummy */
+        console.log(err)
+      })
   }
   handleClose = () => {
     this.setState({
@@ -137,41 +135,6 @@ class BuyScene extends React.Component {
     this.closeWallets()
   }
 
-  formatRate = (rate) => {
-    return rate.toLocaleString(undefined, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    })
-  }
-
-  requestAbort = () => {
-    this.abortController.abort()
-  }
-
-  request = (requested, amount) => {
-    /* core.debugLevel(0, this.edgeUrl) */
-    // Abort any active requests
-    this.requestAbort()
-    const data = {
-      /* signal: this.abortController.signal, */
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        digital_currency: 'BTC',
-        fiat_currency: 'USD',
-        requested_currency: requested,
-        requested_amount: parseFloat(amount),
-        client_id: 'asfasfasdasdfadsf'
-      })
-    }
-    /* core.debugLevel(0, JSON.stringify(data)) */
-    // Issue a new request
-    return window.fetch(this.edgeUrl, data)
-  }
-
   buildObject = (quote) => {
     const o = {
       version: '1',
@@ -180,10 +143,11 @@ class BuyScene extends React.Component {
       return_url: 'https://www.edgesecure.co',
       quote_id: quote.quote_id,
       wallet_id: quote.wallet_id,
-      payment_id: '12123123',
+      payment_id: quote.quote_id,
+      order_id: quote.quote_id,
       user_id: quote.user_id,
       address: '1BnT87d7jeqmT7kr49kLMUsNzCeKQq2mBT',
-      currency: 'USD'
+      currency: 'BTC'
     }
     o.fiat_total_amount_amount = quote.fiat_money.total_amount
     o.fiat_total_amount_currency = quote.fiat_money.currency
@@ -191,6 +155,7 @@ class BuyScene extends React.Component {
     o.fiat_amount = quote.fiat_money.base_amount
     o.digital_amount = quote.digital_money.amount
     o.digital_currency = quote.digital_money.currency
+    o.rate = (o.fiat_amount / o.digital_amount)
     return o
   }
 
@@ -200,7 +165,7 @@ class BuyScene extends React.Component {
         cryptoLoading: false,
         fiatLoading: true
       })
-      this.request('BTC', event.target.value)
+      requestQuote(this.userId, 'BTC', event.target.value, this.state.selectedWallet.currency)
         .then(data => data.json())
         .then(r => {
           this.setState({
@@ -214,7 +179,7 @@ class BuyScene extends React.Component {
           /* core.debugLevel(0, JSON.stringify(err)) */
         })
     } else {
-      this.requestAbort()
+      requestAbort()
       this.setState({
         quote: null,
         fiatLoading: false,
@@ -230,7 +195,7 @@ class BuyScene extends React.Component {
         fiatLoading: false,
         cryptoLoading: true
       })
-      this.request('USD', event.target.value)
+      requestQuote(this.userId, FIAT_CURRENCY, event.target.value, this.state.selectedWallet.currency)
         .then(data => data.json())
         .then(r => {
           this.setState({
@@ -244,7 +209,7 @@ class BuyScene extends React.Component {
           /* core.debugLevel(0, JSON.stringify(err)) */
         })
     } else {
-      this.requestAbort()
+      requestAbort()
       this.setState({
         quote: null,
         fiatLoading: false,
@@ -259,26 +224,26 @@ class BuyScene extends React.Component {
       <div>
         {this.state.quote && (
           <ConfirmDialog
-            fiatAmount={this.state.quote.fiat_amount.toFixed(2)}
-            fee={this.state.quote.fee.toFixed(2)}
+            fiatAmount={formatRate(this.state.quote.fiat_amount, '$')}
+            fee={formatRate(this.state.quote.fee, '$')}
             open={this.state.dialogOpen}
             onAccept={this.handleAccept}
             onClose={this.handleClose} />
         )}
-        <Card className={classes.card}>
-          <CardContent>
-            <Typography
-              component="h3"
-              className={classes.h3}>
-              Conversion Rate
-            </Typography>
-            {this.state.quote && (
-              <Typography component="p" className={classes.conversion}>
-                1BTC = $ TODO
+        {this.state.quote && (
+          <Card className={classes.card}>
+            <CardContent>
+              <Typography
+                component="h3"
+                className={classes.h3}>
+                Conversion Rate
               </Typography>
-            )}
-          </CardContent>
-        </Card>
+              <Typography component="p" className={classes.conversion}>
+                1{this.state.quote.currency} = {formatRate(this.state.quote.rate, '$')}
+              </Typography>
+            </CardContent>
+          </Card>
+        )}
 
         <Card className={classes.card}>
           <CardContent>
@@ -317,12 +282,12 @@ class BuyScene extends React.Component {
               margin="none" fullWidth
               disabled={this.state.fiatLoading}
               InputProps={{
-                endAdornment: <InputAdornment position="end">USD</InputAdornment>
+                endAdornment: <InputAdornment position="end">{FIAT_CURRENCY}</InputAdornment>
               }}
               onKeyUp={this.calcCrypto}
             />
 
-            <DailyLimit />
+            <DailyLimit dailyLimit="$20,000" monthlyLimit="$50,000" />
           </CardContent>
         </Card>
 
@@ -342,7 +307,7 @@ class BuyScene extends React.Component {
         </Card>
 
         {this.state.quote &&
-          <SimplexForm simplexUrl={this.simplexUrl} quote={this.state.quote} />}
+          <SimplexForm quote={this.state.quote} />}
 
         <Support />
         <PoweredBy />
