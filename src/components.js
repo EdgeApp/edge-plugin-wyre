@@ -155,6 +155,10 @@ export class WalletDrawer extends React.Component {
       </EdgeButton>
     )
   }
+  renderWallets = (wallets) => {
+    return this.props.wallets.map((wallet) =>
+      this.renderWallets(wallet))
+  }
   render () {
     return (
       <Drawer
@@ -165,7 +169,7 @@ export class WalletDrawer extends React.Component {
           <EdgeButton color="primary" onClick={this.props.onHeaderClick}>
             Choose Destination Wallet
           </EdgeButton>
-          {this.props.wallets.map((wallet) => this.renderWallet(wallet))}
+          {this.renderWallets()}
         </div>
       </Drawer>
     )

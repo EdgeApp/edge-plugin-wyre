@@ -8,7 +8,6 @@ export const PROVIDER = 'edge'
 export const API_VERSION = '1'
 export const ACCEPT_LANGUAGE = 'en-US;q=0.7,en;q=0.3'
 export const HTTP_ACCEPT = 'en-US;q=0.7,en;q=0.3'
-export const FIAT_CURRENCY = 'USD'
 
 export function requestAbort () {
   abortController.abort()
@@ -70,7 +69,7 @@ export function requestConfirm (userId, sessionId, uaid, quote) {
   return window.fetch(edgeUrl + '/partner/data', data)
 }
 
-export function requestQuote (userId, requested, amount, digitalCurrency) {
+export function requestQuote (userId, requested, amount, digitalCurrency, fiatCurrency) {
   // Abort any active requests
   requestAbort()
   const data = {
@@ -82,7 +81,7 @@ export function requestQuote (userId, requested, amount, digitalCurrency) {
     },
     body: JSON.stringify({
       digital_currency: digitalCurrency,
-      fiat_currency: FIAT_CURRENCY,
+      fiat_currency: fiatCurrency,
       requested_currency: requested,
       requested_amount: parseFloat(amount),
       client_id: userId

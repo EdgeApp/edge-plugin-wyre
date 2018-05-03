@@ -5,10 +5,11 @@ import Card, { CardContent } from 'material-ui/Card'
 import TextField from 'material-ui/TextField'
 import { InputAdornment } from 'material-ui/Input'
 import Typography from 'material-ui/Typography'
+import { CircularProgress } from 'material-ui/Progress'
 import uuidv1 from 'uuid/v1'
 
 import { core, ui } from 'edge-libplugin'
-import { requestAbort, requestConfirm, requestQuote, FIAT_CURRENCY, SimplexForm } from './api'
+import { requestAbort, requestConfirm, requestQuote, SimplexForm } from './api'
 import {
   DailyLimit,
   EdgeButton,
@@ -20,11 +21,41 @@ import {
 
 import './inline.css'
 
+/* There is not a way to change the fiat currency currently */
+const FIAT_CURRENCY = 'USD'
+
 const formatRate = (rate, symbol) => {
   return symbol + rate.toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   })
+}
+
+const buildObject = (res) => {
+  const quote = {
+    version: '1',
+    partner: 'edge',
+    payment_flow_type: 'wallet',
+    return_url: 'https://www.edgesecure.co',
+    quote_id: res.quote_id,
+    wallet_id: res.wallet_id,
+    payment_id: res.quote_id,
+    order_id: res.quote_id,
+    user_id: res.user_id,
+    address: '1BnT87d7jeqmT7kr49kLMUsNzCeKQq2mBT',
+    currency: 'BTC',
+    fiat_total_amount_amount: res.fiat_money.total_amount,
+    fiat_total_amount_currency: res.fiat_money.currency,
+    fee: res.fiat_money.total_amount - res.fiat_money.base_amount,
+    fiat_amount: res.fiat_money.base_amount,
+    digital_amount: res.digital_money.amount,
+    digital_currency: res.digital_money.currency
+  }
+  const rate = {
+    currency: res.digital_money.currency,
+    rate: (quote.fiat_amount / quote.digital_amount)
+  }
+  return {quote, rate}
 }
 
 const buyStyles = theme => ({
@@ -68,12 +99,14 @@ class BuyScene extends React.Component {
       selectedWallet: {
         currency: 'BTC'
       },
+      rate: null,
       quote: null
     }
   }
   componentWillMount () {
     ui.title('Buy Bitcoin')
     this.loadWallets()
+    this.loadConversion()
   }
   loadWallets = () => {
     core.wallets()
@@ -85,6 +118,15 @@ class BuyScene extends React.Component {
       .catch(() => {
         ui.showAlert(false, 'Error', 'Unable to fetch wallets. Please try again later.')
         core.exit()
+      })
+  }
+  loadConversion = () => {
+    const c = this.state.selectedWallet.currency
+    requestQuote(this.userId, c, 1, c, FIAT_CURRENCY)
+      .then(data => data.json())
+      .then(r => {
+        const {rate} = buildObject(r.res)
+        this.setState({rate})
       })
   }
   next = () => {
@@ -123,40 +165,14 @@ class BuyScene extends React.Component {
       drawerOpen: true
     })
   }
-
   closeWallets = () => {
     this.setState({
       drawerOpen: false
     })
   }
-
   selectWallet = (event) => {
     console.log(event)
     this.closeWallets()
-  }
-
-  buildObject = (quote) => {
-    const o = {
-      version: '1',
-      partner: 'edge',
-      payment_flow_type: 'wallet',
-      return_url: 'https://www.edgesecure.co',
-      quote_id: quote.quote_id,
-      wallet_id: quote.wallet_id,
-      payment_id: quote.quote_id,
-      order_id: quote.quote_id,
-      user_id: quote.user_id,
-      address: '1BnT87d7jeqmT7kr49kLMUsNzCeKQq2mBT',
-      currency: 'BTC'
-    }
-    o.fiat_total_amount_amount = quote.fiat_money.total_amount
-    o.fiat_total_amount_currency = quote.fiat_money.currency
-    o.fee = quote.fiat_money.total_amount - quote.fiat_money.base_amount
-    o.fiat_amount = quote.fiat_money.base_amount
-    o.digital_amount = quote.digital_money.amount
-    o.digital_currency = quote.digital_money.currency
-    o.rate = (o.fiat_amount / o.digital_amount)
-    return o
   }
 
   calcFiat = (event) => {
@@ -165,12 +181,16 @@ class BuyScene extends React.Component {
         cryptoLoading: false,
         fiatLoading: true
       })
-      requestQuote(this.userId, 'BTC', event.target.value, this.state.selectedWallet.currency)
+      const v = event.target.value
+      const c = this.state.selectedWallet.currency
+      requestQuote(this.userId, c, v, c, FIAT_CURRENCY)
         .then(data => data.json())
         .then(r => {
+          const {quote, rate} = buildObject(r.res)
           this.setState({
             fiatLoading: false,
-            quote: this.buildObject(r.res)
+            quote,
+            rate
           })
           document.getElementById('fiatInput').value = r.res.fiat_money.base_amount
         })
@@ -195,12 +215,16 @@ class BuyScene extends React.Component {
         fiatLoading: false,
         cryptoLoading: true
       })
-      requestQuote(this.userId, FIAT_CURRENCY, event.target.value, this.state.selectedWallet.currency)
+      const v = event.target.value
+      const c = this.state.selectedWallet.currency
+      requestQuote(this.userId, FIAT_CURRENCY, v, c, FIAT_CURRENCY)
         .then(data => data.json())
         .then(r => {
+          const {quote, rate} = buildObject(r.res)
           this.setState({
             cryptoLoading: false,
-            quote: this.buildObject(r.res)
+            quote,
+            rate
           })
           document.getElementById('cryptoInput').value = r.res.digital_money.amount
         })
@@ -230,20 +254,23 @@ class BuyScene extends React.Component {
             onAccept={this.handleAccept}
             onClose={this.handleClose} />
         )}
-        {this.state.quote && (
-          <Card className={classes.card}>
-            <CardContent>
-              <Typography
-                component="h3"
-                className={classes.h3}>
-                Conversion Rate
-              </Typography>
+        <Card className={classes.card}>
+          <CardContent>
+            <Typography
+              component="h3"
+              className={classes.h3}>
+              Conversion Rate
+            </Typography>
+            {!this.state.rate && (
+              <CircularProgress size={25} />
+            )}
+            {this.state.rate && (
               <Typography component="p" className={classes.conversion}>
-                1{this.state.quote.currency} = {formatRate(this.state.quote.rate, '$')}
+                1{this.state.rate.currency} = {formatRate(this.state.rate.rate, '$')}
               </Typography>
-            </CardContent>
-          </Card>
-        )}
+            )}
+          </CardContent>
+        </Card>
 
         <Card className={classes.card}>
           <CardContent>
@@ -273,7 +300,11 @@ class BuyScene extends React.Component {
               fullWidth
               disabled={this.state.cryptoLoading}
               InputProps={{
-                endAdornment: <InputAdornment position="end">BTC</InputAdornment>
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {this.state.cryptoLoading && <CircularProgress size={25} />}
+                    {!this.state.cryptoLoading && this.state.selectedWallet.currency}
+                  </InputAdornment>)
               }}
               onKeyUp={this.calcFiat}
             />
@@ -282,7 +313,11 @@ class BuyScene extends React.Component {
               margin="none" fullWidth
               disabled={this.state.fiatLoading}
               InputProps={{
-                endAdornment: <InputAdornment position="end">{FIAT_CURRENCY}</InputAdornment>
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {this.state.fiatLoading && <CircularProgress size={25} />}
+                    {!this.state.fiatLoading && FIAT_CURRENCY}
+                  </InputAdornment>)
               }}
               onKeyUp={this.calcCrypto}
             />
