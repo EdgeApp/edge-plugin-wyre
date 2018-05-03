@@ -1,17 +1,22 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import AbortController from 'abort-controller'
+// import AbortController from 'abort-controller'
 
-const abortController = new AbortController()
+// const abortController = new AbortController()
 
 export const PROVIDER = 'edge'
 export const API_VERSION = '1'
 export const ACCEPT_LANGUAGE = 'en-US;q=0.7,en;q=0.3'
 export const HTTP_ACCEPT = 'en-US;q=0.7,en;q=0.3'
+export const RETURN_URL = 'https://edgesecure.co'
 
 export function requestAbort () {
-  abortController.abort()
+  // abortController.abort()
 }
+
+export const SUPPORTED_CURRENCIES = [
+  'BTC', 'ETH'
+]
 
 const edgeUrl = (true)
   ? 'https://simplex-sandbox-api.edgesecure.co'
@@ -28,6 +33,7 @@ export function requestConfirm (userId, sessionId, uaid, quote) {
       'app_version_id': API_VERSION,
       'app_end_user_id': userId,
       'signup_login': {
+        'ip': '4.30.5.194',
         'uaid': uaid,
         'accept_language': ACCEPT_LANGUAGE,
         'http_accept_language': HTTP_ACCEPT,

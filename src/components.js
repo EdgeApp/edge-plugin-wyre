@@ -40,7 +40,7 @@ export const EdgeButton = (props) => {
       variant="raised"
       color={props.color || 'default'}
       onClick={props.onClick}
-      disabled={props.disabled | false}
+      disabled={props.disabled}
       style={{
         textTransform: 'none',
         margin: '5px 0'
@@ -123,7 +123,7 @@ export const ConfirmDialog = withStyles(confirmStyles)((props) => {
       </DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description" className={props.classes.p}>
-          Are you sure you want to buy {props.fiatAmount} worth of BTC, with a fee of {props.fee}?
+          Are you sure you want to buy {props.fiatAmount} worth of {props.currency}, with a fee of {props.fee}?
         </DialogContentText>
         <EdgeButton color="primary" onClick={props.onAccept}>
           Yes, go to payment
@@ -144,20 +144,21 @@ ConfirmDialog.propTypes = {
   onAccept: PropTypes.func.isRequired,
   classes: PropTypes.object,
   fiatAmount: PropTypes.string,
-  fee: PropTypes.string
+  fee: PropTypes.string,
+  currency: PropTypes.string
 }
 
 export class WalletDrawer extends React.Component {
   renderWallet = (wallet) => {
     return (
-      <EdgeButton key={wallet.id} onClick={this.props.selectWallet}>
+      <EdgeButton key={wallet.id} onClick={() => this.props.selectWallet(wallet)}>
         {wallet.name}
       </EdgeButton>
     )
   }
-  renderWallets = (wallets) => {
+  renderWallets = () => {
     return this.props.wallets.map((wallet) =>
-      this.renderWallets(wallet))
+      this.renderWallet(wallet))
   }
   render () {
     return (
