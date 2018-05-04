@@ -15,7 +15,7 @@ export function requestAbort () {
 }
 
 export const SUPPORTED_CURRENCIES = [
-  'BTC', 'ETH'
+  'BTC', 'ETH', 'BCH'
 ]
 
 const edgeUrl = (true)
