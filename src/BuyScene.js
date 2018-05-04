@@ -31,6 +31,20 @@ const formatRate = (rate, symbol) => {
   })
 }
 
+const setFiatInput = (value) => {
+  setDomValue('fiatInput', value)
+}
+
+const setCryptoInput = (value) => {
+  setDomValue('cryptoInput', value)
+}
+
+const setDomValue = (id, value) => {
+  if (document.getElementById(id)) {
+    document.getElementById(id).value = value
+  }
+}
+
 const buildObject = async (res, wallet) => {
   // let addressData = await core.getAddress(wallet.id, wallet.currencyCode)
   const addressData = '1BnT87d7jeqmT7kr49kLMUsNzCeKQq2mBT'
@@ -102,16 +116,16 @@ class BuyScene extends React.Component {
       dialogOpen: false,
       drawerOpen: false,
       wallets: wallets,
-      selectedWallet: wallets[0],
       rate: null,
       quote: null
     }
   }
   componentWillMount () {
-    ui.title('Buy Bitcoin')
     window.scrollTo(0, 0)
+    if (this.state.wallets.length > 0) {
+      this.selectWallet(this.state.wallets[0])
+    }
     this.loadWallets()
-    this.loadConversion()
   }
   loadWallets = () => {
     core.wallets()
@@ -119,6 +133,12 @@ class BuyScene extends React.Component {
         this.setState({
           wallets: data.filter((wallet) =>
             API.SUPPORTED_CURRENCIES.indexOf(wallet.currencyCode) >= 0)
+        }, () => {
+          if (this.state.wallets.length > 0) {
+            this.selectWallet(this.state.wallets[0])
+          } else {
+            // Probably exit...not available wallets
+          }
         })
       })
       .catch(() => {
@@ -175,8 +195,9 @@ class BuyScene extends React.Component {
     })
   }
   selectWallet = (wallet) => {
-    document.getElementById('fiatInput').value = ''
-    document.getElementById('cryptoInput').value = ''
+    setFiatInput('')
+    setCryptoInput('')
+    ui.title(`Buy ${wallet.currencyCode}`)
     this.closeWallets()
     this.setState({
       selectedWallet: wallet,
@@ -204,7 +225,7 @@ class BuyScene extends React.Component {
             quote: r.quote,
             rate: r.rate
           })
-          document.getElementById('fiatInput').value = r.quote.fiat_amount
+          setFiatInput(r.quote.fiat_amount)
         })
         .catch(err => {
           core.debugLevel(0, JSON.stringify(err))
@@ -237,7 +258,7 @@ class BuyScene extends React.Component {
             quote: r.quote,
             rate: r.rate
           })
-          document.getElementById('cryptoInput').value = r.quote.digital_amount
+          setCryptoInput(r.quote.digital_amount)
         })
         .catch(err => {
           core.debugLevel(0, JSON.stringify(err))
@@ -320,7 +341,7 @@ class BuyScene extends React.Component {
                 endAdornment: (
                   <InputAdornment position="end">
                     {this.state.cryptoLoading && <CircularProgress size={25} />}
-                    {!this.state.cryptoLoading && this.state.selectedWallet.currencyCode}
+                    {!this.state.cryptoLoading && this.state.selectedWallet && this.state.selectedWallet.currencyCode}
                   </InputAdornment>)
               }}
               onChange={this.calcFiat}
