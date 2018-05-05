@@ -21,13 +21,12 @@ import {
 
 import './inline.css'
 
-/* There is not a way to change the fiat currency currently */
-const FIAT_CURRENCY = 'USD'
+const DEFAULT_FIAT_CURRENCY = 'USD'
 
-const formatRate = (rate, symbol) => {
-  return symbol + rate.toLocaleString(undefined, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+const formatRate = (rate, currency) => {
+  return rate.toLocaleString(undefined, {
+    style: 'currency',
+    currency: currency
   })
 }
 
@@ -86,6 +85,13 @@ const buyStyles = theme => ({
     fontSize: '16px',
     fontWeight: 'bold'
   },
+  warning: {
+    color: theme.palette.primary.error,
+    padding: 10,
+    margin: '10px 0',
+    fontSize: '16px',
+    fontWeight: 'bold'
+  },
   conversion: {
     fontSize: '24pt',
     color: theme.palette.primary.main
@@ -109,15 +115,19 @@ class BuyScene extends React.Component {
     window.localStorage.setItem('simplex_install_id', this.uaid)
 
     const wallets = [
-      {id: 'BTC', name: 'BTC', currencyCode: 'BTC'},
-      {id: 'ETH', name: 'ETH', currencyCode: 'ETH'}
+      {id: 'BTC', name: 'BTC', currencyCode: 'BTC', fiatCurrency: 'USD'},
+      {id: 'ETH', name: 'ETH', currencyCode: 'ETH', fiatCurrency: 'USD'},
+      {id: 'BTC-EUR', name: 'BTC-EUR', currencyCode: 'BTC', fiatCurrency: 'EUR'},
+      {id: 'BTC-MXN', name: 'BTC-MXN', currencyCode: 'BTC', fiatCurrency: 'MXN'}
     ]
     this.state = {
       dialogOpen: false,
       drawerOpen: false,
       wallets: wallets,
       rate: null,
-      quote: null
+      quote: null,
+      fiatSupport: true,
+      fiat: null
     }
   }
   componentWillMount () {
@@ -132,7 +142,7 @@ class BuyScene extends React.Component {
       .then((data) => {
         this.setState({
           wallets: data.filter((wallet) =>
-            API.SUPPORTED_CURRENCIES.indexOf(wallet.currencyCode) >= 0)
+            API.SUPPORTED_DIGITAL_CURRENCIES.indexOf(wallet.currencyCode) >= 0)
         }, () => {
           if (this.state.wallets.length > 0) {
             this.selectWallet(this.state.wallets[0])
@@ -148,7 +158,7 @@ class BuyScene extends React.Component {
   }
   loadConversion = () => {
     const c = this.state.selectedWallet.currencyCode
-    API.requestQuote(this.userId, c, 1, c, FIAT_CURRENCY)
+    API.requestQuote(this.userId, c, 1, c, DEFAULT_FIAT_CURRENCY)
       .then(data => data.json())
       .then(r => buildObject(r.res, this.state.selectedWallet))
       .then(r => this.setState({rate: r.rate}))
@@ -195,17 +205,23 @@ class BuyScene extends React.Component {
     })
   }
   selectWallet = (wallet) => {
-    setFiatInput('')
-    setCryptoInput('')
-    ui.title(`Buy ${wallet.currencyCode}`)
+    /* Check if this wallets fiat currency is supported */
+    const fiatSupport = API.SUPPORTED_FIAT_CURRENCIES.indexOf(wallet.fiatCurrency) !== -1
+    /* If we don't support this wallet's currency switch to the default */
+    const fiat = fiatSupport ? wallet.fiatCurrency : DEFAULT_FIAT_CURRENCY
     this.closeWallets()
     this.setState({
       selectedWallet: wallet,
       rate: null,
-      quote: null
+      quote: null,
+      fiatSupport,
+      fiat
     }, () => {
       this.loadConversion()
     })
+    setFiatInput('')
+    setCryptoInput('')
+    ui.title(`Buy ${wallet.currencyCode}`)
   }
 
   calcFiat = (event) => {
@@ -216,7 +232,7 @@ class BuyScene extends React.Component {
       })
       const v = event.target.value
       const c = this.state.selectedWallet.currencyCode
-      API.requestQuote(this.userId, c, v, c, FIAT_CURRENCY)
+      API.requestQuote(this.userId, c, v, c, DEFAULT_FIAT_CURRENCY)
         .then(data => data.json())
         .then(r => buildObject(r.res, this.state.selectedWallet))
         .then(r => {
@@ -249,7 +265,7 @@ class BuyScene extends React.Component {
       })
       const v = event.target.value
       const c = this.state.selectedWallet.currencyCode
-      API.requestQuote(this.userId, FIAT_CURRENCY, v, c, FIAT_CURRENCY)
+      API.requestQuote(this.userId, DEFAULT_FIAT_CURRENCY, v, c, DEFAULT_FIAT_CURRENCY)
         .then(data => data.json())
         .then(r => buildObject(r.res, this.state.selectedWallet))
         .then(r => {
@@ -275,16 +291,24 @@ class BuyScene extends React.Component {
 
   render () {
     const { classes } = this.props
+    const {fiat, fiatSupport, selectedWallet} = this.state
     return (
       <div>
         {this.state.quote && (
           <ConfirmDialog
-            fiatAmount={formatRate(this.state.quote.fiat_amount, '$')}
-            fee={formatRate(this.state.quote.fee, '$')}
+            fiatAmount={formatRate(this.state.quote.fiat_amount, this.state.fiat)}
+            fee={formatRate(this.state.quote.fee, fiat)}
             currency={this.state.quote.currency}
             open={this.state.dialogOpen}
             onAccept={this.handleAccept}
             onClose={this.handleClose} />
+        )}
+        {selectedWallet && !fiatSupport && (
+          <Typography
+            component="h2"
+            className={classes.warning}>
+            Please note that {selectedWallet.fiatCurrency} is not supported by Simplex. Defaulting to {fiat}.
+          </Typography>
         )}
         <Card className={classes.card}>
           <CardContent>
@@ -298,7 +322,7 @@ class BuyScene extends React.Component {
             )}
             {this.state.rate && (
               <Typography component="p" className={classes.conversion}>
-                1{this.state.rate.currency} = {formatRate(this.state.rate.rate, '$')}
+                1{this.state.rate.currency} = {formatRate(this.state.rate.rate, fiat)}
               </Typography>
             )}
           </CardContent>
@@ -341,7 +365,7 @@ class BuyScene extends React.Component {
                 endAdornment: (
                   <InputAdornment position="end">
                     {this.state.cryptoLoading && <CircularProgress size={25} />}
-                    {!this.state.cryptoLoading && this.state.selectedWallet && this.state.selectedWallet.currencyCode}
+                    {!this.state.cryptoLoading && selectedWallet && this.state.selectedWallet.currencyCode}
                   </InputAdornment>)
               }}
               onChange={this.calcFiat}
@@ -357,7 +381,7 @@ class BuyScene extends React.Component {
                 endAdornment: (
                   <InputAdornment position="end">
                     {this.state.fiatLoading && <CircularProgress size={25} />}
-                    {!this.state.fiatLoading && FIAT_CURRENCY}
+                    {!this.state.fiatLoading && fiat}
                   </InputAdornment>)
               }}
               onChange={this.calcCrypto}
