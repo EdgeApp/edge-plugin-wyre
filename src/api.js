@@ -103,7 +103,7 @@ export function requestQuote (userId, requested, amount, digitalCurrency, fiatCu
 
 export const SimplexForm = (props) => {
   return (
-    <form id='payment_form' action={simplexUrl} method='POST' target='_blank'>
+    <form id='payment_form' action={simplexUrl} method='POST' target='_self'>
       <input type='hidden' name='version' value={props.quote.version} />
       <input type='hidden' name='partner' value={props.quote.partner} />
       <input type='hidden' name='payment_flow_type' value={props.quote.payment_flow_type} />

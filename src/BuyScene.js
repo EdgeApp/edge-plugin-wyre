@@ -45,8 +45,8 @@ const setDomValue = (id, value) => {
 }
 
 const buildObject = async (res, wallet) => {
-  // let addressData = await core.getAddress(wallet.id, wallet.currencyCode)
-  const addressData = '1BnT87d7jeqmT7kr49kLMUsNzCeKQq2mBT'
+  const addressData = await core.getAddress(wallet.id, wallet.currencyCode)
+  const address = addressData.address.publicAddress
   const quote = {
     version: API.API_VERSION,
     partner: API.PROVIDER,
@@ -57,7 +57,7 @@ const buildObject = async (res, wallet) => {
     payment_id: res.quote_id,
     order_id: res.quote_id,
     user_id: res.user_id,
-    address: addressData,
+    address: address,
     currency: res.digital_money.currency,
     fiat_total_amount_amount: res.fiat_money.total_amount,
     fiat_total_amount_currency: res.fiat_money.currency,
@@ -115,10 +115,12 @@ class BuyScene extends React.Component {
     window.localStorage.setItem('simplex_install_id', this.uaid)
 
     const wallets = [
-      {id: 'BTC', name: 'BTC', currencyCode: 'BTC', fiatCurrency: 'USD'},
-      {id: 'ETH', name: 'ETH', currencyCode: 'ETH', fiatCurrency: 'USD'},
-      {id: 'BTC-EUR', name: 'BTC-EUR', currencyCode: 'BTC', fiatCurrency: 'EUR'},
-      {id: 'BTC-MXN', name: 'BTC-MXN', currencyCode: 'BTC', fiatCurrency: 'MXN'}
+      /*
+      {id: 'BTC', name: 'BTC', currencyCode: 'BTC', fiatCurrencyCode: 'USD'},
+      {id: 'ETH', name: 'ETH', currencyCode: 'ETH', fiatCurrencyCode: 'USD'},
+      {id: 'BTC-EUR', name: 'BTC-EUR', currencyCode: 'BTC', fiatCurrencyCode: 'EUR'},
+      {id: 'BTC-MXN', name: 'BTC-MXN', currencyCode: 'BTC', fiatCurrencyCode: 'MXN'}
+      */
     ]
     this.state = {
       dialogOpen: false,
@@ -206,9 +208,9 @@ class BuyScene extends React.Component {
   }
   selectWallet = (wallet) => {
     /* Check if this wallets fiat currency is supported */
-    const fiatSupport = API.SUPPORTED_FIAT_CURRENCIES.indexOf(wallet.fiatCurrency) !== -1
+    const fiatSupport = API.SUPPORTED_FIAT_CURRENCIES.indexOf(wallet.fiatCurrencyCode) !== -1
     /* If we don't support this wallet's currency switch to the default */
-    const fiat = fiatSupport ? wallet.fiatCurrency : DEFAULT_FIAT_CURRENCY
+    const fiat = fiatSupport ? wallet.fiatCurrencyCode : DEFAULT_FIAT_CURRENCY
     this.closeWallets()
     this.setState({
       selectedWallet: wallet,
@@ -291,14 +293,15 @@ class BuyScene extends React.Component {
 
   render () {
     const { classes } = this.props
-    const {fiat, fiatSupport, selectedWallet} = this.state
+    const {fiat, fiatSupport, selectedWallet, quote} = this.state
     return (
       <div>
         {this.state.quote && (
           <ConfirmDialog
-            fiatAmount={formatRate(this.state.quote.fiat_amount, this.state.fiat)}
-            fee={formatRate(this.state.quote.fee, fiat)}
-            currency={this.state.quote.currency}
+            fiatAmount={formatRate(quote.fiat_amount, fiat)}
+            fee={formatRate(quote.fee, fiat)}
+            currency={quote.currency}
+            address={quote.address}
             open={this.state.dialogOpen}
             onAccept={this.handleAccept}
             onClose={this.handleClose} />
@@ -307,7 +310,7 @@ class BuyScene extends React.Component {
           <Typography
             component="h2"
             className={classes.warning}>
-            Please note that {selectedWallet.fiatCurrency} is not supported by Simplex. Defaulting to {fiat}.
+            Please note that {selectedWallet.fiatCurrencyCode} is not supported by Simplex. Defaulting to {fiat}.
           </Typography>
         )}
         <Card className={classes.card}>
@@ -396,17 +399,22 @@ class BuyScene extends React.Component {
             <Typography component="p" className={classes.p}>
               You will see a confirmation screen before you buy.
             </Typography>
+            {quote && quote.address && (
+              <Typography component="p" className={classes.p}>
+                Payment will be sent to <strong>{quote.address}</strong>.
+              </Typography>
+            )}
             <EdgeButton
               color="primary"
               onClick={this.next}
-              disabled={this.state.quote === null}>
+              disabled={quote === null}>
               Next
             </EdgeButton>
             <EdgeButton onClick={this.cancel}>Cancel</EdgeButton>
           </CardContent>
         </Card>
 
-        {this.state.quote &&
+        {quote &&
           <API.SimplexForm quote={this.state.quote} />}
 
         <Support />
