@@ -110,6 +110,8 @@ class BuyScene extends React.Component {
     this.sessionId = uuidv1()
     /* this should be written to the encrypted storage */
     this.userId = window.localStorage.getItem('simplex_user_id') || uuidv1()
+    window.localStorage.setItem('simplex_user_id', this.userId)
+    console.log('User Id: ' + this.userId)
     /* this only needs to persist with an install. localStorage will do */
     this.uaid = window.localStorage.getItem('simplex_install_id') || uuidv1()
     window.localStorage.setItem('simplex_install_id', this.uaid)
