@@ -3,6 +3,7 @@
   "name": "Simplex",
   "subtitle": "Buy bitcoin with your credit card.",
   "provider": "Edge Secure",
+  "iconUrl": "https://pbs.twimg.com/profile_images/674209638200573952/8RrkpQXo_400x400.png",
   "environment": {
   }
 }
