@@ -10,6 +10,8 @@ import Dialog, {
   DialogTitle
 } from 'material-ui/Dialog'
 
+import { formatRate } from './utils'
+
 const limitStyles = theme => ({
   p: {
     fontColor: theme.palette.primary.main,
@@ -21,17 +23,20 @@ const limitStyles = theme => ({
 })
 
 export const DailyLimit = withStyles(limitStyles)((props) => {
+  const {dailyLimit, monthlyLimit, fiat} = props
   return (
     <Typography component="p" className={props.classes.p}>
-      Daily Limit: {props.dailyLimit} / Monthly Limit: {props.monthlyLimit}
+      Daily Limit: {formatRate(dailyLimit, fiat)} /
+      Monthly Limit: {formatRate(monthlyLimit, fiat)}
     </Typography>
   )
 })
 
 DailyLimit.propTypes = {
   classes: PropTypes.object,
-  dailyLimit: PropTypes.string,
-  monthlyLimit: PropTypes.string
+  dailyLimit: PropTypes.number,
+  monthlyLimit: PropTypes.number,
+  fiat: PropTypes.string
 }
 
 export const EdgeButton = (props) => {

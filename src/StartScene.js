@@ -59,7 +59,7 @@ StartParagraph.propTypes = {
 
 class StartScene extends React.Component {
   componentWillMount () {
-    ui.title('Buy Bitcoin with Simplex')
+    ui.title('Buy with Simplex')
   }
   _start = () => {
     this.props.history.push('/buy/')
@@ -75,16 +75,17 @@ class StartScene extends React.Component {
         <div>
           <StartHeader text="Simplex" classes={classes} />
           <StartParagraph classes={classes}>
-            Simplex is a Edge Wallet bank card processing partner. It is the
-            service which allows you to purchase Bitcoin safely and quickly in just a
-            few short minutes.
+            Simplex is an Edge Wallet bank card processing partner. It is the
+            service which allows you to purchase Bitcoin, Bitcoin Cash and
+            Ethereum safely and quickly in just a few short minutes.
           </StartParagraph>
         </div>
         <Divider className={classes.divider} />
         <div>
           <StartHeader text="Fee" classes={classes} />
           <StartParagraph classes={classes}>
-            Please note that additional fees will be charged, on top of the above Bitcoin / $ rate at checkout. Those fees are as follows:
+            Please note that additional fees will be charged, on top of the
+            above rate at checkout. Those fees are as follows:
           </StartParagraph>
           <ul className={classes.feeList}>
             <li>Edge Wallet 5%</li>
