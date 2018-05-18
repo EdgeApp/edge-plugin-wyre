@@ -48,6 +48,7 @@ export const EdgeButton = (props) => {
       disabled={props.disabled}
       style={{
         textTransform: 'none',
+        padding: '15px 0',
         margin: '5px 0'
       }}
       fullWidth>
