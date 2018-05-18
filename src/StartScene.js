@@ -88,7 +88,7 @@ class StartScene extends React.Component {
             above rate at checkout. Those fees are as follows:
           </StartParagraph>
           <ul className={classes.feeList}>
-            <li>Edge Wallet 5%</li>
+            <li>Edge Wallet 1%</li>
             <li>Credit Card processing by Simplex 5% ($10 min)</li>
           </ul>
         </div>
