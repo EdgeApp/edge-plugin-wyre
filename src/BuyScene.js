@@ -22,6 +22,7 @@ import {
 
 import './inline.css'
 
+const MIN_AMOUNT = 50
 const DAILY_LIMIT = 20000
 const MONTHLY_LIMIT = 50000
 
@@ -40,8 +41,13 @@ const setDomValue = (id, value) => {
 }
 
 const buildObject = async (res, wallet) => {
-  const addressData = await core.getAddress(wallet.id, wallet.currencyCode)
-  const address = addressData.address.publicAddress
+  let address = null
+  if (process.env.NODE_ENV !== 'development') {
+    const addressData = await core.getAddress(wallet.id, wallet.currencyCode)
+    address = addressData.address.publicAddress
+  } else {
+    address = '1fakejPwRxWKiSgMBUewqMCws7DLuzAHQ'
+  }
   const quote = {
     version: API.API_VERSION,
     partner: API.PROVIDER,
@@ -110,14 +116,14 @@ class BuyScene extends React.Component {
     this.uaid = window.localStorage.getItem('simplex_install_id') || uuidv1()
     window.localStorage.setItem('simplex_install_id', this.uaid)
 
-    const wallets = [
-      /*
-      {id: 'BTC', name: 'BTC', currencyCode: 'BTC', fiatCurrencyCode: 'USD'},
-      {id: 'ETH', name: 'ETH', currencyCode: 'ETH', fiatCurrencyCode: 'USD'},
-      {id: 'BTC-EUR', name: 'BTC-EUR', currencyCode: 'BTC', fiatCurrencyCode: 'EUR'},
-      {id: 'BTC-MXN', name: 'BTC-MXN', currencyCode: 'BTC', fiatCurrencyCode: 'MXN'}
-      */
-    ]
+    const wallets = process.env.NODE_ENV !== 'development'
+      ? []
+      : [
+        {id: 'BTC', name: 'BTC', currencyCode: 'BTC', fiatCurrencyCode: 'USD'},
+        {id: 'ETH', name: 'ETH', currencyCode: 'ETH', fiatCurrencyCode: 'USD'},
+        {id: 'BTC-EUR', name: 'BTC-EUR', currencyCode: 'BTC', fiatCurrencyCode: 'EUR'},
+        {id: 'BTC-MXN', name: 'BTC-MXN', currencyCode: 'BTC', fiatCurrencyCode: 'MXN'}
+      ]
     this.state = {
       dialogOpen: false,
       drawerOpen: false,
@@ -321,6 +327,11 @@ class BuyScene extends React.Component {
         errors = {error: true, helperText: 'Exceeding daily limit'}
       } else if (quote.fiat_amount > MONTHLY_LIMIT) {
         errors = {error: true, helperText: 'Exceeding monthly limit'}
+      } else if (quote.fiat_amount < MIN_AMOUNT) {
+        errors = {
+          error: true,
+          helperText: `Below the minimum of ${formatRate(MIN_AMOUNT, fiat)}`
+        }
       }
     }
     return (
@@ -441,7 +452,7 @@ class BuyScene extends React.Component {
             <EdgeButton
               color="primary"
               onClick={this.next}
-              disabled={quote === null}>
+              disabled={quote === null || errors.error}>
               Next
             </EdgeButton>
             <EdgeButton onClick={this.cancel}>Cancel</EdgeButton>
