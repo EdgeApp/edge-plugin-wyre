@@ -111,10 +111,12 @@ class BuyScene extends React.Component {
     window.localStorage.setItem('simplex_install_id', this.uaid)
 
     const wallets = [
+      /*
       {id: 'BTC', name: 'BTC', currencyCode: 'BTC', fiatCurrencyCode: 'USD'},
       {id: 'ETH', name: 'ETH', currencyCode: 'ETH', fiatCurrencyCode: 'USD'},
       {id: 'BTC-EUR', name: 'BTC-EUR', currencyCode: 'BTC', fiatCurrencyCode: 'EUR'},
       {id: 'BTC-MXN', name: 'BTC-MXN', currencyCode: 'BTC', fiatCurrencyCode: 'MXN'}
+      */
     ]
     this.state = {
       dialogOpen: false,

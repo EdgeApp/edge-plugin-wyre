@@ -1,20 +1,19 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 
+import { cancelableFetch } from './utils'
+
 export const PROVIDER = 'edge'
 export const API_VERSION = '1'
 export const ACCEPT_LANGUAGE = 'en-US;q=0.7,en;q=0.3'
 export const HTTP_ACCEPT = 'en-US;q=0.7,en;q=0.3'
 export const RETURN_URL = 'https://edgesecure.co'
 
-let abortController = new window.AbortController()
+let lastRequest = null
 
 export function requestAbort () {
-  try {
-    abortController.abort()
-    abortController = new window.AbortController()
-  } catch (e) {
-    console.log(e)
+  if (lastRequest) {
+    lastRequest.cancel()
   }
 }
 
@@ -72,7 +71,7 @@ export function requestConfirm (userId, sessionId, uaid, quote) {
     }
   }
   const data = {
-    signal: abortController.signal,
+    // signal: abortController.signal,
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -80,14 +79,15 @@ export function requestConfirm (userId, sessionId, uaid, quote) {
     },
     body: JSON.stringify(body)
   }
-  return window.fetch(edgeUrl + '/partner/data', data)
+  lastRequest = cancelableFetch(edgeUrl + '/partner/data', data)
+  return lastRequest.promise
 }
 
 export function requestQuote (userId, requested, amount, digitalCurrency, fiatCurrency) {
   // Abort any active requests
   requestAbort()
   const data = {
-    signal: abortController.signal,
+    // signal: abortController.signal,
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -102,7 +102,8 @@ export function requestQuote (userId, requested, amount, digitalCurrency, fiatCu
     })
   }
   // Issue a new request
-  return window.fetch(edgeUrl + '/quote', data)
+  lastRequest = cancelableFetch(edgeUrl + '/quote', data)
+  return lastRequest.promise
 }
 
 export const SimplexForm = (props) => {
