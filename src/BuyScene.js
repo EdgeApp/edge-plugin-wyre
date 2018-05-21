@@ -408,6 +408,7 @@ class BuyScene extends React.Component {
               InputLabelProps={{
                 shrink: true
               }}
+              tabIndex={1}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -425,6 +426,7 @@ class BuyScene extends React.Component {
               InputLabelProps={{
                 shrink: true
               }}
+              tabIndex={2}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -450,12 +452,13 @@ class BuyScene extends React.Component {
               </Typography>
             )}
             <EdgeButton
+              tabIndex={3}
               color="primary"
               onClick={this.next}
               disabled={quote === null || errors.error}>
               Next
             </EdgeButton>
-            <EdgeButton onClick={this.cancel}>Cancel</EdgeButton>
+            <EdgeButton onClick={this.cancel} tabIndex={4}>Cancel</EdgeButton>
           </CardContent>
         </Card>
 
