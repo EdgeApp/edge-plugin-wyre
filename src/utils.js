@@ -1,8 +1,11 @@
 
 export function formatRate (rate, currency) {
+  if (!rate) {
+    return ''
+  }
   return rate.toLocaleString(undefined, {
     style: 'currency',
-    currency: currency || 'USD'
+    currency: currency
   })
 }
 

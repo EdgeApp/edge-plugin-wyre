@@ -158,7 +158,7 @@ export class WalletDrawer extends React.Component {
   renderWallet = (wallet) => {
     return (
       <EdgeButton key={wallet.id} onClick={() => this.props.selectWallet(wallet)}>
-        {wallet.name} ({wallet.fiatCurrencyCode})
+        {wallet.name} ({wallet.currencyCode})
       </EdgeButton>
     )
   }

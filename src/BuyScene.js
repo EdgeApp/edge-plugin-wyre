@@ -22,10 +22,6 @@ import {
 
 import './inline.css'
 
-const MIN_AMOUNT = 50
-const DAILY_LIMIT = 20000
-const MONTHLY_LIMIT = 50000
-
 const setFiatInput = (value) => {
   setDomValue('fiatInput', value)
 }
@@ -41,6 +37,9 @@ const setDomValue = (id, value) => {
 }
 
 const buildObject = async (res, wallet) => {
+  if (!res.quote_id) {
+    throw new Error('Invalid response')
+  }
   let address = null
   if (process.env.NODE_ENV !== 'development') {
     const addressData = await core.getAddress(wallet.id, wallet.currencyCode)
@@ -119,7 +118,7 @@ class BuyScene extends React.Component {
     const wallets = process.env.NODE_ENV !== 'development'
       ? []
       : [
-        {id: 'BTC', name: 'BTC', currencyCode: 'BTC', fiatCurrencyCode: 'USD'},
+        {id: 'BTC', name: 'BTC', currencyCode: 'BTC', fiatCurrencyCode: 'EUR'},
         {id: 'ETH', name: 'ETH', currencyCode: 'ETH', fiatCurrencyCode: 'USD'},
         {id: 'BTC-EUR', name: 'BTC-EUR', currencyCode: 'BTC', fiatCurrencyCode: 'EUR'},
         {id: 'BTC-MXN', name: 'BTC-MXN', currencyCode: 'BTC', fiatCurrencyCode: 'MXN'}
@@ -170,6 +169,8 @@ class BuyScene extends React.Component {
       .then(d => d.json())
       .then(r => buildObject(r.res, this.state.selectedWallet))
       .then(r => this.setState({rate: r.rate}))
+      // TODO: handle this
+      .catch(e => console.log(e))
   }
 
   next = () => {
@@ -241,7 +242,8 @@ class BuyScene extends React.Component {
       rate: null,
       quote: null,
       fiatSupport,
-      fiat
+      fiat,
+      defaultFiat: fiat
     }, () => {
       this.loadConversion()
     })
@@ -320,17 +322,17 @@ class BuyScene extends React.Component {
 
   render () {
     const { classes } = this.props
-    const {fiat, fiatSupport, selectedWallet, quote} = this.state
-    let errors = {error: false, helperText: ''}
+    const { fiat, fiatSupport, selectedWallet, quote } = this.state
+    let errors = { error: false, helperText: '' }
     if (quote) {
-      if (quote.fiat_amount > DAILY_LIMIT) {
+      if (quote.fiat_total_amount_amount > API.LIMITS[fiat].daily) {
         errors = {error: true, helperText: 'Exceeding daily limit'}
-      } else if (quote.fiat_amount > MONTHLY_LIMIT) {
+      } else if (quote.fiat_total_amount_amount > API.LIMITS[fiat].monthly) {
         errors = {error: true, helperText: 'Exceeding monthly limit'}
-      } else if (quote.fiat_amount < MIN_AMOUNT) {
+      } else if (quote.fiat_total_amount_amount < API.LIMITS[fiat].min) {
         errors = {
           error: true,
-          helperText: `Below the minimum of ${formatRate(MIN_AMOUNT, fiat)}`
+          helperText: `Below the minimum of ${formatRate(API.LIMITS[fiat].min, fiat)}`
         }
       }
     }
@@ -437,7 +439,10 @@ class BuyScene extends React.Component {
               onChange={this.calcCrypto}
             />
 
-            <DailyLimit fiat={fiat} dailyLimit={DAILY_LIMIT} monthlyLimit={MONTHLY_LIMIT} />
+            <DailyLimit
+              fiat={fiat}
+              dailyLimit={API.LIMITS[fiat].daily}
+              monthlyLimit={API.LIMITS[fiat].monthly} />
           </CardContent>
         </Card>
 
