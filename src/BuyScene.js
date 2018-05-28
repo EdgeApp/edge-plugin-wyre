@@ -22,6 +22,8 @@ import {
 
 import './inline.css'
 
+const DEV = false // process.env.NODE_ENV !== 'development'
+
 const setFiatInput = (value) => {
   setDomValue('fiatInput', value)
 }
@@ -115,7 +117,7 @@ class BuyScene extends React.Component {
     this.uaid = window.localStorage.getItem('simplex_install_id') || uuidv1()
     window.localStorage.setItem('simplex_install_id', this.uaid)
 
-    const wallets = process.env.NODE_ENV !== 'development'
+    const wallets = DEV
       ? []
       : [
         {id: 'BTC', name: 'BTC', currencyCode: 'BTC', fiatCurrencyCode: 'EUR'},
@@ -185,9 +187,6 @@ class BuyScene extends React.Component {
   }
 
   handleAccept = () => {
-    this.setState({
-      dialogOpen: false
-    })
     API.requestConfirm(
       this.userId, this.sessionId,
       this.uaid, this.state.quote)
@@ -199,6 +198,9 @@ class BuyScene extends React.Component {
       .catch((err) => {
         /* Tell the user dummy */
         console.log(err)
+        this.setState({
+          dialogOpen: false
+        })
       })
   }
 

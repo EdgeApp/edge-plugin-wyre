@@ -9,6 +9,7 @@ import Dialog, {
   DialogContentText,
   DialogTitle
 } from 'material-ui/Dialog'
+import { CircularProgress } from 'material-ui/Progress'
 
 import { formatRate } from './utils'
 
@@ -116,35 +117,67 @@ const confirmStyles = (theme) => ({
   },
   p: {
     textAlign: 'center'
+  },
+  progress: {
+    textAlign: 'center'
   }
 })
 
-export const ConfirmDialog = withStyles(confirmStyles)((props) => {
-  return (
-    <Dialog open={props.open} onClose={props.onClose}>
-      <DialogTitle id="alert-confirm-title" disableTypography>
-        <Typography component="h2" className={props.classes.title}>
-          Confirm Purchase Details
-        </Typography>
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText id="alert-dialog-description" className={props.classes.p}>
-          Are you sure you want to buy {props.fiatAmount} worth of {props.currency}, with a fee of {props.fee}?
-        </DialogContentText>
-        <EdgeButton color="primary" onClick={props.onAccept}>
-          Yes, go to payment
-        </EdgeButton>
-        <div>
-          <EdgeButton color="default" onClick={props.onClose}>
-            Cancel
-          </EdgeButton>
-        </div>
-      </DialogContent>
-    </Dialog>
-  )
-})
+class ConfirmUnstyled extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      loading: false
+    }
+  }
 
-ConfirmDialog.propTypes = {
+  onAccept = () => {
+    this.setState({
+      loading: true
+    })
+    this.props.onAccept()
+  }
+
+  render () {
+    return (
+      <Dialog open={this.props.open} onClose={this.props.onClose}>
+        <DialogTitle id="alert-confirm-title" disableTypography>
+          <Typography component="h2" className={this.props.classes.title}>
+            {this.state.loading && 'Please Wait'}
+            {!this.state.loading && 'Confirm Purchase Details'}
+          </Typography>
+        </DialogTitle>
+        {this.state.loading && (
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description" className={this.props.classes.p}>
+              We are connecting to Simplex!
+            </DialogContentText>
+            <div className={this.props.classes.progress}>
+              <CircularProgress />
+            </div>
+          </DialogContent>
+        )}
+        {!this.state.loading && (
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description" className={this.props.classes.p}>
+              Are you sure you want to buy {this.props.fiatAmount} worth of {this.props.currency}, with a fee of {this.props.fee}?
+            </DialogContentText>
+            <div>
+              <EdgeButton color="primary" onClick={this.onAccept}>
+                Yes, go to payment
+              </EdgeButton>
+              <EdgeButton color="default" onClick={this.props.onClose}>
+                Cancel
+              </EdgeButton>
+            </div>
+          </DialogContent>
+        )}
+      </Dialog>
+    )
+  }
+}
+
+ConfirmUnstyled.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func.isRequired,
   onAccept: PropTypes.func.isRequired,
@@ -153,6 +186,8 @@ ConfirmDialog.propTypes = {
   fee: PropTypes.string,
   currency: PropTypes.string
 }
+
+export const ConfirmDialog = withStyles(confirmStyles)(ConfirmUnstyled)
 
 export class WalletDrawer extends React.Component {
   renderWallet = (wallet) => {
@@ -170,6 +205,7 @@ export class WalletDrawer extends React.Component {
     return (
       <Drawer
         anchor="bottom"
+        variant="temporary"
         open={this.props.open}
         onClose={this.props.onClose}>
         <div>
