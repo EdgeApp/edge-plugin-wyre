@@ -234,6 +234,9 @@ class BuyScene extends React.Component {
   }
 
   selectWallet = (wallet) => {
+    if (!wallet || !wallet.id) {
+      return
+    }
     /* Check if this wallets fiat currency is supported */
     const fiatSupport = API.SUPPORTED_FIAT_CURRENCIES.indexOf(wallet.fiatCurrencyCode) !== -1
     /* If we don't support this wallet's currency switch to the default */
@@ -327,11 +330,11 @@ class BuyScene extends React.Component {
     const { fiat, fiatSupport, selectedWallet, quote } = this.state
     let errors = { error: false, helperText: '' }
     if (quote) {
-      if (quote.fiat_total_amount_amount > API.LIMITS[fiat].daily) {
+      if (quote.fiat_amount > API.LIMITS[fiat].daily) {
         errors = {error: true, helperText: 'Exceeding daily limit'}
-      } else if (quote.fiat_total_amount_amount > API.LIMITS[fiat].monthly) {
+      } else if (quote.fiat_amount > API.LIMITS[fiat].monthly) {
         errors = {error: true, helperText: 'Exceeding monthly limit'}
-      } else if (quote.fiat_total_amount_amount < API.LIMITS[fiat].min) {
+      } else if (quote.fiat_amount < API.LIMITS[fiat].min) {
         errors = {
           error: true,
           helperText: `Below the minimum of ${formatRate(API.LIMITS[fiat].min, fiat)}`

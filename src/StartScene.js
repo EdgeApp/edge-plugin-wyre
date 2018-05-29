@@ -60,6 +60,7 @@ StartParagraph.propTypes = {
 class StartScene extends React.Component {
   componentWillMount () {
     ui.title('Buy with Simplex')
+    window.scrollTo(0, 0)
   }
   _start = () => {
     this.props.history.push('/buy/')
