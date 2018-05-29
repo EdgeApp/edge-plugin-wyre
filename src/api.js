@@ -7,7 +7,7 @@ export const PROVIDER = 'edge'
 export const API_VERSION = '1'
 export const ACCEPT_LANGUAGE = 'en-US;q=0.7,en;q=0.3'
 export const HTTP_ACCEPT = 'en-US;q=0.7,en;q=0.3'
-export const RETURN_URL = 'https://edgesecure.co'
+export const RETURN_URL = 'edge-ret://plugins/simplex'
 export const LIMITS = {
   USD: {
     min: 50,
