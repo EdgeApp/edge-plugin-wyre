@@ -64,7 +64,6 @@ class StartScene extends React.Component {
   }
   _start = () => {
     this.props.history.push('/buy/')
-    ui.navStackPush('/buy/')
   }
   render () {
     const classes = this.props.classes

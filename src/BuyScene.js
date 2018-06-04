@@ -183,7 +183,6 @@ class BuyScene extends React.Component {
 
   cancel = () => {
     this.props.history.goBack()
-    ui.navStackPop()
   }
 
   handleAccept = () => {
