@@ -61,6 +61,8 @@ class StartScene extends React.Component {
   componentWillMount () {
     ui.title('Buy with Simplex')
     window.scrollTo(0, 0)
+    window.localStorage.removeItem('last_crypto_amount')
+    window.localStorage.removeItem('last_fiat_amount')
   }
   _start = () => {
     this.props.history.push('/buy/')

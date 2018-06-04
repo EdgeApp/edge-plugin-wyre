@@ -22,7 +22,7 @@ import {
 
 import './inline.css'
 
-const DEV = false // process.env.NODE_ENV !== 'development'
+const DEV = process.env.NODE_ENV === 'development'
 
 const setFiatInput = (value) => {
   setDomValue('fiatInput', value)
@@ -43,7 +43,7 @@ const buildObject = async (res, wallet) => {
     throw new Error('Invalid response')
   }
   let address = null
-  if (process.env.NODE_ENV !== 'development') {
+  if (!DEV) {
     const addressData = await core.getAddress(wallet.id, wallet.currencyCode)
     address = addressData.address.publicAddress
   } else {
@@ -117,7 +117,7 @@ class BuyScene extends React.Component {
     this.uaid = window.localStorage.getItem('simplex_install_id') || uuidv1()
     window.localStorage.setItem('simplex_install_id', this.uaid)
 
-    const wallets = DEV
+    const wallets = !DEV
       ? []
       : [
         {id: 'BTC', name: 'BTC', currencyCode: 'BTC', fiatCurrencyCode: 'EUR'},
@@ -132,7 +132,7 @@ class BuyScene extends React.Component {
       rate: null,
       quote: null,
       fiatSupport: true,
-      fiat: null,
+      fiat: 'USD',
       defaultFiat: 'USD'
     }
   }
@@ -153,7 +153,19 @@ class BuyScene extends React.Component {
             API.SUPPORTED_DIGITAL_CURRENCIES.indexOf(wallet.currencyCode) >= 0)
         }, () => {
           if (this.state.wallets.length > 0) {
-            this.selectWallet(this.state.wallets[0])
+            let i = 0
+            const lastWallet = window.localStorage.getItem('last_wallet')
+            if (lastWallet) {
+              for (; i < this.state.wallets.length; ++i) {
+                if (this.state.wallets[i].id === lastWallet) {
+                  break
+                }
+              }
+              if (i >= this.state.wallets.length) {
+                i = 0
+              }
+            }
+            this.selectWallet(this.state.wallets[i])
           } else {
             // Probably exit...not available wallets
           }
@@ -249,14 +261,29 @@ class BuyScene extends React.Component {
       fiat,
       defaultFiat: fiat
     }, () => {
-      this.loadConversion()
+      const lastCrypto = window.localStorage.getItem('last_crypto_amount')
+      const lastFiat = window.localStorage.getItem('last_fiat_amount')
+      if (lastCrypto) {
+        setCryptoInput(lastCrypto)
+        this.calcFiat({target: {value: lastCrypto}})
+      } else if (lastFiat) {
+        setFiatInput(lastFiat)
+        this.calcCrypto({target: {value: lastFiat}})
+      } else {
+        setFiatInput('')
+        setCryptoInput('')
+        this.loadConversion()
+      }
+      window.localStorage.removeItem('last_crypto_amount')
+      window.localStorage.removeItem('last_fiat_amount')
     })
-    setFiatInput('')
-    setCryptoInput('')
     ui.title(`Buy ${wallet.currencyCode}`)
+    window.localStorage.setItem('last_wallet', wallet.id)
   }
 
   calcFiat = (event) => {
+    window.localStorage.setItem('last_crypto_amount', event.target.value)
+    window.localStorage.removeItem('last_fiat_amount')
     if (event.target.value) {
       this.setState({
         cryptoLoading: false,
@@ -291,6 +318,8 @@ class BuyScene extends React.Component {
   }
 
   calcCrypto = async (event) => {
+    window.localStorage.setItem('last_fiat_amount', event.target.value)
+    window.localStorage.removeItem('last_crypto_amount')
     if (event.target.value) {
       this.setState({
         fiatLoading: false,
