@@ -19,8 +19,7 @@
     "rimraf": "^2.6.2"
   },
   "dependencies": {
-    "abort-controller": "^1.0.2",
-    "edge-libplugin": "https://github.com/teneighty/edge-libplugin.git",
+    "edge-libplugin": "https://github.com/Airbitz/edge-libplugin.git#4c094a6",
     "material-ui": "^1.0.0-beta.39",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
