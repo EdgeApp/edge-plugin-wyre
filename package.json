@@ -5,6 +5,7 @@
   "devDependencies": {
     "babel-eslint": "^7.1.1",
     "babel-jest": "^20.0.3",
+    "edge-libplugin": "https://github.com/Airbitz/edge-libplugin.git#4c094a6",
     "eslint": "^4.12.1",
     "eslint-config-standard": "^11.0.0-beta.0",
     "eslint-plugin-flowtype": "^2.35.0",
@@ -15,15 +16,12 @@
     "eslint-plugin-standard": "^3.0.1",
     "flow-bin": "^0.66.0",
     "husky": "^0.14.3",
+    "material-ui": "^1.0.0-beta.39",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.1",
-    "rimraf": "^2.6.2"
-  },
-  "dependencies": {
-    "edge-libplugin": "https://github.com/Airbitz/edge-libplugin.git#4c094a6",
-    "material-ui": "^1.0.0-beta.39",
+    "rimraf": "^2.6.2",
     "uuid": "^3.2.1"
   },
   "scripts": {
