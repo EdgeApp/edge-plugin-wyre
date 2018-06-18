@@ -7,7 +7,7 @@ export const PROVIDER = 'edge'
 export const API_VERSION = '1'
 export const ACCEPT_LANGUAGE = 'en-US;q=0.7,en;q=0.3'
 export const HTTP_ACCEPT = 'en-US;q=0.7,en;q=0.3'
-export const RETURN_URL = 'https://simplex-sandbox-api.edgesecure.co/redirect/'
+export const RETURN_URL = 'https://simplex-api.edgesecure.co/redirect/'
 export const LIMITS = {
   USD: {
     min: 50,
@@ -37,13 +37,8 @@ export const SUPPORTED_FIAT_CURRENCIES = [
   'USD', 'EUR'
 ]
 
-const edgeUrl = (true)
-  ? 'https://simplex-sandbox-api.edgesecure.co'
-  : 'https://simplex-api.edgesecure.co'
-
-const simplexUrl = (true)
-  ? 'https://sandbox.test-simplexcc.com/payments/new'
-  : 'https://checkout.simplexcc.com/payments/new'
+const edgeUrl = 'https://simplex-api.edgesecure.co'
+const simplexUrl = 'https://checkout.simplexcc.com/payments/new'
 
 export function requestConfirm (userId, sessionId, uaid, quote) {
   const body = {
