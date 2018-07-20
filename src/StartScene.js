@@ -67,6 +67,9 @@ class StartScene extends React.Component {
   _start = () => {
     this.props.history.push('/buy/')
   }
+  _gotoEvents = () => {
+    this.props.history.push('/payments/')
+  }
   render () {
     const classes = this.props.classes
     return (
@@ -111,6 +114,7 @@ class StartScene extends React.Component {
         <Divider className={classes.divider} />
         <div>
           <EdgeButton color="primary" onClick={this._start}>Next</EdgeButton>
+          <EdgeButton color="default" onClick={this._gotoEvents}>Transactions</EdgeButton>
         </div>
       </div>
     )

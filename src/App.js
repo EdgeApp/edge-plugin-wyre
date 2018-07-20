@@ -6,6 +6,8 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import StartScene from './StartScene'
 import BuyScene from './BuyScene'
+import PaymentsScene from './PaymentsScene'
+import EventsScene from './EventsScene'
 
 const theme = createMuiTheme({
   palette: {
@@ -29,6 +31,14 @@ export const routes = [{
 }, {
   path: '/buy/',
   main: BuyScene,
+  exact: true
+}, {
+  path: '/payments/',
+  main: PaymentsScene,
+  exact: true
+}, {
+  path: '/events/:paymentId/',
+  main: EventsScene,
   exact: true
 }]
 

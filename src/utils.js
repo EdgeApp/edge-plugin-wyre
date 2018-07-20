@@ -9,6 +9,21 @@ export function formatRate (rate, currency) {
   })
 }
 
+export function formatStatus (status) {
+  if (status === 'submitted') {
+    return 'Submitted'
+  } else if (status === 'pending_simplexcc_approval') {
+    return 'Pending Approval'
+  } else if (status === 'approved') {
+    return 'Approved'
+  } else if (status === 'declined') {
+    return 'Declined'
+  } else if (status === 'cancelled') {
+    return 'Cancelled'
+  }
+  return status
+}
+
 export const cancelableFetch = (url, data) => {
   let canceled = false
   const promise = new Promise((resolve, reject) => {

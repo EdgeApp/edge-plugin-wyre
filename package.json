@@ -39,5 +39,8 @@
   "files": [
     "target/index.html",
     "manifest.json"
-  ]
+  ],
+  "dependencies": {
+    "moment": "^2.22.2"
+  }
 }

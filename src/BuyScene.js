@@ -22,8 +22,6 @@ import {
 
 import './inline.css'
 
-const DEV = process.env.NODE_ENV === 'development'
-
 const setFiatInput = (value) => {
   setDomValue('fiatInput', value)
 }
@@ -43,7 +41,7 @@ const buildObject = async (res, wallet) => {
     throw new Error('Invalid response')
   }
   let address = null
-  if (!DEV) {
+  if (!API.DEV) {
     const addressData = await core.getAddress(wallet.id, wallet.currencyCode)
     address = addressData.address.publicAddress
   } else {
@@ -109,15 +107,13 @@ class BuyScene extends React.Component {
   constructor (props) {
     super(props)
     /* sessionId can be regenerated each time we come to this form */
-    this.sessionId = uuidv1()
+    this.sessionId = API.sessionId()
     /* this should be written to the encrypted storage */
-    this.userId = window.localStorage.getItem('simplex_user_id') || uuidv1()
-    window.localStorage.setItem('simplex_user_id', this.userId)
+    this.userId = API.userId()
     /* this only needs to persist with an install. localStorage will do */
-    this.uaid = window.localStorage.getItem('simplex_install_id') || uuidv1()
-    window.localStorage.setItem('simplex_install_id', this.uaid)
+    this.uaid = API.installId()
 
-    const wallets = !DEV
+    const wallets = !API.DEV
       ? []
       : [
         {id: 'BTC', name: 'BTC', currencyCode: 'BTC', fiatCurrencyCode: 'EUR'},
@@ -356,7 +352,9 @@ class BuyScene extends React.Component {
   render () {
     const { classes } = this.props
     const { fiat, fiatSupport, selectedWallet, quote } = this.state
-    let errors = { error: false, helperText: '' }
+    let errors = {
+      error: false, helperText: ''
+    }
     if (quote) {
       if (quote.fiat_amount > API.LIMITS[fiat].daily) {
         errors = {error: true, helperText: 'Exceeding daily limit'}

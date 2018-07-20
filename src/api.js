@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
+import uuidv1 from 'uuid/v1'
 
 import { cancelableFetch } from './utils'
 
@@ -37,8 +38,30 @@ export const SUPPORTED_FIAT_CURRENCIES = [
   'USD', 'EUR'
 ]
 
-const edgeUrl = 'https://simplex-api.edgesecure.co'
-const simplexUrl = 'https://checkout.simplexcc.com/payments/new'
+export const DEV = process.env.NODE_ENV === 'development'
+
+const edgeUrl = DEV
+  ? 'http://localhost:3000'
+  : 'https://simplex-api.edgesecure.co'
+const simplexUrl = DEV
+  ? 'https://sandbox.test-simplexcc.com/payments/new'
+  : 'https://checkout.simplexcc.com/payments/new'
+
+export function sessionId () {
+  return uuidv1()
+}
+
+export function userId () {
+  const id = window.localStorage.getItem('simplex_user_id') || uuidv1()
+  window.localStorage.setItem('simplex_user_id', id)
+  return id
+}
+
+export function installId () {
+  const id = window.localStorage.getItem('simplex_install_id') || uuidv1()
+  window.localStorage.setItem('simplex_install_id', id)
+  return id
+}
 
 export function requestConfirm (userId, sessionId, uaid, quote) {
   const body = {
@@ -111,6 +134,30 @@ export function requestQuote (userId, requested, amount, digitalCurrency, fiatCu
   // Issue a new request
   lastRequest = cancelableFetch(edgeUrl + '/quote', data)
   return lastRequest.promise
+}
+
+export function payments (userId) {
+  const data = {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  }
+  const url = `${edgeUrl}/payments/${userId}/`
+  return window.fetch(url, data)
+}
+
+export function paymentDetails (userId, paymentId) {
+  const data = {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  }
+  const url = `${edgeUrl}/payments/${userId}/${paymentId}/`
+  return window.fetch(url, data)
 }
 
 export const SimplexForm = (props) => {
