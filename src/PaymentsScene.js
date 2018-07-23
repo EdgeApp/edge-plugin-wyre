@@ -53,7 +53,7 @@ class PaymentsScene extends React.Component {
   }
 
   loadEvents = () => {
-    API.payments(API.userId())
+    API.payments()
       .then(d => d.json())
       .then((data) => {
         this.setState({

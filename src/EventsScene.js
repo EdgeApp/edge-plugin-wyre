@@ -57,7 +57,7 @@ class EventsScene extends React.Component {
 
   loadEvents = () => {
     const { paymentId } = this.props.match.params
-    API.paymentDetails(API.userId(), paymentId)
+    API.paymentDetails(paymentId)
       .then(d => d.json())
       .then((data) => {
         this.setState({

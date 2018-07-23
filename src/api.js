@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import uuidv1 from 'uuid/v1'
+import { core } from 'edge-libplugin'
 
 import { cancelableFetch } from './utils'
 
@@ -41,7 +42,7 @@ export const SUPPORTED_FIAT_CURRENCIES = [
 export const DEV = process.env.NODE_ENV === 'development'
 
 const edgeUrl = DEV
-  ? 'http://localhost:3000'
+  ? 'https://simplex-sandbox-api.edgesecure.co'
   : 'https://simplex-api.edgesecure.co'
 const simplexUrl = DEV
   ? 'https://sandbox.test-simplexcc.com/payments/new'
@@ -51,9 +52,25 @@ export function sessionId () {
   return uuidv1()
 }
 
-export function userId () {
-  const id = window.localStorage.getItem('simplex_user_id') || uuidv1()
-  window.localStorage.setItem('simplex_user_id', id)
+export async function getUserId () {
+  let id = null
+  try {
+    id = await core.readData('simplex_user_id')
+  } catch (e) {
+    console.log(e)
+  }
+  if (!id) {
+    id = window.localStorage.getItem('simplex_user_id')
+  }
+  if (!id) {
+    id = uuidv1()
+    window.localStorage('simplex_user_id', id)
+    try {
+      await core.writeData('simplex_user_id', id)
+    } catch (e) {
+      console.log(e)
+    }
+  }
   return id
 }
 
@@ -63,7 +80,8 @@ export function installId () {
   return id
 }
 
-export function requestConfirm (userId, sessionId, uaid, quote) {
+export async function requestConfirm (sessionId, uaid, quote) {
+  const userId = await getUserId()
   const body = {
     'account_details': {
       'app_provider_id': PROVIDER,
@@ -113,7 +131,8 @@ export function requestConfirm (userId, sessionId, uaid, quote) {
   return lastRequest.promise
 }
 
-export function requestQuote (userId, requested, amount, digitalCurrency, fiatCurrency) {
+export async function requestQuote (requested, amount, digitalCurrency, fiatCurrency) {
+  const userId = await getUserId()
   // Abort any active requests
   requestAbort()
   const data = {
@@ -136,7 +155,9 @@ export function requestQuote (userId, requested, amount, digitalCurrency, fiatCu
   return lastRequest.promise
 }
 
-export function payments (userId) {
+export async function payments () {
+  const userId = await getUserId()
+
   const data = {
     method: 'GET',
     headers: {
@@ -148,7 +169,8 @@ export function payments (userId) {
   return window.fetch(url, data)
 }
 
-export function paymentDetails (userId, paymentId) {
+export async function paymentDetails (paymentId) {
+  const userId = await getUserId()
   const data = {
     method: 'GET',
     headers: {

@@ -108,8 +108,6 @@ class BuyScene extends React.Component {
     super(props)
     /* sessionId can be regenerated each time we come to this form */
     this.sessionId = API.sessionId()
-    /* this should be written to the encrypted storage */
-    this.userId = API.userId()
     /* this only needs to persist with an install. localStorage will do */
     this.uaid = API.installId()
 
@@ -175,7 +173,7 @@ class BuyScene extends React.Component {
 
   loadConversion = () => {
     const c = this.state.selectedWallet.currencyCode
-    API.requestQuote(this.userId, c, 1, c, this.state.defaultFiat)
+    API.requestQuote(c, 1, c, this.state.defaultFiat)
       .then(d => d.json())
       .then(r => buildObject(r.res, this.state.selectedWallet))
       .then(r => this.setState({rate: r.rate}))
@@ -195,7 +193,7 @@ class BuyScene extends React.Component {
 
   handleAccept = () => {
     API.requestConfirm(
-      this.userId, this.sessionId,
+      this.sessionId,
       this.uaid, this.state.quote)
       .then((data) => data.json())
       .then((data) => {
@@ -287,7 +285,7 @@ class BuyScene extends React.Component {
       })
       const v = event.target.value
       const c = this.state.selectedWallet.currencyCode
-      API.requestQuote(this.userId, c, v, c, this.state.defaultFiat)
+      API.requestQuote(c, v, c, this.state.defaultFiat)
         .then(d => d.json())
         .then(r => buildObject(r.res, this.state.selectedWallet))
         .then(r => {
@@ -323,7 +321,7 @@ class BuyScene extends React.Component {
       })
       const v = event.target.value
       const c = this.state.selectedWallet.currencyCode
-      API.requestQuote(this.userId, this.state.defaultFiat, v, c, this.state.defaultFiat)
+      API.requestQuote(this.state.defaultFiat, v, c, this.state.defaultFiat)
         .then(d => d.json())
         .then(r => buildObject(r.res, this.state.selectedWallet))
         .then(r => {
