@@ -54,21 +54,28 @@ export function sessionId () {
 
 export async function getUserId () {
   let id = null
+  let inCore = true
   try {
     id = await core.readData('simplex_user_id')
+    core.debugLevel(0, 'Found user key in core')
   } catch (e) {
-    console.log(e)
+    core.debugLevel(0, 'No existing key in core')
+    inCore = false
   }
   if (!id) {
     id = window.localStorage.getItem('simplex_user_id')
   }
   if (!id) {
     id = uuidv1()
-    window.localStorage('simplex_user_id', id)
+    core.debugLevel(0, 'Generating id "' + id + "' ")
+  }
+  if (!inCore) {
     try {
       await core.writeData('simplex_user_id', id)
+      core.debugLevel(0, 'Wrote key to core')
     } catch (e) {
-      console.log(e)
+      core.debugLevel(0, 'Unable to write key to core. Storing in localStorage')
+      window.localStorage.setItem('simplex_user_id', id)
     }
   }
   return id
