@@ -167,7 +167,7 @@ class BuyScene extends React.Component {
       })
       .catch(() => {
         ui.showAlert(false, 'Error', 'Unable to fetch wallets. Please try again later.')
-        core.exit()
+        ui.exit()
       })
   }
 
@@ -177,8 +177,10 @@ class BuyScene extends React.Component {
       .then(d => d.json())
       .then(r => buildObject(r.res, this.state.selectedWallet))
       .then(r => this.setState({rate: r.rate}))
-      // TODO: handle this
-      .catch(e => console.log(e))
+      .catch(() => {
+        ui.showAlert(false, 'Error', 'Unable to retrieve rates. Please try again later.')
+        ui.exit()
+      })
   }
 
   next = () => {
@@ -278,7 +280,7 @@ class BuyScene extends React.Component {
   calcFiat = (event) => {
     window.localStorage.setItem('last_crypto_amount', event.target.value)
     window.localStorage.removeItem('last_fiat_amount')
-    if (event.target.value) {
+    if (event.target.value && event.target.value > 0) {
       this.setState({
         cryptoLoading: false,
         fiatLoading: true
@@ -314,7 +316,7 @@ class BuyScene extends React.Component {
   calcCrypto = async (event) => {
     window.localStorage.setItem('last_fiat_amount', event.target.value)
     window.localStorage.removeItem('last_crypto_amount')
-    if (event.target.value) {
+    if (event.target.value && event.target.value > 0) {
       this.setState({
         fiatLoading: false,
         cryptoLoading: true
