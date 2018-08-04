@@ -53,6 +53,9 @@ export function sessionId () {
 }
 
 export async function getUserId () {
+  if (DEV) {
+    return 'dev-user-id'
+  }
   let id = null
   let inCore = true
   try {
