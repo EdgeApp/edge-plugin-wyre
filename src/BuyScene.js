@@ -487,7 +487,7 @@ class BuyScene extends React.Component {
             </Typography>
             {quote && quote.address && (
               <Typography component="p" className={classes.p}>
-                Payment will be sent to <strong>{quote.address}</strong>.
+                Payment will be sent to <strong style={{wordWrap: 'break-word'}}>{quote.address}</strong>.
               </Typography>
             )}
             <EdgeButton
