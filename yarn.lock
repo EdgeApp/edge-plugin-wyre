@@ -2306,9 +2306,9 @@ ecc-jsbn@~0.1.1:
   dependencies:
     jsbn "~0.1.0"
 
-"edge-libplugin@https://github.com/Airbitz/edge-libplugin.git#4c094a6":
+"edge-libplugin@https://github.com/EdgeApp/edge-libplugin.git":
   version "0.0.1"
-  resolved "https://github.com/Airbitz/edge-libplugin.git#4c094a6b71a8bb420774cf29256982ff15082071"
+  resolved "https://github.com/EdgeApp/edge-libplugin.git#69b6043be075bc91728eb2fbbac70ffa49d46c3b"
   dependencies:
     babel-core "^6.26.0"
     babel-loader "^7.1.3"

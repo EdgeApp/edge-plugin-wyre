@@ -54,3 +54,9 @@ body,
 .body > div:nth-child(odd) {
   background-color: #eee;
 }
+
+.address {
+  overflow-wrap: "break-word";
+  word-wrap: "break-word";
+  flex-wrap: "wrap";
+}
