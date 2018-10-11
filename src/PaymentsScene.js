@@ -18,7 +18,6 @@ import './inline.css'
 
 const eventStyles = (theme) => ({
   paymentScene: {
-    height: '100%',
     display: 'flex',
     flexDirection: 'column'
   },
