@@ -32,7 +32,7 @@ export function requestAbort () {
 }
 
 export const SUPPORTED_DIGITAL_CURRENCIES = [
-  'BTC', 'ETH', 'BCH', 'LTC'
+  'BTC', 'ETH', 'BCH', 'LTC', 'XRP'
 ]
 
 export const SUPPORTED_FIAT_CURRENCIES = [

@@ -120,7 +120,8 @@ class BuyScene extends React.Component {
         {id: 'BTC', name: 'BTC', currencyCode: 'BTC', fiatCurrencyCode: 'EUR'},
         {id: 'ETH', name: 'ETH', currencyCode: 'ETH', fiatCurrencyCode: 'USD'},
         {id: 'BTC-EUR', name: 'BTC-EUR', currencyCode: 'BTC', fiatCurrencyCode: 'EUR'},
-        {id: 'BTC-MXN', name: 'BTC-MXN', currencyCode: 'BTC', fiatCurrencyCode: 'MXN'}
+        {id: 'BTC-MXN', name: 'BTC-MXN', currencyCode: 'BTC', fiatCurrencyCode: 'MXN'},
+        {id: 'XRP-USD', name: 'XRP-USD', currencyCode: 'XRP', fiatCurrencyCode: 'USD'}
       ]
     this.state = {
       dialogOpen: false,
