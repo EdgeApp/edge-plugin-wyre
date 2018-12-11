@@ -43,9 +43,13 @@ const buildObject = async (res, wallet) => {
   let address = null
   if (!API.DEV) {
     const addressData = await core.getAddress(wallet.id, wallet.currencyCode)
-    address = addressData.address.legacyAddress
-    if (!address) {
+    if (wallet.currencyCode === 'BCH') {
       address = addressData.address.publicAddress
+    } else {
+      address = addressData.address.legacyAddress
+      if (!address) {
+        address = addressData.address.publicAddress
+      }
     }
   } else {
     address = '1fakejPwRxWKiSgMBUewqMCws7DLuzAHQ'
