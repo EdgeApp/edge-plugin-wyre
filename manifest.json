@@ -1,8 +1,8 @@
 {
-  "pluginId": "co.edgesecure.simplex",
-  "name": "Simplex",
-  "subtitle": "Buy crypto with your credit card.",
-  "provider": "Edge Secure",
+  "pluginId": "co.edgesecure.wyre",
+  "name": "Wyre from Simplex Example",
+  "subtitle": "Buy crypto with your bank account.",
+  "provider": "Edge Wallet",
   "iconUrl": "https://airbitz.co/static/simplex.png",
   "environment": {
   }

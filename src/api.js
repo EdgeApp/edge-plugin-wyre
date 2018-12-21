@@ -124,7 +124,7 @@ export async function requestConfirm (sessionId, uaid, quote) {
           'currency': quote.digital_currency,
           'address': quote.address
         },
-        'original_http_ref_url': 'https://www.edgesecure.co/'
+        'original_http_ref_url': 'https://www.edge.app/'
       }
     }
   }

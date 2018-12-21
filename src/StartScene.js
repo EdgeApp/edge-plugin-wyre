@@ -3,12 +3,13 @@ import React from 'react'
 import { withStyles } from 'material-ui/styles'
 import Divider from 'material-ui/Divider'
 import Typography from 'material-ui/Typography'
-
+import logo from './logo.png'
+import THEME from './constants/themeConstants.js'
 import './inline.css'
-
 import { ui } from 'edge-libplugin'
-import { EdgeButton, SupportLink } from './components'
+import { PrimaryButton, SecondaryButton, TertiaryButton, SupportLink } from './components'
 
+console.log('THEME is: ', THEME)
 const startStyles = (theme) => ({
   container: {
     backgroundColor: '#FFF',
@@ -58,14 +59,18 @@ StartParagraph.propTypes = {
 }
 
 class StartScene extends React.Component {
-  componentWillMount () {
-    ui.title('Buy with Simplex')
+  UNSAFE_componentWillMount () {
+    ui.title('Buy &amp; Sell with Wyre')
     window.scrollTo(0, 0)
     window.localStorage.removeItem('last_crypto_amount')
     window.localStorage.removeItem('last_fiat_amount')
   }
-  _start = () => {
+  _buy = () => {
     this.props.history.push('/buy/')
+  }
+
+  _sell = () => {
+    this.props.history.push('/sell/')
   }
   _gotoEvents = () => {
     this.props.history.push('/payments/')
@@ -74,16 +79,13 @@ class StartScene extends React.Component {
     const classes = this.props.classes
     return (
       <div className={classes.container}>
-        <div className="text-center">
-          <div className="iconLogo" />
+        <div style={{ textAlign: 'center' }}>
+          <img src={logo} className='iconLogo' />
         </div>
         <div>
-          <StartHeader text="Simplex" classes={classes} />
+          <StartHeader text="Wyre" classes={classes} />
           <StartParagraph classes={classes}>
-            Simplex is an Edge Wallet bank card processing partner. It is the
-            service which allows you to purchase Bitcoin, Bitcoin Cash,
-            Ethereum, Litecoin and Ripple/XRP safely and quickly in just a few
-            short minutes.
+              Wyre is a secure and compliant bridge between fiat currencies and cryptocurrency. Exchange crypto safely and securely.
           </StartParagraph>
         </div>
         <Divider className={classes.divider} />
@@ -95,7 +97,7 @@ class StartScene extends React.Component {
           </StartParagraph>
           <ul className={classes.feeList}>
             <li>Edge Wallet 1%</li>
-            <li>Credit Card processing by Simplex 5% ($10 min)</li>
+            <li>Credit Card processing by Wyre 1% ($10 min)</li>
           </ul>
         </div>
         <Divider className={classes.divider} />
@@ -114,8 +116,9 @@ class StartScene extends React.Component {
         </div>
         <Divider className={classes.divider} />
         <div>
-          <EdgeButton color="primary" onClick={this._start}>Next</EdgeButton>
-          <EdgeButton color="default" onClick={this._gotoEvents}>Transactions</EdgeButton>
+          <PrimaryButton onClick={this._buy}>Buy</PrimaryButton>
+          <SecondaryButton onClick={this._sell}>Sell</SecondaryButton>
+          <TertiaryButton onClick={this._gotoEvents}>Transactions</TertiaryButton>
         </div>
       </div>
     )

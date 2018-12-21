@@ -13,6 +13,7 @@ import Dialog, {
 import { CircularProgress } from 'material-ui/Progress'
 import { formatRate, formatStatus } from './utils'
 import moment from 'moment'
+import THEME from './constants/themeConstants.js'
 
 const limitStyles = theme => ({
   p: {
@@ -41,17 +42,24 @@ DailyLimit.propTypes = {
   fiat: PropTypes.string
 }
 
+const buttonStyle = {
+  textTransform: 'none',
+  padding: '15px 0',
+  margin: '5px 0',
+  borderRadius: '5px'
+}
+
 export const EdgeButton = (props) => {
+  console.log('EdgeButton props are: ', props)
   return (
     <Button
       variant="raised"
-      color={props.color || 'default'}
       onClick={props.onClick}
       disabled={props.disabled}
       style={{
-        textTransform: 'none',
-        padding: '15px 0',
-        margin: '5px 0'
+        ...buttonStyle,
+        backgroundColor: props.backgroundColor,
+        color: props.textColor
       }}
       fullWidth>
       {props.children}
@@ -60,14 +68,91 @@ export const EdgeButton = (props) => {
 }
 
 EdgeButton.propTypes = {
-  color: PropTypes.string,
+  textColor: PropTypes.string,
+  backgroundColor: PropTypes.string,
+  onClick: PropTypes.func.isRequired,
+  children: PropTypes.node.isRequired,
+  disabled: PropTypes.bool
+}
+
+export const PrimaryButton = (props) => {
+  return (
+    <Button
+      variant="raised"
+      onClick={props.onClick}
+      disabled={props.disabled}
+      style={{
+        ...buttonStyle,
+        backgroundColor: THEME.COLORS.SECONDARY,
+        color: THEME.COLORS.WHITE
+      }}
+      fullWidth>
+      {props.children}
+    </Button>
+  )
+}
+
+PrimaryButton.propTypes = {
+  textColor: PropTypes.string,
+  backgroundColor: PropTypes.string,
+  onClick: PropTypes.func.isRequired,
+  children: PropTypes.node.isRequired,
+  disabled: PropTypes.bool
+}
+
+export const SecondaryButton = (props) => {
+  return (
+    <Button
+      variant="raised"
+      onClick={props.onClick}
+      disabled={props.disabled}
+      style={{
+        ...buttonStyle,
+        backgroundColor: THEME.COLORS.GRAY_2,
+        color: THEME.COLORS.WHITE
+      }}
+      fullWidth>
+      {props.children}
+    </Button>
+  )
+}
+
+SecondaryButton.propTypes = {
+  textColor: PropTypes.string,
+  backgroundColor: PropTypes.string,
+  onClick: PropTypes.func.isRequired,
+  children: PropTypes.node.isRequired,
+  disabled: PropTypes.bool
+}
+
+export const TertiaryButton = (props) => {
+  return (
+    <Button
+      variant="raised"
+      onClick={props.onClick}
+      disabled={props.disabled}
+      style={{
+        ...buttonStyle,
+        backgroundColor: THEME.COLORS.WHITE,
+        color: THEME.COLORS.SECONDARY,
+        border: `2px solid ${THEME.COLORS.SECONDARY}`
+      }}
+      fullWidth>
+      {props.children}
+    </Button>
+  )
+}
+
+TertiaryButton.propTypes = {
+  textColor: PropTypes.string,
+  backgroundColor: PropTypes.string,
   onClick: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired,
   disabled: PropTypes.bool
 }
 
 export const SupportLink = (props) => {
-  return (<a href="mailto:support@simplex.com">support@simplex.com</a>)
+  return (<a href="mailto:support@sendwyre.com">support@sendwyre.com</a>)
 }
 
 const supportThemes = theme => ({
@@ -101,7 +186,7 @@ const powerThemes = (theme) => ({
 export const PoweredBy = withStyles(powerThemes)((props) => {
   return (
     <Typography component="p" className={props.classes.p}>
-      Powered by Simplex
+      Powered by Wyre
     </Typography>
   )
 })
