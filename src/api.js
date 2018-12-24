@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import uuidv1 from 'uuid/v1'
 import { core } from 'edge-libplugin'
-
+import { API_URL } from './env.js'
 import { cancelableFetch } from './utils'
 
 export const PROVIDER = 'edge'
@@ -32,7 +32,7 @@ export function requestAbort () {
 }
 
 export const SUPPORTED_DIGITAL_CURRENCIES = [
-  'BTC', 'ETH', 'BCH', 'LTC', 'XRP'
+  'BTC', 'ETH', 'DAI'
 ]
 
 export const SUPPORTED_FIAT_CURRENCIES = [
@@ -141,27 +141,21 @@ export async function requestConfirm (sessionId, uaid, quote) {
   return lastRequest.promise
 }
 
-export async function requestQuote (requested, amount, digitalCurrency, fiatCurrency) {
+export async function requestQuote () {
   const userId = await getUserId()
   // Abort any active requests
   requestAbort()
   const data = {
     // signal: abortController.signal,
-    method: 'POST',
+    method: 'GET',
+    mode: 'no-cors', // no-cors, cors, *same-origin
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      digital_currency: digitalCurrency,
-      fiat_currency: fiatCurrency,
-      requested_currency: requested,
-      requested_amount: parseFloat(amount),
-      client_id: userId
-    })
+    }
   }
   // Issue a new request
-  lastRequest = cancelableFetch(edgeUrl + '/quote', data)
+  lastRequest = cancelableFetch(`${API_URL}rates`, data)
   return lastRequest.promise
 }
 

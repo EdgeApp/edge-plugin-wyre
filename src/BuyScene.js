@@ -8,9 +8,9 @@ import Typography from 'material-ui/Typography'
 import { CircularProgress } from 'material-ui/Progress'
 import uuidv1 from 'uuid/v1'
 import { core, ui } from 'edge-libplugin'
-
+import fakeWallets from './fake/wallets.js'
 import * as API from './api'
-import { formatRate } from './utils'
+import { formatRate, makeFakeQuoteRequest } from './utils'
 import {
   DailyLimit,
   EdgeButton,
@@ -117,16 +117,7 @@ class BuyScene extends React.Component {
     this.sessionId = API.sessionId()
     /* this only needs to persist with an install. localStorage will do */
     this.uaid = API.installId()
-
-    const wallets = !API.DEV
-      ? []
-      : [
-        {id: 'BTC', name: 'BTC', currencyCode: 'BTC', fiatCurrencyCode: 'EUR'},
-        {id: 'ETH', name: 'ETH', currencyCode: 'ETH', fiatCurrencyCode: 'USD'},
-        {id: 'BTC-EUR', name: 'BTC-EUR', currencyCode: 'BTC', fiatCurrencyCode: 'EUR'},
-        {id: 'BTC-MXN', name: 'BTC-MXN', currencyCode: 'BTC', fiatCurrencyCode: 'MXN'},
-        {id: 'XRP-USD', name: 'XRP-USD', currencyCode: 'XRP', fiatCurrencyCode: 'USD'}
-      ]
+    const wallets = fakeWallets
     this.state = {
       dialogOpen: false,
       drawerOpen: false,
@@ -151,6 +142,7 @@ class BuyScene extends React.Component {
     core.wallets()
       .then((data) => {
         this.setState({
+          rate: data,
           wallets: data.filter((wallet) =>
             API.SUPPORTED_DIGITAL_CURRENCIES.indexOf(wallet.currencyCode) >= 0)
         }, () => {
@@ -179,17 +171,50 @@ class BuyScene extends React.Component {
       })
   }
 
-  loadConversion = () => {
-    const c = this.state.selectedWallet.currencyCode
-    API.requestQuote(c, 1, c, this.state.defaultFiat)
-      .then(d => d.json())
-      .then(r => buildObject(r.res, this.state.selectedWallet))
+  loadConversion = async () => {
+    // this.fetchExchangeRates()
+    const { selectedWallet, defaultFiat } = this.state
+    const currencyCode = selectedWallet.currencyCode
+    const requestQuoteData = {
+      sourceCurrency: currencyCode,
+      destCurrency: defaultFiat,
+      sourceAmount: 1
+    }
+    const fetchQuoteData = await makeFakeQuoteRequest('quote', 'POST', requestQuoteData)
+    this.setState({
+      rate: {
+        rate: fetchQuoteData.rate,
+        currency: currencyCode
+      }})
+    console.log('fetchQuoteData: ', fetchQuoteData)
+    /* API.requestQuote()
+      .then(d => {
+        console.log('requestQuote: ', d)
+      })
+      .then(r => {
+        buildObject(r.res, this.state.selectedWallet)
+        window.alert(r)
+        this.setState({
+          exchangeRates: JSON.stringify(r)
+        })
+      })
       .then(r => this.setState({rate: r.rate}))
       .catch(() => {
         ui.showAlert(false, 'Error', 'Unable to retrieve rates. Please try again later.')
+        this.setState({exchangeRates: 'Unable to retrieve rates. Please try again later.'})
         ui.exit()
-      })
+      }) */
   }
+
+  /* fetchExchangeRates = async () => {
+    const response = await fetch('https://api.testwyre.com/v3/rates')
+    console.log('response: ', response)
+    const data = await response.json()
+    console.log('data: ', data)
+    this.setState({
+      exchangeRates: JSON.stringify(data)
+    })
+  } */
 
   next = () => {
     this.setState({
@@ -391,7 +416,7 @@ class BuyScene extends React.Component {
           <Typography
             component='h2'
             className={classes.warning}>
-            Please note that {selectedWallet.fiatCurrencyCode} is not supported by Simplex.
+            Please note that {selectedWallet.fiatCurrencyCode} is not supported by Wyre.
             Defaulting to
             <select defaultValue={fiat} onChange={this.changeDefaultFiat}>
               <option value='USD'>USD</option>
@@ -410,8 +435,8 @@ class BuyScene extends React.Component {
               <CircularProgress size={25} />
             )}
             {this.state.rate && (
-              <Typography component='p' className={classes.conversion}>
-                1{this.state.rate.currency} = {formatRate(this.state.rate.rate, fiat)}
+              <Typography component="p" className={classes.conversion}>
+                {this.state.rate.currency} = {formatRate(this.state.rate.rate, fiat)}
               </Typography>
             )}
           </CardContent>

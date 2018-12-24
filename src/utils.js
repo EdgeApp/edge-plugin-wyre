@@ -1,3 +1,43 @@
+// @flow
+
+import sha256 from 'js-sha256'
+import { API_URL, API_KEY, API_SECRET_KEY } from './env.js'
+
+export const makeAuthenticationRequest = async (endpoint: string, method: string, body?: Object) => {
+    const url = API_URL
+    const apiKey = API_KEY
+    const secretKey = API_SECRET_KEY
+    const requestUrl = `${url}${endpoint}`
+    const queryString = body ? Object.keys(body).map((key) => {
+      return encodeURIComponent(key) + '=' + encodeURIComponent(body[key])
+    }).join('&') : '' 
+    const authSigHash = calcAuthSigHash(secretKey, `${requestUrl}?${queryString}`)
+    const headers = {
+      'Content-Type': 'application/json',
+      'X-Api-Key': apiKey,
+      'X-Api-Signature': authSigHash,
+      'X-Api-Version': '2'
+    }
+    let requestResponse
+    if (body) {
+      requestResponse = await fetch(requestUrl, {
+        headers,
+        body,
+        method
+      })
+    } else {
+      requestResponse = await fetch(requestUrl, {
+        headers,
+        method
+      })
+    }
+    const requestData = await requestResponse.json()
+    return requestData
+}
+
+export const calcAuthSigHash = (secretKey: string, value: string) => {
+  return sha256.hmac(secretKey, value);  
+}
 
 export function formatRate (rate, currency) {
   if (!rate) {
@@ -49,5 +89,14 @@ export const cancelableFetch = (url, data) => {
     cancel () {
       canceled = true
     }
+  }
+}
+
+
+/////////////// fake stuff ///////////////////
+export const makeFakeQuoteRequest = async (endpoint, method, data) => {
+  return {
+    currency: data.sourceCurrency,
+    rate: (Math.random() * 10000).toFixed(2)
   }
 }
