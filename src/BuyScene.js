@@ -206,16 +206,6 @@ class BuyScene extends React.Component {
       }) */
   }
 
-  /* fetchExchangeRates = async () => {
-    const response = await fetch('https://api.testwyre.com/v3/rates')
-    console.log('response: ', response)
-    const data = await response.json()
-    console.log('data: ', data)
-    this.setState({
-      exchangeRates: JSON.stringify(data)
-    })
-  } */
-
   next = () => {
     this.setState({
       dialogOpen: true

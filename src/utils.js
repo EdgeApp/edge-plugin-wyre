@@ -8,15 +8,17 @@ export const makeAuthenticationRequest = async (endpoint: string, method: string
     const apiKey = API_KEY
     const secretKey = API_SECRET_KEY
     const requestUrl = `${url}${endpoint}`
+    const timestamp = (new Date()).getTime()
     const queryString = body ? Object.keys(body).map((key) => {
       return encodeURIComponent(key) + '=' + encodeURIComponent(body[key])
-    }).join('&') : '' 
-    const authSigHash = calcAuthSigHash(secretKey, `${requestUrl}?${queryString}`)
+    }).join('&') : ''
+    const stringToHash = `${requestUrl}?timestamp=${timestamp}&${queryString}`
+    const authSigHash = calcAuthSigHash(secretKey, stringToHash)
     const headers = {
       'Content-Type': 'application/json',
       'X-Api-Key': apiKey,
       'X-Api-Signature': authSigHash,
-      'X-Api-Version': '2'
+      'X-Api-Version': '3'
     }
     let requestResponse
     if (body) {
