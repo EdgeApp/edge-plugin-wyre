@@ -10,7 +10,7 @@ import uuidv1 from 'uuid/v1'
 import { core, ui } from 'edge-libplugin'
 import fakeWallets from './fake/wallets.js'
 import * as API from './api'
-import { formatRate, makeFakeQuoteRequest } from './utils'
+import { formatRate, makeFakeQuoteRequest, makeFakeBuyRequest, makeAuthenticationRequest } from './utils'
 import {
   DailyLimit,
   EdgeButton,
@@ -34,50 +34,6 @@ const setDomValue = (id, value) => {
   if (document.getElementById(id)) {
     document.getElementById(id).value = value
   }
-}
-
-const buildObject = async (res, wallet) => {
-  if (!res.quote_id) {
-    throw new Error('Invalid response')
-  }
-  let address = null
-  if (!API.DEV) {
-    const addressData = await core.getAddress(wallet.id, wallet.currencyCode)
-    if (wallet.currencyCode === 'BCH') {
-      address = addressData.address.publicAddress
-    } else {
-      address = addressData.address.legacyAddress
-      if (!address) {
-        address = addressData.address.publicAddress
-      }
-    }
-  } else {
-    address = '1fakejPwRxWKiSgMBUewqMCws7DLuzAHQ'
-  }
-  const quote = {
-    version: API.API_VERSION,
-    partner: API.PROVIDER,
-    payment_flow_type: 'wallet',
-    return_url: API.RETURN_URL,
-    quote_id: res.quote_id,
-    wallet_id: res.wallet_id,
-    payment_id: uuidv1(),
-    order_id: res.quote_id,
-    user_id: res.user_id,
-    address: address,
-    currency: res.digital_money.currency,
-    fiat_total_amount_amount: res.fiat_money.total_amount,
-    fiat_total_amount_currency: res.fiat_money.currency,
-    fee: res.fiat_money.total_amount - res.fiat_money.base_amount,
-    fiat_amount: res.fiat_money.base_amount,
-    digital_amount: res.digital_money.amount,
-    digital_currency: res.digital_money.currency
-  }
-  const rate = {
-    currency: res.digital_money.currency,
-    rate: (quote.fiat_amount / quote.digital_amount)
-  }
-  return {quote, rate}
 }
 
 const buyStyles = theme => ({
@@ -126,7 +82,8 @@ class BuyScene extends React.Component {
       quote: null,
       fiatSupport: true,
       fiat: 'USD',
-      defaultFiat: 'USD'
+      defaultFiat: 'USD',
+      wyreAccount: null
     }
   }
 
@@ -136,6 +93,13 @@ class BuyScene extends React.Component {
       this.selectWallet(this.state.wallets[0])
     }
     this.loadWallets()
+    this.fetchWyreAccount()
+  }
+
+  fetchWyreAccount = async () => {
+    const wyreAccountResponse = await makeAuthenticationRequest('account', 'GET')
+    const wyreAccountData = wyreAccountResponse.json()
+    console.log('wyreAccountData: ', wyreAccountData)
   }
 
   loadWallets = () => {
@@ -300,30 +264,29 @@ class BuyScene extends React.Component {
     window.localStorage.setItem('last_wallet', wallet.id)
   }
 
-  calcFiat = (event) => {
+  calcFiat = async (event) => {
     window.localStorage.setItem('last_crypto_amount', event.target.value)
     window.localStorage.removeItem('last_fiat_amount')
-    if (event.target.value && event.target.value > 0) {
+    if (event.target.value && event.target.value > 0) { // event.target.value is the entered crypto amount
       this.setState({
         cryptoLoading: false,
         fiatLoading: true
       })
-      const v = event.target.value
-      const c = this.state.selectedWallet.currencyCode
-      API.requestQuote(c, v, c, this.state.defaultFiat)
-        .then(d => d.json())
-        .then(r => buildObject(r.res, this.state.selectedWallet))
-        .then(r => {
-          this.setState({
-            fiatLoading: false,
-            quote: r.quote,
-            rate: r.rate
-          })
-          setFiatInput(r.quote.fiat_amount)
+      try {
+        const cryptoAmount = event.target.value
+        const currencyCode = this.state.selectedWallet.currencyCode
+        const response = makeFakeBuyRequest(currencyCode, cryptoAmount, 'someFakeAddress123', this.state.defaultFiat)
+        const r2 = buildObject(response, this.state.selectedWallet)
+        this.setState({
+          fiatLoading: false,
+          quote: r2.quote,
+          rate: r2.rate
         })
-        .catch(err => {
-          core.debugLevel(0, JSON.stringify(err))
-        })
+        setFiatInput(r2.quote.fiat_amount)
+      } catch (err) {
+        console.log('buildObject error: ', err)
+        core.debugLevel(0, JSON.stringify(err))
+      }
     } else {
       API.requestAbort()
       this.setState({
@@ -522,9 +485,6 @@ class BuyScene extends React.Component {
           </CardContent>
         </Card>
 
-        {quote &&
-          <API.SimplexForm quote={this.state.quote} />}
-
         <Support />
         <PoweredBy />
         <WalletDrawer
@@ -544,3 +504,45 @@ BuyScene.propTypes = {
 }
 
 export default withStyles(buyStyles)(BuyScene)
+
+const buildObject = async (res, wallet) => {
+  if (!res.id) {
+    throw new Error('No quote ID')
+  }
+  let address = null
+  if (!API.DEV) {
+    const addressData = await core.getAddress(wallet.id, wallet.currencyCode)
+    if (wallet.currencyCode === 'BCH') {
+      address = addressData.address.publicAddress
+    } else {
+      address = addressData.address.legacyAddress
+      if (!address) {
+        address = addressData.address.publicAddress
+      }
+    }
+  } else {
+    address = '1fakejPwRxWKiSgMBUewqMCws7DLuzAHQ'
+  }
+  const quote = {
+    payment_flow_type: 'wallet',
+    return_url: API.RETURN_URL,
+    quote_id: res.id,
+    wallet_id: res.wallet_id,
+    payment_id: uuidv1(),
+    order_id: res.quote_id,
+    user_id: res.user_id,
+    address: address,
+    currency: res.digital_money.currency,
+    fiat_total_amount_amount: res.fiat_money.total_amount,
+    fiat_total_amount_currency: res.fiat_money.currency,
+    fee: res.fiat_money.total_amount - res.fiat_money.base_amount,
+    fiat_amount: res.fiat_money.base_amount,
+    digital_amount: res.digital_money.amount,
+    digital_currency: res.digital_money.currency
+  }
+  const rate = {
+    currency: res.digital_money.currency,
+    rate: (quote.fiat_amount / quote.digital_amount)
+  }
+  return {quote, rate}
+}

@@ -1,35 +1,38 @@
 // @flow
 
 import sha256 from 'js-sha256'
-import { API_URL, API_KEY, API_SECRET_KEY } from './env.js'
+import { V2_API_URL, API_KEY, API_SECRET_KEY } from './env.js'
 
 export const makeAuthenticationRequest = async (endpoint: string, method: string, body?: Object) => {
-    const url = API_URL
-    const apiKey = API_KEY
-    const secretKey = API_SECRET_KEY
+    const url = V2_API_URL
     const requestUrl = `${url}${endpoint}`
     const timestamp = (new Date()).getTime()
     const queryString = body ? Object.keys(body).map((key) => {
       return encodeURIComponent(key) + '=' + encodeURIComponent(body[key])
     }).join('&') : ''
-    const stringToHash = `${requestUrl}?timestamp=${timestamp}&${queryString}`
-    const authSigHash = calcAuthSigHash(secretKey, stringToHash)
+    const suffix = queryString ? `&${queryString}` : ''
+    const stringToHash = `${requestUrl}?timestamp=${timestamp}${suffix}`
+    console.log('full URL to hash is: ', stringToHash)
+    const authSigHash = calcAuthSigHash(API_SECRET_KEY, stringToHash)
+    console.log('V2_API_URL is: ', V2_API_URL, ' API_KEY is: ', API_KEY, 'API_SECRET_KEY is: ', API_SECRET_KEY)
     const headers = {
       'Content-Type': 'application/json',
-      'X-Api-Key': apiKey,
+      'X-Api-Key': API_KEY,
       'X-Api-Signature': authSigHash,
-      'X-Api-Version': '3'
+      'X-Api-Version': '2'
     }
+    console.log('headers are: ', headers)
     let requestResponse
     if (body) {
-      requestResponse = await fetch(requestUrl, {
+      requestResponse = await fetch(stringToHash, {
         headers,
         body,
         method
       })
     } else {
-      requestResponse = await fetch(requestUrl, {
+      requestResponse = await fetch(stringToHash, {
         headers,
+        mode: 'cors',
         method
       })
     }
@@ -102,3 +105,91 @@ export const makeFakeQuoteRequest = async (endpoint, method, data) => {
     rate: (Math.random() * 10000).toFixed(2)
   }
 }
+
+export const makeFakeBuyRequest = async (currencyCode, cryptoAmount, address, fiatCurrency) => {
+  const body = {
+    source: 'myFakeAccount1243',
+    destAmount: cryptoAmount,
+    dest: address,
+    destCurrency: fiatCurrency,
+    preview: true,
+    amountIncludesFees: true
+  }
+
+  const exchangeRate = (Math.random() * 10000).toFixed(2)
+
+  const fakeBuyResponse = {  
+    "id":"PLV7BBP7MVJ",
+    "status":"UNCONFIRMED",
+    "failureReason":null,
+    "language":"en",
+    "createdAt": new Date().getTime(),
+    "completedAt":null,
+    "depositInitiatedAt":null,
+    "cancelledAt":null,
+    "expiresAt": new Date().getTime() + 30000,
+    "owner": "account:i6rgs8mjdmmu7cnf7a5bgl0r0vudsfe5",
+    "source": "account:i6rgs8mjdmmu7cnf7a5bgl0r0vudsfe5",
+    "dest": "bitcoin:2ShLpdz6XT8FRm1KZYSGwiHLZvZbrYgxrgB",
+    "sourceCurrency":fiatCurrency,
+    "sourceAmount":5.00,
+    "destCurrency":"BTC",
+    "destAmount":cryptoAmount,
+    "exchangeRate":cryptoAmount / exchangeRate,
+    "desc":"Unconfirmed: Exchange of $X.00 to 0.00XXBTC",
+    "message":null,
+    "totalFees":0.00,
+    "equivalencies":{  
+       "EUR":0.00418079,
+       "USD":4.99,
+       "CNY":29.66
+    },
+    "feeEquivalencies":{  
+       "EUR":0.00,
+       "USD":0.00,
+       "CNY":0.00
+    },
+    "fees":{  
+       "USD":0.00,
+       "BTC":0.00
+    },
+    "authorizingIp":"10.255.0.2",
+    "paymentUrl":null,
+    "exchangeOrderId":null,
+    "chargeId":null,
+    "depositId":null,
+    "sourceTxId":null,
+    "destTxId":null,
+    "customId":null,
+    "buy":false,
+    "instantBuy":false,
+    "sell":false,
+    "exchange":true,
+    "send":true,
+    "deposit":false,
+    "withdrawal":false,
+    "closed":false,
+    "reversingSubStatus":null,
+    "reversalReason":null,
+    "retrievalUrl":null,
+    "quotedMargin":null,
+    "pendingSubStatus":null,
+    "destName":"myUser@gmail.com",
+    "sourceName":"Primary Account",
+    "exchangeOrder":null,
+    "estimatedArrival":new Date().getTime() + 86400000,
+    "blockchainTx":null,
+    "documents":[  
+  
+    ],
+    "reversalRevenue":null,
+    "reversalRevenueCurrency":null,
+    "depositInfo":null,
+    "chargeInfo":null
+  }
+
+  return fakeBuyResponse
+}
+
+const delay = (duration) =>
+  new Promise(resolve => setTimeout(resolve, duration))

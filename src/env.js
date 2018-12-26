@@ -1,3 +1,5 @@
-export const API_KEY = 'AK-JF6DA78G-MEPWMFT9-N6Q7YFN3-7D9DLJ4R'
+export const API_KEY = 'bh405n7stsuo5ut30iftrsl71b4iqjnv'
 export const API_URL = 'https://api.testwyre.com/v3/'
-export const API_SECRET_KEY = 'SK-TEWTVWWL-DDTJZ4UF-WJPH9H3A-GQ89DRCE'
+export const V2_API_URL = 'https://api.sendwyre.com/v2/'
+export const V3_API_URL = 'https://api.testwyre.com/v3/'
+export const API_SECRET_KEY = 'a19cvrchgja82urvn47kirrlrrb7stgg'
