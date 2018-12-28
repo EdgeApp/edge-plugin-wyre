@@ -2,30 +2,20 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { withStyles } from 'material-ui/styles'
 import Card, { CardContent } from 'material-ui/Card'
-import TextField from 'material-ui/TextField'
-import { InputAdornment } from 'material-ui/Input'
 import Typography from 'material-ui/Typography'
-import { CircularProgress } from 'material-ui/Progress'
 import { core, ui } from 'edge-libplugin'
 import fakeWallets from './fake/wallets.js'
 import * as API from './api'
-import { formatRate, makeFakeQuoteRequest, makeFakeBuyRequest, makeAuthenticationRequest } from './utils'
 import {
-  DailyLimit,
   EdgeButton,
-  ConfirmDialog,
   Support,
   PoweredBy,
-  WalletDrawer
+  WalletDrawer,
+  PrimaryButton,
+  SecondaryButton
 } from './components'
 
 import './inline.css'
-
-const setDomValue = (id, value) => {
-  if (document.getElementById(id)) {
-    document.getElementById(id).value = value
-  }
-}
 
 const buyStyles = theme => ({
   card: {
@@ -66,32 +56,17 @@ class BuyScene extends React.Component {
     this.uaid = API.installId()
     const wallets = fakeWallets
     this.state = {
-      dialogOpen: false,
       drawerOpen: false,
       wallets: wallets,
-      rate: null,
-      quote: null,
-      fiatSupport: true,
-      fiat: 'USD',
-      defaultFiat: 'USD',
       wyreAccount: null,
-      expiration: 0
+      selectedWallet: null,
+      publicAddress: ''
     }
   }
 
   UNSAFE_componentWillMount () {
     window.scrollTo(0, 0)
-    if (this.state.wallets.length > 0) {
-      this.selectWallet(this.state.wallets[0])
-    }
     this.loadWallets()
-    this.fetchWyreAccount()
-  }
-
-  fetchWyreAccount = async () => {
-    const wyreAccountResponse = await makeAuthenticationRequest('account', 'GET')
-    const wyreAccountData = wyreAccountResponse.json()
-    console.log('wyreAccountData: ', wyreAccountData)
   }
 
   loadWallets = () => {
@@ -115,7 +90,6 @@ class BuyScene extends React.Component {
                 i = 0
               }
             }
-            this.selectWallet(this.state.wallets[i])
           } else {
             // Probably exit...not available wallets
           }
@@ -127,18 +101,27 @@ class BuyScene extends React.Component {
       })
   }
 
-  next = () => {
-    this.setState({
-      dialogOpen: true
-    })
-  }
-
   cancel = () => {
     this.props.history.goBack()
   }
 
-  handleAccept = () => {
-    console.log('About to ask for confirmation of quote')
+  onAccept = () => {
+    const { selectedWallet } = this.state
+    const { currencyCode } = selectedWallet
+    const widget = new window.Wyre.Widget({
+      env: 'test',
+      accountId: 'randomasdfasdfsdfasdkluhlkhakl',
+      auth: {
+        type: 'secretKey',
+        secretKey: 'VERY_LONG_DEVICE_SECRET_KEY_GOES_HERE'
+      },
+      operation: {
+        type: 'onramp',
+        destCurrency: currencyCode,
+        dest: 'ethereum:0xababababababababababbb'
+      }
+    })
+    widget.open()
   }
 
   handleClose = () => {
@@ -170,23 +153,17 @@ class BuyScene extends React.Component {
     })
   }
 
-  selectWallet = (wallet) => {
+  selectWallet = async (wallet) => {
     if (!wallet || !wallet.id) {
       return
     }
     /* Check if this wallets fiat currency is supported */
-    const fiatSupport = API.SUPPORTED_FIAT_CURRENCIES.indexOf(wallet.fiatCurrencyCode) !== -1
     /* If we don't support this wallet's currency switch to the default */
-    const fiat = fiatSupport ? wallet.fiatCurrencyCode : this.state.defaultFiat
     this.closeWallets()
+    const response = await core.getAddress(wallet.id, wallet.currencyCode)
     this.setState({
       selectedWallet: wallet,
-      fiatSupport,
-      fiat,
-      defaultFiat: fiat
-    }, () => {
-      window.localStorage.removeItem('last_crypto_amount')
-      window.localStorage.removeItem('last_fiat_amount')
+      publicAddress: response.address.publicAddress
     })
     ui.title(`Buy ${wallet.currencyCode}`)
     window.localStorage.setItem('last_wallet', wallet.id)
@@ -194,37 +171,24 @@ class BuyScene extends React.Component {
 
   render () {
     const { classes } = this.props
-    const { fiat, fiatSupport, selectedWallet, quote } = this.state
-
+    const { selectedWallet, publicAddress } = this.state
     return (
       <div>
-        {selectedWallet && !fiatSupport && (
-          <Typography
-            component='h2'
-            className={classes.warning}>
-            Please note that {selectedWallet.fiatCurrencyCode} is not supported by Wyre.
-            Defaulting to
-            <select defaultValue={fiat} onChange={this.changeDefaultFiat}>
-              <option value='USD'>USD</option>
-              <option value='EUR'>EUR</option>
-            </select>
-          </Typography>
-        )}
-
         <Card className={classes.card}>
           <CardContent>
-            <Typography
-              variant='headline'
-              component='h3'
-              className={classes.h3}>
-              Destination Wallet
-              {this.state.selectedWallet && (
-                <span>: {this.state.selectedWallet.name} ({this.state.selectedWallet.currencyCode})</span>
-              )}
-            </Typography>
-            <EdgeButton color='primary' onClick={this.openWallets}>
-              Change Destination Wallet
-            </EdgeButton>
+            <PrimaryButton color='primary' onClick={this.openWallets}>
+              {this.state.selectedWallet ? (
+                `Wallet: ${this.state.selectedWallet.name} (${this.state.selectedWallet.currencyCode})`
+              ) : (
+                'Change Destination Wallet'
+              ) }
+            </PrimaryButton>
+            {publicAddress && (
+              <p style={{textAlign: 'center', maxWidth: '100%', wordWrap: 'break-word', overflowWrap: 'break-word', flexWrap: 'wrap'}} component='p'>
+                Receive Address:<br />
+                <strong style={{maxWidth: '100%', wordWrap: 'break-word', overflowWrap: 'break-word', flexWrap: 'wrap'}} className={classes.address}>{publicAddress}</strong>
+              </p>
+            )}
           </CardContent>
         </Card>
 
@@ -233,20 +197,25 @@ class BuyScene extends React.Component {
             <Typography component='p' className={classes.p}>
               You will see a confirmation screen before you buy.
             </Typography>
-            {quote && quote.address && (
-              <p style={{textAlign: 'center', maxWidth: '100%', wordWrap: 'break-word', overflowWrap: 'break-word', flexWrap: 'wrap'}} component='p'>
-                Payment will be sent to<br />
-                <strong style={{maxWidth: '100%', wordWrap: 'break-word', overflowWrap: 'break-word', flexWrap: 'wrap'}} className={classes.address}>{quote.address}</strong>
-              </p>
+            {selectedWallet ? (
+              <PrimaryButton
+                tabIndex={3}
+                color='primary'
+                onClick={this.onAccept}
+                disabled={false}>
+                Next
+              </PrimaryButton>
+            ) : (
+              <SecondaryButton
+                tabIndex={3}
+                color='primary'
+                onClick={this.onAccept}
+                disabled={true}>
+                Next
+              </SecondaryButton>
             )}
-            <EdgeButton
-              tabIndex={3}
-              color='primary'
-              onClick={this.next}
-              disabled={false}>
-              Next
-            </EdgeButton>
-            <EdgeButton onClick={this.cancel} tabIndex={4}>Cancel</EdgeButton>
+
+            <SecondaryButton onClick={this.cancel} tabIndex={4}>Cancel</SecondaryButton>
           </CardContent>
         </Card>
 
@@ -269,7 +238,3 @@ BuyScene.propTypes = {
 }
 
 export default withStyles(buyStyles)(BuyScene)
-
-const buildObject = async () => {
-  return null
-}
