@@ -85,20 +85,8 @@ class StartScene extends React.Component {
         <div>
           <StartHeader text="Wyre" classes={classes} />
           <StartParagraph classes={classes}>
-              Wyre is a secure and compliant bridge between fiat currencies and cryptocurrency. Exchange crypto safely and securely.
+            Wyre is a secure and compliant bridge between fiat currencies and cryptocurrency. Exchange crypto safely and securely.
           </StartParagraph>
-        </div>
-        <Divider className={classes.divider} />
-        <div>
-          <StartHeader text="Fee" classes={classes} />
-          <StartParagraph classes={classes}>
-            Please note that additional fees will be charged, on top of the
-            above rate at checkout. Those fees are as follows:
-          </StartParagraph>
-          <ul className={classes.feeList}>
-            <li>Edge Wallet 1%</li>
-            <li>Credit Card processing by Wyre 1% ($10 min)</li>
-          </ul>
         </div>
         <Divider className={classes.divider} />
         <div>

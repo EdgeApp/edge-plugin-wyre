@@ -21,14 +21,6 @@ import {
 
 import './inline.css'
 
-const setFiatInput = (value) => {
-  setDomValue('fiatInput', value)
-}
-
-const setCryptoInput = (value) => {
-  setDomValue('cryptoInput', value)
-}
-
 const setDomValue = (id, value) => {
   if (document.getElementById(id)) {
     document.getElementById(id).value = value
@@ -135,31 +127,6 @@ class BuyScene extends React.Component {
       })
   }
 
-  loadConversion = async () => {
-    // this.fetchExchangeRates()
-    try {
-      const { selectedWallet, defaultFiat } = this.state
-      const currencyCode = selectedWallet.currencyCode
-      const requestQuoteData = {
-        sourceCurrency: currencyCode,
-        destCurrency: defaultFiat,
-        sourceAmount: 1
-      }
-      const fetchQuoteData = await makeFakeQuoteRequest('quote', 'POST', requestQuoteData)
-      this.setState({
-        rate: {
-          rate: fetchQuoteData.rate,
-          currency: currencyCode,
-
-        }})
-      console.log('fetchQuoteData: ', fetchQuoteData)
-    } catch (e) {
-      window.alert('error: ' + e)
-      ui.showAlert(false, 'Error', 'Unable to retrieve rates. Please try again later.')
-      ui.exit()
-    }
-  }
-
   next = () => {
     this.setState({
       dialogOpen: true
@@ -171,21 +138,7 @@ class BuyScene extends React.Component {
   }
 
   handleAccept = () => {
-    API.requestConfirm(
-      this.sessionId,
-      this.uaid, this.state.quote)
-      .then((data) => data.json())
-      .then((data) => {
-        console.log(data)
-        document.getElementById('payment_form').submit()
-      })
-      .catch((err) => {
-        /* Tell the user dummy */
-        console.log(err)
-        this.setState({
-          dialogOpen: false
-        })
-      })
+    console.log('About to ask for confirmation of quote')
   }
 
   handleClose = () => {
@@ -228,25 +181,10 @@ class BuyScene extends React.Component {
     this.closeWallets()
     this.setState({
       selectedWallet: wallet,
-      rate: null,
-      quote: null,
       fiatSupport,
       fiat,
       defaultFiat: fiat
     }, () => {
-      const lastCrypto = window.localStorage.getItem('last_crypto_amount')
-      const lastFiat = window.localStorage.getItem('last_fiat_amount')
-      if (lastCrypto) {
-        setCryptoInput(lastCrypto)
-        this.calcFiat({target: {value: lastCrypto}})
-      } else if (lastFiat) {
-        setFiatInput(lastFiat)
-        this.calcCrypto({target: {value: lastFiat}})
-      } else {
-        setFiatInput('')
-        setCryptoInput('')
-        this.loadConversion()
-      }
       window.localStorage.removeItem('last_crypto_amount')
       window.localStorage.removeItem('last_fiat_amount')
     })
@@ -254,130 +192,12 @@ class BuyScene extends React.Component {
     window.localStorage.setItem('last_wallet', wallet.id)
   }
 
-  calcFiat = async (event) => {
-    window.localStorage.setItem('last_crypto_amount', event.target.value)
-    window.localStorage.removeItem('last_fiat_amount')
-    if (event.target.value && event.target.value > 0) { // event.target.value is the entered crypto amount
-      this.setState({
-        cryptoLoading: false,
-        fiatLoading: true
-      })
-      try {
-        const cryptoAmount = event.target.value
-        const currencyCode = this.state.selectedWallet.currencyCode
-        const requestQuoteInfo = {
-          source: 'myFakeAccount1243',
-          sourceCurrency: this.state.defaultFiat,
-          destAmount: cryptoAmount,
-          dest: 'someFakeAddress123',
-          destCurrency: currencyCode,
-          preview: true,
-          amountIncludesFees: true
-        }
-        const response = makeFakeBuyRequest(requestQuoteInfo)
-        // const r2 = buildObject(response, this.state.selectedWallet)
-        const rate = {
-          rate: response.exchangeRate,
-          currency: response.destCurrency
-        }
-        const quote = response
-        this.setState({
-          fiatLoading: false,
-          quote,
-          rate,
-          expiration: response.expiresAt
-        })
-        setFiatInput(response.sourceAmount)
-      } catch (err) {
-        console.log('buildObject error: ', err)
-        core.debugLevel(0, JSON.stringify(err))
-      }
-    } else {
-      API.requestAbort()
-      this.setState({
-        quote: null,
-        fiatLoading: false,
-        cryptoLoading: false
-      }, () => {
-        setFiatInput('')
-      })
-    }
-  }
-
-  calcCrypto = async (event) => {
-    window.localStorage.setItem('last_fiat_amount', event.target.value)
-    window.localStorage.removeItem('last_crypto_amount')
-    if (event.target.value && event.target.value > 0) {
-      this.setState({
-        fiatLoading: false,
-        cryptoLoading: true
-      })
-      const fiatAmount = event.target.value
-      const currencyCode = this.state.selectedWallet.currencyCode
-      const requestQuoteInfo = {
-        source: 'myFakeAccount1243',
-        sourceAmount: fiatAmount,
-        sourceCurrency: this.state.defaultFiat,
-        dest: 'someFakeAddress123',
-        destCurrency: currencyCode,
-        preview: true,
-        amountIncludesFees: true
-      }
-      const response = makeFakeBuyRequest(requestQuoteInfo)
-      const rate = {
-        rate: response.exchangeRate,
-        currency: response.destCurrency
-      }
-      const quote = response
-      this.setState({
-        cryptoLoading: false,
-        quote,
-        rate,
-        expiration: response.expiresAt
-      })
-      setCryptoInput(response.destAmount)
-    } else {
-      API.requestAbort()
-      this.setState({
-        quote: null,
-        fiatLoading: false,
-        cryptoLoading: false
-      }, () => {
-        setCryptoInput('')
-      })
-    }
-  }
-
   render () {
     const { classes } = this.props
     const { fiat, fiatSupport, selectedWallet, quote } = this.state
-    let errors = {
-      error: false, helperText: ''
-    }
-    if (quote) {
-      if (quote.fiat_amount > API.LIMITS[fiat].daily) {
-        errors = {error: true, helperText: 'Exceeding daily limit'}
-      } else if (quote.fiat_amount > API.LIMITS[fiat].monthly) {
-        errors = {error: true, helperText: 'Exceeding monthly limit'}
-      } else if (quote.fiat_amount < API.LIMITS[fiat].min) {
-        errors = {
-          error: true,
-          helperText: `Below the minimum of ${formatRate(API.LIMITS[fiat].min, fiat)}`
-        }
-      }
-    }
+
     return (
       <div>
-        {this.state.quote && (
-          <ConfirmDialog
-            fiatAmount={formatRate(quote.fiat_amount, fiat)}
-            fee={formatRate(quote.fee, fiat)}
-            currency={quote.currency}
-            address={quote.address}
-            open={this.state.dialogOpen}
-            onAccept={this.handleAccept}
-            onClose={this.handleClose} />
-        )}
         {selectedWallet && !fiatSupport && (
           <Typography
             component='h2'
@@ -390,23 +210,6 @@ class BuyScene extends React.Component {
             </select>
           </Typography>
         )}
-        <Card className={classes.card}>
-          <CardContent>
-            <Typography
-              component='h3'
-              className={classes.h3}>
-              Conversion Rate
-            </Typography>
-            {!this.state.rate && (
-              <CircularProgress size={25} />
-            )}
-            {this.state.rate && (
-              <Typography component="p" className={classes.conversion}>
-                1 {this.state.rate.currency} = {formatRate(this.state.rate.rate, fiat)}
-              </Typography>
-            )}
-          </CardContent>
-        </Card>
 
         <Card className={classes.card}>
           <CardContent>
@@ -416,63 +219,12 @@ class BuyScene extends React.Component {
               className={classes.h3}>
               Destination Wallet
               {this.state.selectedWallet && (
-                <span>: {this.state.selectedWallet.name}</span>
+                <span>: {this.state.selectedWallet.name} ({this.state.selectedWallet.currencyCode})</span>
               )}
             </Typography>
             <EdgeButton color='primary' onClick={this.openWallets}>
               Change Destination Wallet
             </EdgeButton>
-          </CardContent>
-        </Card>
-
-        <Card className={classes.card}>
-          <CardContent>
-            <Typography
-              variant='headline'
-              component='h3'
-              className={classes.h3}>
-              Purchase Amount
-            </Typography>
-
-            <TextField id='cryptoInput' type='number' label='Enter Amount'
-              margin='none' fullWidth
-              disabled={this.state.cryptoLoading}
-              InputLabelProps={{
-                shrink: true
-              }}
-              tabIndex={1}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position='end'>
-                    {this.state.cryptoLoading && <CircularProgress size={25} />}
-                    {!this.state.cryptoLoading && selectedWallet && this.state.selectedWallet.currencyCode}
-                  </InputAdornment>)
-              }}
-              onChange={this.calcFiat}
-            />
-
-            <TextField id='fiatInput' type='number' label='Enter Amount'
-              {...errors}
-              margin='none' fullWidth
-              disabled={this.state.fiatLoading}
-              InputLabelProps={{
-                shrink: true
-              }}
-              tabIndex={2}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position='end'>
-                    {this.state.fiatLoading && <CircularProgress size={25} />}
-                    {!this.state.fiatLoading && fiat}
-                  </InputAdornment>)
-              }}
-              onChange={this.calcCrypto}
-            />
-
-            <DailyLimit
-              fiat={fiat}
-              dailyLimit={API.LIMITS[fiat].daily}
-              monthlyLimit={API.LIMITS[fiat].monthly} />
           </CardContent>
         </Card>
 
@@ -491,7 +243,7 @@ class BuyScene extends React.Component {
               tabIndex={3}
               color='primary'
               onClick={this.next}
-              disabled={quote === null || errors.error}>
+              disabled={false}>
               Next
             </EdgeButton>
             <EdgeButton onClick={this.cancel} tabIndex={4}>Cancel</EdgeButton>
