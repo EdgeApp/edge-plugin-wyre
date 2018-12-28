@@ -6,7 +6,6 @@ import TextField from 'material-ui/TextField'
 import { InputAdornment } from 'material-ui/Input'
 import Typography from 'material-ui/Typography'
 import { CircularProgress } from 'material-ui/Progress'
-import uuidv1 from 'uuid/v1'
 import { core, ui } from 'edge-libplugin'
 import fakeWallets from './fake/wallets.js'
 import * as API from './api'
@@ -83,7 +82,8 @@ class BuyScene extends React.Component {
       fiatSupport: true,
       fiat: 'USD',
       defaultFiat: 'USD',
-      wyreAccount: null
+      wyreAccount: null,
+      expiration: 0
     }
   }
 
@@ -137,37 +137,27 @@ class BuyScene extends React.Component {
 
   loadConversion = async () => {
     // this.fetchExchangeRates()
-    const { selectedWallet, defaultFiat } = this.state
-    const currencyCode = selectedWallet.currencyCode
-    const requestQuoteData = {
-      sourceCurrency: currencyCode,
-      destCurrency: defaultFiat,
-      sourceAmount: 1
+    try {
+      const { selectedWallet, defaultFiat } = this.state
+      const currencyCode = selectedWallet.currencyCode
+      const requestQuoteData = {
+        sourceCurrency: currencyCode,
+        destCurrency: defaultFiat,
+        sourceAmount: 1
+      }
+      const fetchQuoteData = await makeFakeQuoteRequest('quote', 'POST', requestQuoteData)
+      this.setState({
+        rate: {
+          rate: fetchQuoteData.rate,
+          currency: currencyCode,
+
+        }})
+      console.log('fetchQuoteData: ', fetchQuoteData)
+    } catch (e) {
+      window.alert('error: ' + e)
+      ui.showAlert(false, 'Error', 'Unable to retrieve rates. Please try again later.')
+      ui.exit()
     }
-    const fetchQuoteData = await makeFakeQuoteRequest('quote', 'POST', requestQuoteData)
-    this.setState({
-      rate: {
-        rate: fetchQuoteData.rate,
-        currency: currencyCode
-      }})
-    console.log('fetchQuoteData: ', fetchQuoteData)
-    /* API.requestQuote()
-      .then(d => {
-        console.log('requestQuote: ', d)
-      })
-      .then(r => {
-        buildObject(r.res, this.state.selectedWallet)
-        window.alert(r)
-        this.setState({
-          exchangeRates: JSON.stringify(r)
-        })
-      })
-      .then(r => this.setState({rate: r.rate}))
-      .catch(() => {
-        ui.showAlert(false, 'Error', 'Unable to retrieve rates. Please try again later.')
-        this.setState({exchangeRates: 'Unable to retrieve rates. Please try again later.'})
-        ui.exit()
-      }) */
   }
 
   next = () => {
@@ -275,14 +265,29 @@ class BuyScene extends React.Component {
       try {
         const cryptoAmount = event.target.value
         const currencyCode = this.state.selectedWallet.currencyCode
-        const response = makeFakeBuyRequest(currencyCode, cryptoAmount, 'someFakeAddress123', this.state.defaultFiat)
-        const r2 = buildObject(response, this.state.selectedWallet)
+        const requestQuoteInfo = {
+          source: 'myFakeAccount1243',
+          sourceCurrency: this.state.defaultFiat,
+          destAmount: cryptoAmount,
+          dest: 'someFakeAddress123',
+          destCurrency: currencyCode,
+          preview: true,
+          amountIncludesFees: true
+        }
+        const response = makeFakeBuyRequest(requestQuoteInfo)
+        // const r2 = buildObject(response, this.state.selectedWallet)
+        const rate = {
+          rate: response.exchangeRate,
+          currency: response.destCurrency
+        }
+        const quote = response
         this.setState({
           fiatLoading: false,
-          quote: r2.quote,
-          rate: r2.rate
+          quote,
+          rate,
+          expiration: response.expiresAt
         })
-        setFiatInput(r2.quote.fiat_amount)
+        setFiatInput(response.sourceAmount)
       } catch (err) {
         console.log('buildObject error: ', err)
         core.debugLevel(0, JSON.stringify(err))
@@ -307,22 +312,30 @@ class BuyScene extends React.Component {
         fiatLoading: false,
         cryptoLoading: true
       })
-      const v = event.target.value
-      const c = this.state.selectedWallet.currencyCode
-      API.requestQuote(this.state.defaultFiat, v, c, this.state.defaultFiat)
-        .then(d => d.json())
-        .then(r => buildObject(r.res, this.state.selectedWallet))
-        .then(r => {
-          this.setState({
-            cryptoLoading: false,
-            quote: r.quote,
-            rate: r.rate
-          })
-          setCryptoInput(r.quote.digital_amount)
-        })
-        .catch(err => {
-          core.debugLevel(0, JSON.stringify(err))
-        })
+      const fiatAmount = event.target.value
+      const currencyCode = this.state.selectedWallet.currencyCode
+      const requestQuoteInfo = {
+        source: 'myFakeAccount1243',
+        sourceAmount: fiatAmount,
+        sourceCurrency: this.state.defaultFiat,
+        dest: 'someFakeAddress123',
+        destCurrency: currencyCode,
+        preview: true,
+        amountIncludesFees: true
+      }
+      const response = makeFakeBuyRequest(requestQuoteInfo)
+      const rate = {
+        rate: response.exchangeRate,
+        currency: response.destCurrency
+      }
+      const quote = response
+      this.setState({
+        cryptoLoading: false,
+        quote,
+        rate,
+        expiration: response.expiresAt
+      })
+      setCryptoInput(response.destAmount)
     } else {
       API.requestAbort()
       this.setState({
@@ -389,7 +402,7 @@ class BuyScene extends React.Component {
             )}
             {this.state.rate && (
               <Typography component="p" className={classes.conversion}>
-                {this.state.rate.currency} = {formatRate(this.state.rate.rate, fiat)}
+                1 {this.state.rate.currency} = {formatRate(this.state.rate.rate, fiat)}
               </Typography>
             )}
           </CardContent>
@@ -505,44 +518,6 @@ BuyScene.propTypes = {
 
 export default withStyles(buyStyles)(BuyScene)
 
-const buildObject = async (res, wallet) => {
-  if (!res.id) {
-    throw new Error('No quote ID')
-  }
-  let address = null
-  if (!API.DEV) {
-    const addressData = await core.getAddress(wallet.id, wallet.currencyCode)
-    if (wallet.currencyCode === 'BCH') {
-      address = addressData.address.publicAddress
-    } else {
-      address = addressData.address.legacyAddress
-      if (!address) {
-        address = addressData.address.publicAddress
-      }
-    }
-  } else {
-    address = '1fakejPwRxWKiSgMBUewqMCws7DLuzAHQ'
-  }
-  const quote = {
-    payment_flow_type: 'wallet',
-    return_url: API.RETURN_URL,
-    quote_id: res.id,
-    wallet_id: res.wallet_id,
-    payment_id: uuidv1(),
-    order_id: res.quote_id,
-    user_id: res.user_id,
-    address: address,
-    currency: res.digital_money.currency,
-    fiat_total_amount_amount: res.fiat_money.total_amount,
-    fiat_total_amount_currency: res.fiat_money.currency,
-    fee: res.fiat_money.total_amount - res.fiat_money.base_amount,
-    fiat_amount: res.fiat_money.base_amount,
-    digital_amount: res.digital_money.amount,
-    digital_currency: res.digital_money.currency
-  }
-  const rate = {
-    currency: res.digital_money.currency,
-    rate: (quote.fiat_amount / quote.digital_amount)
-  }
-  return {quote, rate}
+const buildObject = async () => {
+  return null
 }

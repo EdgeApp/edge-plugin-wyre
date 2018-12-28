@@ -102,21 +102,19 @@ export const cancelableFetch = (url, data) => {
 export const makeFakeQuoteRequest = async (endpoint, method, data) => {
   return {
     currency: data.sourceCurrency,
-    rate: (Math.random() * 10000).toFixed(2)
+    rate: (3500 + Math.random() * 700).toFixed(2)
   }
 }
 
-export const makeFakeBuyRequest = async (currencyCode, cryptoAmount, address, fiatCurrency) => {
-  const body = {
-    source: 'myFakeAccount1243',
-    destAmount: cryptoAmount,
-    dest: address,
-    destCurrency: fiatCurrency,
-    preview: true,
-    amountIncludesFees: true
+// only for buying!
+export const makeFakeBuyRequest = (requestQuoteInfo) => {
+  const exchangeRate = (3500 + Math.random() * 700).toFixed(2)
+  
+  if (requestQuoteInfo.destAmount) { // crypto amount defined
+    requestQuoteInfo.sourceAmount = (requestQuoteInfo.destAmount * exchangeRate).toFixed(2)
+  } else {
+    requestQuoteInfo.destAmount = (requestQuoteInfo.sourceAmount / exchangeRate).toFixed(6)
   }
-
-  const exchangeRate = (Math.random() * 10000).toFixed(2)
 
   const fakeBuyResponse = {  
     "id":"PLV7BBP7MVJ",
@@ -131,11 +129,11 @@ export const makeFakeBuyRequest = async (currencyCode, cryptoAmount, address, fi
     "owner": "account:i6rgs8mjdmmu7cnf7a5bgl0r0vudsfe5",
     "source": "account:i6rgs8mjdmmu7cnf7a5bgl0r0vudsfe5",
     "dest": "bitcoin:2ShLpdz6XT8FRm1KZYSGwiHLZvZbrYgxrgB",
-    "sourceCurrency":fiatCurrency,
-    "sourceAmount":5.00,
+    "sourceCurrency":requestQuoteInfo.sourceCurrency,
+    "sourceAmount":requestQuoteInfo.sourceAmount,
     "destCurrency":"BTC",
-    "destAmount":cryptoAmount,
-    "exchangeRate":cryptoAmount / exchangeRate,
+    "destAmount":requestQuoteInfo.destAmount,
+    "exchangeRate":exchangeRate,
     "desc":"Unconfirmed: Exchange of $X.00 to 0.00XXBTC",
     "message":null,
     "totalFees":0.00,
