@@ -4,10 +4,10 @@ import { withStyles } from 'material-ui/styles'
 import Card, { CardContent } from 'material-ui/Card'
 import Typography from 'material-ui/Typography'
 import { core, ui } from 'edge-libplugin'
+import { getRandom } from './utils.js'
 import fakeWallets from './fake/wallets.js'
 import * as API from './api'
 import {
-  EdgeButton,
   Support,
   PoweredBy,
   WalletDrawer,
@@ -64,9 +64,19 @@ class BuyScene extends React.Component {
     }
   }
 
-  UNSAFE_componentWillMount () {
+  UNSAFE_componentWillMount = () => {
     window.scrollTo(0, 0)
     this.loadWallets()
+    const data = {
+      key: 'wyreAccountId',
+      value: 'awdfasdfasdfsdfasfasdfasdfasfdasf'
+    }
+    core.readData(data)
+      .then(wyreAccount => {
+        this.setState({
+          wyreAccount
+        })
+      })
   }
 
   loadWallets = () => {
@@ -106,11 +116,11 @@ class BuyScene extends React.Component {
   }
 
   onAccept = () => {
-    const { selectedWallet } = this.state
+    const { selectedWallet, publicAddress, wyreAccount } = this.state
     const { currencyCode } = selectedWallet
     const widget = new window.Wyre.Widget({
       env: 'test',
-      accountId: 'randomasdfasdfsdfasdkluhlkhakl',
+      accountId: wyreAccount,
       auth: {
         type: 'secretKey',
         secretKey: 'VERY_LONG_DEVICE_SECRET_KEY_GOES_HERE'
@@ -118,7 +128,7 @@ class BuyScene extends React.Component {
       operation: {
         type: 'onramp',
         destCurrency: currencyCode,
-        dest: 'ethereum:0xababababababababababbb'
+        dest: publicAddress
       }
     })
     widget.open()
@@ -148,8 +158,6 @@ class BuyScene extends React.Component {
       fiat: event.target.value,
       rate: null,
       quote: null
-    }, () => {
-      this.loadConversion()
     })
   }
 

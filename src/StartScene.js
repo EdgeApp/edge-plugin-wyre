@@ -59,7 +59,7 @@ StartParagraph.propTypes = {
 }
 
 class StartScene extends React.Component {
-  UNSAFE_componentWillMount () {
+  UNSAFE_componentWillMount = async () => {
     ui.title('Buy &amp; Sell with Wyre')
     window.scrollTo(0, 0)
     window.localStorage.removeItem('last_crypto_amount')
