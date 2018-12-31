@@ -29,7 +29,7 @@ export const routes = [{
   main: StartScene,
   exact: true
 }, {
-  path: '/buy/',
+  path: '/buy/:accountId',
   main: BuyScene,
   exact: true
 }, {

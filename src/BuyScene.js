@@ -4,7 +4,6 @@ import { withStyles } from 'material-ui/styles'
 import Card, { CardContent } from 'material-ui/Card'
 import Typography from 'material-ui/Typography'
 import { core, ui } from 'edge-libplugin'
-import { getRandom } from './utils.js'
 import fakeWallets from './fake/wallets.js'
 import * as API from './api'
 import {
@@ -58,25 +57,16 @@ class BuyScene extends React.Component {
     this.state = {
       drawerOpen: false,
       wallets: wallets,
-      wyreAccount: null,
+      wyreAccount: props.match.params.accountId || null,
       selectedWallet: null,
       publicAddress: ''
     }
   }
 
-  UNSAFE_componentWillMount = () => {
+  componentDidMount = async () => {
+    // string given to wyre to identify this specific user
     window.scrollTo(0, 0)
     this.loadWallets()
-    const data = {
-      key: 'wyreAccountId',
-      value: 'awdfasdfasdfsdfasfasdfasdfasfdasf'
-    }
-    core.readData(data)
-      .then(wyreAccount => {
-        this.setState({
-          wyreAccount
-        })
-      })
   }
 
   loadWallets = () => {
@@ -118,20 +108,26 @@ class BuyScene extends React.Component {
   onAccept = () => {
     const { selectedWallet, publicAddress, wyreAccount } = this.state
     const { currencyCode } = selectedWallet
-    const widget = new window.Wyre.Widget({
-      env: 'test',
-      accountId: wyreAccount,
-      auth: {
-        type: 'secretKey',
-        secretKey: 'VERY_LONG_DEVICE_SECRET_KEY_GOES_HERE'
-      },
-      operation: {
-        type: 'onramp',
-        destCurrency: currencyCode,
-        dest: publicAddress
-      }
-    })
-    widget.open()
+    const addressPrefix = currencyCode === 'BTC' ? 'bitcoin:' : 'ethereum:'
+    try {
+      const widget = new window.Wyre.Widget({
+        env: 'test',
+        accountId: 'SK-XTEA2PLV-7MJX7P7A-PY296XEL-MB6DMYYL',
+        auth: {
+          type: 'secretKey',
+          secretKey: wyreAccount
+        },
+        operation: {
+          type: 'onramp',
+          destCurrency: currencyCode,
+          dest: `${addressPrefix}${publicAddress}`
+        }
+      })
+      widget.open()
+      setTimeout(() => this.props.history.goBack(), 2000)
+    } catch (e) {
+      core.debugLevel(0, 'Opening widget error is: ' + publicAddress)
+    }
   }
 
   handleClose = () => {
@@ -222,7 +218,6 @@ class BuyScene extends React.Component {
                 Next
               </SecondaryButton>
             )}
-
             <SecondaryButton onClick={this.cancel} tabIndex={4}>Cancel</SecondaryButton>
           </CardContent>
         </Card>
@@ -242,7 +237,8 @@ class BuyScene extends React.Component {
 
 BuyScene.propTypes = {
   classes: PropTypes.object,
-  history: PropTypes.object
+  history: PropTypes.object,
+  match: PropTypes.any
 }
 
 export default withStyles(buyStyles)(BuyScene)

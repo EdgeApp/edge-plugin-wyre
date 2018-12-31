@@ -4,12 +4,11 @@ import { withStyles } from 'material-ui/styles'
 import Divider from 'material-ui/Divider'
 import Typography from 'material-ui/Typography'
 import logo from './logo.png'
-import THEME from './constants/themeConstants.js'
+import { genRandomString } from './utils.js'
 import './inline.css'
-import { ui } from 'edge-libplugin'
-import { PrimaryButton, SecondaryButton, TertiaryButton, SupportLink } from './components'
+import { ui, core } from 'edge-libplugin'
+import { PrimaryButton, TertiaryButton, SupportLink } from './components'
 
-console.log('THEME is: ', THEME)
 const startStyles = (theme) => ({
   container: {
     backgroundColor: '#FFF',
@@ -59,21 +58,81 @@ StartParagraph.propTypes = {
 }
 
 class StartScene extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      wyreAccount: null
+    }
+  }
+  
   UNSAFE_componentWillMount = async () => {
-    ui.title('Buy &amp; Sell with Wyre')
+    ui.title('Buy & Sell with Wyre')
     window.scrollTo(0, 0)
     window.localStorage.removeItem('last_crypto_amount')
     window.localStorage.removeItem('last_fiat_amount')
   }
-  _buy = () => {
-    this.props.history.push('/buy/')
+
+  componentDidMount = async () => {
+    try {
+      const key = 'wyreAccountId'
+      const wyreAccount = await core.readData(key)
+      if (wyreAccount) {
+        this.setState({
+          wyreAccount
+        })
+      } else {
+        // this code may never get executed
+        const accountId = genRandomString(32)
+        const key = 'wyreAccountId'
+        const value = accountId
+        const success = await core.writeData(key, value)
+        if (success) {
+          this.setState({
+            wyreAccount: accountId
+          })
+        } else {
+          core.debugLevel(0, 'LOGGING Trouble setting wyre account')
+        }
+      }
+    } catch (e) {
+      core.debugLevel(0, 'LOGGING Trouble getting wyre account (does not exist?)')
+      const accountId = genRandomString(32)
+      const key = 'wyreAccountId'
+      const value = accountId
+      const success = await core.writeData(key, value)
+      if (success) {
+        this.setState({
+          wyreAccount: accountId
+        })
+      } else {
+        core.debugLevel(0, 'LOGGING Trouble setting wyre account after not existing')
+      }
+    }
   }
 
-  _sell = () => {
+  _buy = () => {
+    const { wyreAccount } = this.state
+    core.debugLevel(0, 'LOGGING routing to /buy/ scene with wyreAccount: ', wyreAccount)
+    this.props.history.push(`/buy/${wyreAccount}`)
+  }
+
+  _sell = () => { // not implemented yet
     this.props.history.push('/sell/')
   }
   _gotoEvents = () => {
-    this.props.history.push('/payments/')
+    const { wyreAccount } = this.state
+    const widget = new window.Wyre.Widget({
+      env: 'test',
+      accountId: 'SK-XTEA2PLV-7MJX7P7A-PY296XEL-MB6DMYYL',
+      auth: {
+        type: 'secretKey',
+        secretKey: wyreAccount
+      },
+      operation: {
+        type: 'onramp'
+      }
+    })
+    widget.open()
   }
   render () {
     const classes = this.props.classes
@@ -105,7 +164,6 @@ class StartScene extends React.Component {
         <Divider className={classes.divider} />
         <div>
           <PrimaryButton onClick={this._buy}>Buy</PrimaryButton>
-          <SecondaryButton onClick={this._sell}>Sell</SecondaryButton>
           <TertiaryButton onClick={this._gotoEvents}>Transactions</TertiaryButton>
         </div>
       </div>
