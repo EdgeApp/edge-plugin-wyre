@@ -3,7 +3,6 @@ import React from 'react'
 import { withStyles } from 'material-ui/styles'
 import Divider from 'material-ui/Divider'
 import Typography from 'material-ui/Typography'
-import logo from './logo.png'
 import { genRandomString } from './utils.js'
 import './inline.css'
 import { ui, core } from 'edge-libplugin'
@@ -139,7 +138,7 @@ class StartScene extends React.Component {
     return (
       <div className={classes.container}>
         <div style={{ textAlign: 'center' }}>
-          <img src={logo} className='iconLogo' />
+          <img src={'http://edge.app/wp-content/uploads/2018/12/logo.png'} className='iconLogo' />
         </div>
         <div>
           <StartHeader text="Wyre" classes={classes} />

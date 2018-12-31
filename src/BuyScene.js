@@ -199,7 +199,7 @@ class BuyScene extends React.Component {
         <Card className={classes.card}>
           <CardContent>
             <Typography component='p' className={classes.p}>
-              You will see a confirmation screen before you buy.
+              Please be aware that account verification may several days.
             </Typography>
             {selectedWallet ? (
               <PrimaryButton
