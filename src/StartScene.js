@@ -137,8 +137,8 @@ class StartScene extends React.Component {
     const classes = this.props.classes
     return (
       <div className={classes.container}>
-        <div style={{ textAlign: 'center' }}>
-          <img src={'http://edge.app/wp-content/uploads/2018/12/logo.png'} className='iconLogo' />
+        <div className="text-center">
+          <div className="iconLogo" />
         </div>
         <div>
           <StartHeader text="Wyre" classes={classes} />
