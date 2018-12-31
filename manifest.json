@@ -1,9 +1,9 @@
 {
   "pluginId": "co.edgesecure.wyre",
-  "name": "Wyre from Simplex Example",
+  "name": "Buy Crypto with Wyre",
   "subtitle": "Buy crypto with your bank account with Wyre.",
   "provider": "Edge Wallet",
-  "iconUrl": "https://airbitz.co/static/simplex.png",
+  "iconUrl": "http://edge.app/wp-content/uploads/2018/12/logo.png",
   "environment": {
   }
 }
