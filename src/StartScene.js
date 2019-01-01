@@ -134,7 +134,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
   _gotoEvents = () => {
     const { wyreAccount } = this.state
     const widget = new window.Wyre.Widget({
-      env: 'test',
+      env: 'production',
       accountId: 'SK-XTEA2PLV-7MJX7P7A-PY296XEL-MB6DMYYL',
       auth: {
         type: 'secretKey',
