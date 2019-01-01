@@ -1,16 +1,4 @@
-// @flow
-
-export function formatRate (rate, currency) {
-  if (!rate) {
-    return ''
-  }
-  return rate.toLocaleString(undefined, {
-    style: 'currency',
-    currency: currency
-  })
-}
-
-export function formatStatus (status) {
+export function formatStatus (status: string) {
   if (status === 'submitted') {
     return 'Submitted'
   } else if (status === 'pending_simplexcc_approval') {
@@ -25,7 +13,7 @@ export function formatStatus (status) {
   return status
 }
 
-export const cancelableFetch = (url, data) => {
+export const cancelableFetch = (url: string, data: any) => {
   let canceled = false
   const promise = new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -50,17 +38,6 @@ export const cancelableFetch = (url, data) => {
     cancel () {
       canceled = true
     }
-  }
-}
-
-// only for buying!
-export const makeFakeBuyRequest = (requestQuoteInfo) => {
-  const exchangeRate = (3500 + Math.random() * 700).toFixed(2)
-
-  if (requestQuoteInfo.destAmount) { // crypto amount defined
-    requestQuoteInfo.sourceAmount = (requestQuoteInfo.destAmount * exchangeRate).toFixed(2)
-  } else {
-    requestQuoteInfo.destAmount = (requestQuoteInfo.sourceAmount / exchangeRate).toFixed(6)
   }
 }
 

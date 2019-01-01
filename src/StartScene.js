@@ -1,5 +1,7 @@
+// @flow
+
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { Component } from 'react'
 import { withStyles } from 'material-ui/styles'
 import Divider from 'material-ui/Divider'
 import Typography from 'material-ui/Typography'
@@ -8,7 +10,16 @@ import './inline.css'
 import { ui, core } from 'edge-libplugin'
 import { PrimaryButton, TertiaryButton, SupportLink } from './components'
 
-const startStyles = (theme) => ({
+type StartSceneState = {
+  wyreAccount: string | null
+}
+
+type StartSceneProps = {
+  history: Object,
+  classes: Object
+}
+
+const startStyles = (theme: Object) => ({
   container: {
     backgroundColor: '#FFF',
     padding: '20px'
@@ -30,7 +41,12 @@ const startStyles = (theme) => ({
   }
 })
 
-const StartHeader = (props) => {
+type HeaderProps = {
+  classes: Object,
+  text?: string
+}
+
+const StartHeader = (props: HeaderProps) => {
   return (
     <Typography variant="headline" component="h3" className={props.classes.h3}>
       {props.text}
@@ -38,12 +54,12 @@ const StartHeader = (props) => {
   )
 }
 
-StartHeader.propTypes = {
-  classes: PropTypes.object,
-  text: PropTypes.string
+type ParagraphProps = {
+  classes: Object,
+  children: any
 }
 
-const StartParagraph = (props) => {
+const StartParagraph = (props: ParagraphProps) => {
   return (
     <Typography component="p" className={props.classes.p}>
       {props.children}
@@ -51,13 +67,9 @@ const StartParagraph = (props) => {
   )
 }
 
-StartParagraph.propTypes = {
-  classes: PropTypes.object.isRequired,
-  children: PropTypes.node.isRequired
-}
 
-class StartScene extends React.Component {
-  constructor (props) {
+class StartScene extends Component<StartSceneProps, StartSceneState> {
+  constructor (props: StartSceneProps) {
     super(props)
     this.state = {
       wyreAccount: null
@@ -74,7 +86,7 @@ class StartScene extends React.Component {
   componentDidMount = async () => {
     try {
       const key = 'wyreAccountId'
-      const wyreAccount = await core.readData(key)
+      const wyreAccount: string = await core.readData(key)
       if (wyreAccount) {
         this.setState({
           wyreAccount
@@ -112,7 +124,8 @@ class StartScene extends React.Component {
   _buy = () => {
     const { wyreAccount } = this.state
     core.debugLevel(0, 'LOGGING routing to /buy/ scene with wyreAccount: ', wyreAccount)
-    this.props.history.push(`/buy/${wyreAccount}`)
+    let wyreAccountSyntax = wyreAccount ? wyreAccount : ''
+    this.props.history.push(`/buy/${wyreAccountSyntax}`)
   }
 
   _sell = () => { // not implemented yet
@@ -168,11 +181,6 @@ class StartScene extends React.Component {
       </div>
     )
   }
-}
-
-StartScene.propTypes = {
-  history: PropTypes.object,
-  classes: PropTypes.object
 }
 
 export default withStyles(startStyles)(StartScene)

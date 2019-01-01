@@ -3,7 +3,6 @@ import React from 'react'
 import { withStyles } from 'material-ui/styles'
 import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
-import Grid from 'material-ui/Grid'
 import Drawer from 'material-ui/Drawer'
 import Dialog, {
   DialogContent,
@@ -11,36 +10,7 @@ import Dialog, {
   DialogTitle
 } from 'material-ui/Dialog'
 import { CircularProgress } from 'material-ui/Progress'
-import { formatRate, formatStatus } from './utils'
-import moment from 'moment'
 import THEME from './constants/themeConstants.js'
-
-const limitStyles = theme => ({
-  p: {
-    fontColor: theme.palette.primary.main,
-    backgroundColor: '#d9e3ec',
-    textAlign: 'center',
-    padding: '10px 0',
-    margin: '5px 0'
-  }
-})
-
-export const DailyLimit = withStyles(limitStyles)((props) => {
-  const {dailyLimit, monthlyLimit, fiat} = props
-  return (
-    <Typography component="p" className={props.classes.p}>
-      Daily Limit: {formatRate(dailyLimit, fiat)} /
-      Monthly Limit: {formatRate(monthlyLimit, fiat)}
-    </Typography>
-  )
-})
-
-DailyLimit.propTypes = {
-  classes: PropTypes.object,
-  dailyLimit: PropTypes.number,
-  monthlyLimit: PropTypes.number,
-  fiat: PropTypes.string
-}
 
 const buttonStyle = {
   textTransform: 'none',
@@ -311,82 +281,4 @@ WalletDrawer.propTypes = {
   onHeaderClick: PropTypes.func,
   onClose: PropTypes.func,
   wallets: PropTypes.array
-}
-
-export const PaymentRow = (props) => {
-  const payment = props.payment
-  const status = formatStatus(payment.status)
-  const fiatAmount = formatRate(
-    payment.fiat_total_amount,
-    payment.fiat_currency)
-  const cryptoAmount = formatRate(
-    payment.requested_digital_amount,
-    payment.requested_digital_currency)
-  const date = moment(payment.created_at)
-  const onClick = () => {
-    if (props.history) {
-      props.history.push(`/events/${payment.payment_id}/`)
-    }
-  }
-  return (
-    <Grid container key={payment.payment_id} onClick={onClick}>
-      <Grid item xs={6} scope="row">
-        <Typography variant="body1">{date.format('LL')}</Typography>
-        <Typography variant="caption">{date.format('LT')}</Typography>
-      </Grid>
-      <Grid item xs={3}>
-        <Typography variant="caption">{fiatAmount} {payment.fiat_currency}</Typography>
-        <Typography variant="caption">{cryptoAmount} {payment.requested_digital_currency}</Typography>
-      </Grid>
-      <Grid item xs={3}>{status}</Grid>
-    </Grid>
-  )
-}
-
-PaymentRow.propTypes = {
-  payment: PropTypes.object,
-  history: PropTypes.object
-}
-
-export const PaymentDetails = (props) => {
-  const payment = props.payment
-  const fiatAmount = formatRate(
-    payment.fiat_total_amount,
-    payment.fiat_currency)
-  const cryptoAmount = formatRate(
-    payment.requested_digital_amount,
-    payment.requested_digital_currency)
-  const date = moment(payment.created_at)
-  return (
-    <Grid container key={payment.payment_id}>
-      <Grid item xs={12}>
-        <Grid container className="header">
-          <Grid item xs={6}><Typography>Payment Id</Typography></Grid>
-          <Grid item xs={6}><Typography>{payment.payment_id}</Typography></Grid>
-        </Grid>
-      </Grid>
-      <Grid item xs={12}>
-        <Grid container className="header">
-          <Grid item xs={6}><Typography>Date</Typography></Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1">{date.format('LL')} {date.format('LT')}</Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-      <Grid item xs={12}>
-        <Grid container className="header">
-          <Grid item xs={6}><Typography>Amount</Typography></Grid>
-          <Grid item xs={6}>
-            <Typography>
-              {fiatAmount} {payment.fiat_currency} / {cryptoAmount} {payment.requested_digital_currency}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-    </Grid>
-  )
-}
-
-PaymentDetails.propTypes = {
-  payment: PropTypes.object
 }

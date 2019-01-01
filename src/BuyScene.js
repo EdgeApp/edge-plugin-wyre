@@ -1,5 +1,7 @@
+// @flow
+
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { Component } from 'react'
 import { withStyles } from 'material-ui/styles'
 import Card, { CardContent } from 'material-ui/Card'
 import Typography from 'material-ui/Typography'
@@ -46,13 +48,23 @@ const buyStyles = theme => ({
   }
 })
 
-class BuyScene extends React.Component {
+type BuySceneProps = {
+  history: Object,
+  classes: Object
+}
+
+type BuySceneState = {
+  drawerOpen: boolean,
+  wallets: any,
+  wyreAccount: string | null,
+  selectedWallet: Object | null,
+  publicAddress: string
+}
+
+class BuyScene extends Component<BuySceneProps, BuySceneState> {
+  sessionsId: string
   constructor (props) {
     super(props)
-    /* sessionId can be regenerated each time we come to this form */
-    this.sessionId = API.sessionId()
-    /* this only needs to persist with an install. localStorage will do */
-    this.uaid = API.installId()
     const wallets = fakeWallets
     this.state = {
       drawerOpen: false,
@@ -73,7 +85,6 @@ class BuyScene extends React.Component {
     core.wallets()
       .then((data) => {
         this.setState({
-          rate: data,
           wallets: data.filter((wallet) =>
             API.SUPPORTED_DIGITAL_CURRENCIES.indexOf(wallet.currencyCode) >= 0)
         }, () => {
@@ -107,6 +118,7 @@ class BuyScene extends React.Component {
 
   onAccept = () => {
     const { selectedWallet, publicAddress, wyreAccount } = this.state
+    if (!selectedWallet) return
     const { currencyCode } = selectedWallet
     const addressPrefix = currencyCode === 'BTC' ? 'bitcoin:' : 'ethereum:'
     try {
@@ -130,12 +142,6 @@ class BuyScene extends React.Component {
     }
   }
 
-  handleClose = () => {
-    this.setState({
-      dialogOpen: false
-    })
-  }
-
   openWallets = () => {
     this.setState({
       drawerOpen: true
@@ -145,15 +151,6 @@ class BuyScene extends React.Component {
   closeWallets = () => {
     this.setState({
       drawerOpen: false
-    })
-  }
-
-  changeDefaultFiat = (event) => {
-    this.setState({
-      defaultFiat: event.target.value,
-      fiat: event.target.value,
-      rate: null,
-      quote: null
     })
   }
 
@@ -233,12 +230,6 @@ class BuyScene extends React.Component {
       </div>
     )
   }
-}
-
-BuyScene.propTypes = {
-  classes: PropTypes.object,
-  history: PropTypes.object,
-  match: PropTypes.any
 }
 
 export default withStyles(buyStyles)(BuyScene)
