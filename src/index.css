@@ -1,0 +1,62 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Source Sans Pro', sans-serif;
+  background-color: #F4F5F6;
+}
+
+html,
+body,
+#root,
+#root > div {
+  height: 100%;
+}
+
+.h-100 {
+  heigth: 100%;
+}
+
+.d-flex {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-fill {
+  flex: 1 1 auto;
+}
+
+.flex-shrink {
+  flex: 0 1 auto;
+}
+
+.empty {
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.header {
+  border-bottom: #ccc solid 1px;
+  padding: 10px 0;
+  margin: 0 1px;
+  text-transform: uppercase;
+}
+
+.body {
+  overflow-y: scroll;
+}
+
+.body > div {
+  margin: 0 1px;
+  padding: 10px 5px;
+}
+
+.body > div:nth-child(odd) {
+  background-color: #eee;
+}
+
+.address {
+  overflow-wrap: "break-word";
+  word-wrap: "break-word";
+  flex-wrap: "wrap";
+}
