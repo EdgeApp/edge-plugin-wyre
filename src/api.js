@@ -3,7 +3,6 @@ import React from 'react'
 import uuidv1 from 'uuid/v1'
 import { core } from 'edge-libplugin'
 import { API_URL } from './env.js'
-import { cancelableFetch } from './utils'
 
 export const PROVIDER = 'edge'
 export const API_VERSION = '1'
@@ -88,75 +87,6 @@ export function installId () {
   const id = window.localStorage.getItem('simplex_install_id') || uuidv1()
   window.localStorage.setItem('simplex_install_id', id)
   return id
-}
-
-export async function requestConfirm (sessionId, uaid, quote) {
-  const userId = await getUserId()
-  const body = {
-    'account_details': {
-      'app_provider_id': PROVIDER,
-      'app_version_id': API_VERSION,
-      'app_end_user_id': userId,
-      'signup_login': {
-        'ip': '4.30.5.194',
-        'uaid': uaid,
-        'accept_language': ACCEPT_LANGUAGE,
-        'http_accept_language': HTTP_ACCEPT,
-        'user_agent': window.navigator.userAgent,
-        'cookie_session_id': sessionId,
-        'timestamp': new Date().toISOString()
-      }
-    },
-    'transaction_details': {
-      'payment_details': {
-        'quote_id': quote.quote_id,
-        'payment_id': quote.payment_id,
-        'order_id': quote.order_id,
-        'fiat_total_amount': {
-          'currency': quote.fiat_total_amount_currency,
-          'amount': quote.fiat_total_amount_amount
-        },
-        'requested_digital_amount': {
-          'currency': quote.digital_currency,
-          'amount': quote.digital_amount
-        },
-        'destination_wallet': {
-          'currency': quote.digital_currency,
-          'address': quote.address
-        },
-        'original_http_ref_url': 'https://www.edge.app/'
-      }
-    }
-  }
-  const data = {
-    // signal: abortController.signal,
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(body)
-  }
-  lastRequest = cancelableFetch(edgeUrl + '/partner/data', data)
-  return lastRequest.promise
-}
-
-export async function requestQuote () {
-  const userId = await getUserId()
-  // Abort any active requests
-  requestAbort()
-  const data = {
-    // signal: abortController.signal,
-    method: 'GET',
-    mode: 'no-cors', // no-cors, cors, *same-origin
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    }
-  }
-  // Issue a new request
-  lastRequest = cancelableFetch(`${API_URL}rates`, data)
-  return lastRequest.promise
 }
 
 export async function payments () {
