@@ -155,7 +155,6 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
       <div className={classes.container}>
         <div className="text-center">
           <div className="iconLogo" />
-          Am I in here?
         </div>
         <div>
           <StartHeader text="Wyre" classes={classes} />
