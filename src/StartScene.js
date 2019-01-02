@@ -86,6 +86,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
 
   getAccountId = async () => {
     try {
+      core.debugLevel(0, 'LOGGING inside of StartScene getAccountId')          
       const key = 'wyreAccountId'
       const wyreAccount: string = await core.readData(key)
       if (wyreAccount) {
@@ -102,7 +103,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
           this.setState({
             wyreAccount: accountId
           })
-          core.debugLevel(0, 'LOGGING accountId properly set')          
+          core.debugLevel(0, 'LOGGING accountId properly set in StartScene')          
         } else {
           core.debugLevel(0, 'LOGGING Trouble setting wyre account')
         }
