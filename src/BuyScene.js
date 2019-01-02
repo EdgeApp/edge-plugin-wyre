@@ -73,6 +73,8 @@ class BuyScene extends Component<BuySceneProps, BuySceneState> {
       selectedWallet: null,
       publicAddress: ''
     }
+    let wyreAccountSyntax = props.match.params.accountId ? props.match.params.accountId : 'null'
+    core.debugLevel(0, 'LOGGING BuyScene constructor, wyreAccountis: properly set' + wyreAccountSyntax)    
   }
 
   componentDidMount = async () => {
