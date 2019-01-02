@@ -81,9 +81,10 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
     window.scrollTo(0, 0)
     window.localStorage.removeItem('last_crypto_amount')
     window.localStorage.removeItem('last_fiat_amount')
+    this.getAccountId()
   }
 
-  componentDidMount = async () => {
+  getAccountId = async () => {
     try {
       const key = 'wyreAccountId'
       const wyreAccount: string = await core.readData(key)
@@ -101,6 +102,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
           this.setState({
             wyreAccount: accountId
           })
+          core.debugLevel(0, 'LOGGING accountId properly set')          
         } else {
           core.debugLevel(0, 'LOGGING Trouble setting wyre account')
         }
@@ -115,6 +117,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
         this.setState({
           wyreAccount: accountId
         })
+        core.debugLevel(0, 'LOGGING accountId properly set')        
       } else {
         core.debugLevel(0, 'LOGGING Trouble setting wyre account after not existing')
       }
@@ -123,8 +126,8 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
 
   _buy = () => {
     const { wyreAccount } = this.state
-    core.debugLevel(0, 'LOGGING routing to /buy/ scene with wyreAccount: ', wyreAccount)
     let wyreAccountSyntax = wyreAccount ? wyreAccount : 'null'
+    core.debugLevel(0, 'LOGGING routing to /buy/ scene with wyreAccount: ' + wyreAccountSyntax)
     this.props.history.push(`/buy/${wyreAccountSyntax}`)
   }
 
