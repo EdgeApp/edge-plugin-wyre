@@ -137,6 +137,7 @@ class BuyScene extends Component<BuySceneProps, BuySceneState> {
           dest: `${addressPrefix}${publicAddress}`
         }
       })
+      core.debugLevel(0, 'Opening widget, currencyCode is: ' + currencyCode)      
       widget.open()
       setTimeout(() => this.props.history.goBack(), 2000)
     } catch (e) {
@@ -160,8 +161,6 @@ class BuyScene extends Component<BuySceneProps, BuySceneState> {
     if (!wallet || !wallet.id) {
       return
     }
-    /* Check if this wallets fiat currency is supported */
-    /* If we don't support this wallet's currency switch to the default */
     this.closeWallets()
     const response = await core.getAddress(wallet.id, wallet.currencyCode)
     this.setState({
