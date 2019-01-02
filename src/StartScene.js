@@ -88,7 +88,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
     try {
       core.debugLevel(0, 'LOGGING inside of StartScene getAccountId')          
       const key = 'wyreAccountId'
-      const wyreAccount: string = await core.readData(key)
+      const wyreAccount = await core.readData(key)
       core.debugLevel(0, 'Readdata for wyreAccount is: ' + wyreAccount)      
       if (wyreAccount) {
         this.setState({
@@ -99,15 +99,16 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
         const accountId = genRandomString(32)
         const key = 'wyreAccountId'
         const value = accountId
+        core.debugLevel(0, 'about to write data, key is: ' + key + ' and value is: ' + value)        
         const success = await core.writeData(key, value)
         core.debugLevel(0, 'else clause success value is: ' + success)
         if (success) {
           this.setState({
             wyreAccount: accountId
           })
-          core.debugLevel(0, 'LOGGING accountId properly set in StartScene')          
+          core.debugLevel(0, 'accountId properly set in StartScene')          
         } else {
-          core.debugLevel(0, 'LOGGING Trouble setting wyre account')
+          core.debugLevel(0, 'Trouble setting wyre account')
         }
       }
     } catch (e) {
