@@ -124,7 +124,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
   _buy = () => {
     const { wyreAccount } = this.state
     core.debugLevel(0, 'LOGGING routing to /buy/ scene with wyreAccount: ', wyreAccount)
-    let wyreAccountSyntax = wyreAccount ? wyreAccount : ''
+    let wyreAccountSyntax = wyreAccount ? wyreAccount : 'null'
     this.props.history.push(`/buy/${wyreAccountSyntax}`)
   }
 
