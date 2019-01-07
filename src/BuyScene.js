@@ -196,7 +196,7 @@ class BuyScene extends Component<BuySceneProps, BuySceneState> {
         <Card className={classes.card}>
           <CardContent>
             <Typography component='p' className={classes.p}>
-              Please be aware that account verification may several days.
+              Please be aware that account verification may take a few days.
             </Typography>
             {selectedWallet ? (
               <PrimaryButton
