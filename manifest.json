@@ -1,7 +1,7 @@
 {
   "pluginId": "co.edgesecure.wyre",
-  "name": "Buy Crypto with Wyre",
-  "subtitle": "Buy crypto with your bank account with Wyre.",
+  "name": "Wyre",
+  "subtitle": "Buy crypto with your bank account.",
   "provider": "Edge Wallet",
   "iconUrl": "http://edge.app/wp-content/uploads/2018/12/wyre-logo-square.png",
   "environment": {
