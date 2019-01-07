@@ -161,13 +161,6 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
         </div>
         <Divider className={classes.divider} />
         <div>
-          <StartHeader text="Time" classes={classes} />
-          <StartParagraph classes={classes}>
-            Estimated transaction time is about 10-30min.
-          </StartParagraph>
-        </div>
-        <Divider className={classes.divider} />
-        <div>
           <StartHeader text="Support" classes={classes} />
           <StartParagraph classes={classes}>
             For support, please contact <SupportLink />.
