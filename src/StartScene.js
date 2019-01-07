@@ -169,7 +169,6 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
         <Divider className={classes.divider} />
         <div>
           <PrimaryButton onClick={this._buy}>Buy</PrimaryButton>
-          <TertiaryButton onClick={this._gotoEvents}>Transactions</TertiaryButton>
         </div>
       </div>
     )
