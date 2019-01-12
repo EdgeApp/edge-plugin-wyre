@@ -138,7 +138,7 @@ class BuyScene extends Component<BuySceneProps, BuySceneState> {
       widget.open()
       setTimeout(() => this.props.history.goBack(), 2000)
     } catch (e) {
-      core.debugLevel(0, 'Opening widget error is: ' + publicAddress)
+      core.debugLevel(0, 'Opening widget error is: ' + e)
     }
   }
 
