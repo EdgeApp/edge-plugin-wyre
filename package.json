@@ -1,6 +1,6 @@
 {
-  "name": "edge-plugin-simplex",
-  "version": "0.0.3",
+  "name": "edge-plugin-wyre",
+  "version": "0.1.1",
   "private": true,
   "devDependencies": {
     "babel-eslint": "^7.1.1",

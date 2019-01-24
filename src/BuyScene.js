@@ -123,8 +123,8 @@ class BuyScene extends Component<BuySceneProps, BuySceneState> {
     const addressPrefix = currencyCode === 'BTC' ? 'bitcoin:' : 'ethereum:'
     try {
       const widget = new window.Wyre.Widget({
-        env: 'prod',
-        accountId: 'SK-XTEA2PLV-7MJX7P7A-PY296XEL-MB6DMYYL',
+        env: 'production',
+        accountId: 'AC-FJN8L976EW4',
         auth: {
           type: 'secretKey',
           secretKey: wyreAccount
