@@ -1,7 +1,7 @@
 {
   "pluginId": "co.edgesecure.wyre",
   "name": "Wyre",
-  "subtitle": "Buy crypto with your bank account.",
+  "subtitle": "Buy crypto with your credit card\nBTC, BCH, ETH, XRP, and LTC\nFees 6%. 10-30 minute settlement",
   "provider": "Edge Wallet",
   "iconUrl": "http://edge.app/wp-content/uploads/2019/01/wyre-logo-square-small.png",
   "environment": {
