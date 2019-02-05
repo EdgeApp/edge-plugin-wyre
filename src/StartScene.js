@@ -90,6 +90,8 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
       if (wyreAccount) {
         this.setState({
           wyreAccount
+        }, () => {
+          this.checkIfSplashPageHidden()
         })
       } else {
         // this code may never get executed
@@ -100,6 +102,9 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
         if (success) {
           this.setState({
             wyreAccount: accountId
+          }, () => {
+            core.writeData('isWyreSplashHidden', false)
+            core.debugLevel(0, 'LOGGING Setting isWyreSplashHidden to false')            
           })
         } else {
           core.debugLevel(0, 'LOGGING Trouble setting wyre account')
@@ -118,6 +123,20 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
       } else {
         core.debugLevel(0, 'LOGGING Trouble setting wyre account after not existing')
       }
+    }
+  }
+
+  checkIfSplashPageHidden = async () => {
+    try {
+      const isWyreSplashHiddenKey = 'isWyreSplashHidden'
+      const isWyreSplashHidden: boolean = await core.readData(isWyreSplashHiddenKey)
+      core.debugLevel(0, 'LOGGING isWyreSplashHidden is: ', isWyreSplashHidden)      
+      if (isWyreSplashHidden) {
+        this._buy()
+      }
+    } catch (e) {
+      core.debugLevel(0, 'LOGGING Unable to read Wyre splash page visited, setting value')
+      core.writeData('isWyreSplashHidden', false)
     }
   }
 
@@ -146,6 +165,19 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
     })
     widget.open()
   }
+
+  hideSplashPage = async () => {
+    const key = 'isWyreSplashHidden'
+    const value = true
+    try {
+      const success = await core.writeData(key, value)
+      core.debugLevel(0, 'LOGGING setting isWyreSplashHidden to true')
+      this._buy()
+    } catch (e) {
+      core.debugLevel(0, 'LOGGING error during setting isWyreSplashHidden to true')
+    }
+  }
+
   render () {
     const classes = this.props.classes
     return (
@@ -187,6 +219,9 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
         <Divider className={classes.divider} />
         <div>
           <PrimaryButton onClick={this._buy}>Buy</PrimaryButton>
+        </div>
+        <div>
+          <TertiaryButton onClick={this.hideSplashPage}>Don't Show Again</TertiaryButton>
         </div>
       </div>
     )
