@@ -75,7 +75,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
       wyreAccount: null
     }
   }
-  
+
   UNSAFE_componentWillMount = async () => {
     ui.title('Buy with Wyre')
     window.scrollTo(0, 0)
@@ -174,7 +174,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
         <div>
           <StartHeader text="Time" classes={classes} />
           <StartParagraph classes={classes}>
-            Initial account verification usually takes 1 business day and transactions settle in about 3 business days.
+            Initial account verification usually takes 1 business day and transactions settle in 3-5 business days.
           </StartParagraph>
         </div>
         <Divider className={classes.divider} />
