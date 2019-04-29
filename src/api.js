@@ -2,7 +2,6 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import uuidv1 from 'uuid/v1'
 import { core } from 'edge-libplugin'
-import { API_URL } from './env.js'
 
 export const PROVIDER = 'edge'
 export const API_VERSION = '1'

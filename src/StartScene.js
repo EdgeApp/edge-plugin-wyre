@@ -9,9 +9,10 @@ import { genRandomString } from './utils.js'
 import './inline.css'
 import { ui, core } from 'edge-libplugin'
 import { PrimaryButton, TertiaryButton, SupportLink } from './components'
+import { API_URL, KEY } from './env.js'
 
 type StartSceneState = {
-  wyreAccount: string | null
+  wyreAccountId: string | null
 }
 
 type StartSceneProps = {
@@ -72,7 +73,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
   constructor (props: StartSceneProps) {
     super(props)
     this.state = {
-      wyreAccount: null
+      wyreAccountId: null
     }
   }
 
@@ -86,11 +87,18 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
   componentDidMount = async () => {
     try {
       const key = 'wyreAccountId'
-      const wyreAccount: string = await core.readData(key)
-      if (wyreAccount) {
+      const wyreAccountId: string = await core.readData(key)
+      if (wyreAccountId) { // if an account exists
         this.setState({
-          wyreAccount
+          wyreAccountId
         })
+        const getAccountResponse = await fetch(`${API_URL}account/${wyreAccountId}`, {
+          header: {
+            'Authorization': `Bearer ${KEY}`
+          }
+        })
+        const getAccountData = await getAccountResponse.json()
+        core.debugLevel(0, 'LOGGING getAccountData is: ', getAccountData)
       } else {
         // this code may never get executed
         const accountId = genRandomString(32)
@@ -99,7 +107,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
         const success = await core.writeData(key, value)
         if (success) {
           this.setState({
-            wyreAccount: accountId
+            wyreAccountId: accountId
           })
         } else {
           core.debugLevel(0, 'LOGGING Trouble setting wyre account')
@@ -113,7 +121,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
       const success = await core.writeData(key, value)
       if (success) {
         this.setState({
-          wyreAccount: accountId
+          wyreAccountId: accountId
         })
       } else {
         core.debugLevel(0, 'LOGGING Trouble setting wyre account after not existing')
@@ -121,31 +129,19 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
     }
   }
 
+  // io.console.info
+
   _buy = () => {
-    const { wyreAccount } = this.state
-    core.debugLevel(0, 'LOGGING routing to /buy/ scene with wyreAccount: ', wyreAccount)
-    let wyreAccountSyntax = wyreAccount ? wyreAccount : ''
+    const { wyreAccountId } = this.state
+    core.debugLevel(0, 'LOGGING routing to /buy/ scene with wyreAccountId: ', wyreAccountId)
+    let wyreAccountSyntax = wyreAccountId ? wyreAccountId : ''
     this.props.history.push(`/buy/${wyreAccountSyntax}`)
   }
 
   _sell = () => { // not implemented yet
     this.props.history.push('/sell/')
   }
-  _gotoEvents = () => {
-    const { wyreAccount } = this.state
-    const widget = new window.Wyre.Widget({
-      env: 'production',
-      accountId: 'AC-FJN8L976EW4',
-      auth: {
-        type: 'secretKey',
-        secretKey: wyreAccount
-      },
-      operation: {
-        type: 'onramp'
-      }
-    })
-    widget.open()
-  }
+
   render () {
     const classes = this.props.classes
     return (
