@@ -9,10 +9,12 @@ import { genRandomString } from './utils.js'
 import './inline.css'
 import { ui, core } from 'edge-libplugin'
 import { PrimaryButton, TertiaryButton, SupportLink } from './components'
-import { API_URL, KEY } from './env.js'
+import { API_URL, KEY, FAKE_DEVICE_TOKEN, FAKE_USER_ID, ENVIRONMENT } from './env.js'
+
 
 type StartSceneState = {
-  wyreAccountId: string | null
+  wyreAccountId: string | null,
+  account: null | Object
 }
 
 type StartSceneProps = {
@@ -72,8 +74,10 @@ const StartParagraph = (props: ParagraphProps) => {
 class StartScene extends Component<StartSceneProps, StartSceneState> {
   constructor (props: StartSceneProps) {
     super(props)
+    console.log('inside constructor')
     this.state = {
-      wyreAccountId: null
+      wyreAccountId: null,
+      account: null
     }
   }
 
@@ -85,36 +89,16 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
   }
 
   componentDidMount = async () => {
+    let wyreAccountId
+    const accountIdKey = 'wyreAccountId'
+    const wyreIdentifier = 'wyreIdentifier'
     try {
-      const key = 'wyreAccountId'
-      const wyreAccountId: string = await core.readData(key)
-      if (wyreAccountId) { // if an account exists
-        this.setState({
-          wyreAccountId
-        })
-        const getAccountResponse = await fetch(`${API_URL}account/${wyreAccountId}`, {
-          header: {
-            'Authorization': `Bearer ${KEY}`
-          }
-        })
-        const getAccountData = await getAccountResponse.json()
-        core.debugLevel(0, 'LOGGING getAccountData is: ', getAccountData)
-      } else {
-        // this code may never get executed
-        const accountId = genRandomString(32)
-        const key = 'wyreAccountId'
-        const value = accountId
-        const success = await core.writeData(key, value)
-        if (success) {
-          this.setState({
-            wyreAccountId: accountId
-          })
-        } else {
-          core.debugLevel(0, 'LOGGING Trouble setting wyre account')
-        }
-      }
+      wyreAccountId = await core.readData(accountIdKey)
+      core.debugLevel(0, `1 LOGGING wyreAccountId exists and is: ${wyreAccountId}`)
+      console.log(`2 LOGGING wyreAccountId exists and is: ${wyreAccountId}`)
     } catch (e) {
-      core.debugLevel(0, 'LOGGING Trouble getting wyre account (does not exist?)')
+      core.debugLevel(0, `8 LOGGING Trouble getting wyre account (does not exist?), error: ${JSON.stringify(e)}`)
+      console.log(`LOGGING Trouble getting wyre account (does not exist?), error: ${JSON.stringify(e)}`)
       const accountId = genRandomString(32)
       const key = 'wyreAccountId'
       const value = accountId
@@ -124,7 +108,33 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
           wyreAccountId: accountId
         })
       } else {
-        core.debugLevel(0, 'LOGGING Trouble setting wyre account after not existing')
+        core.debugLevel(0, '9 LOGGING Trouble setting wyre account after not existing')
+        console.log('LOGGING Trouble setting wyre account after not existing')
+      }
+    }
+    if (wyreAccountId) { // if an account exists
+      this.setState({
+        wyreAccountId
+      })
+      // wyreAccountId is a misnomer
+      console.log('wyreAccountId is: ', wyreAccountId)
+      const actualAccountId = await core.readData(wyreIdentifier)
+      console.log('actualAccountId: ', actualAccountId)
+      core.debugLevel(0, `3 LOGGING actualAccountId exists and is: ${actualAccountId}`)
+      if (actualAccountId) {
+        const getAccountResponse = await fetch(`${API_URL}accounts/${actualAccountId}`, {
+          headers: {
+            'Authorization': `Bearer ${wyreAccountId}`
+          }
+        })
+        core.debugLevel(0, `4 LOGGING getAccountResponse is: ${JSON.stringify(getAccountResponse)}`)
+        console.log(`LOGGING getAccountResponse is: ${JSON.stringify(getAccountResponse)}`)
+        const account = await getAccountResponse.json()
+        this.setState({
+          account
+        })
+        core.debugLevel(0, `5 LOGGING getAccountData is: ${JSON.stringify(account)}`)
+        console.log(`LOGGING getAccountData is: ${JSON.stringify(account)}`)
       }
     }
   }
@@ -132,14 +142,14 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
   // io.console.info
 
   _buy = () => {
-    const { wyreAccountId } = this.state
-    core.debugLevel(0, 'LOGGING routing to /buy/ scene with wyreAccountId: ', wyreAccountId)
+    const wyreAccountId =this.state.wyreAccountId
+    core.debugLevel(0, `LOGGING routing to /buy/ scene with wyreAccountId: ${wyreAccountId}`)
+    console.log(`LOGGING routing to /buy/ scene with wyreAccountId: ${wyreAccountId}`)
     let wyreAccountSyntax = wyreAccountId ? wyreAccountId : ''
-    this.props.history.push(`/buy/${wyreAccountSyntax}`)
-  }
-
-  _sell = () => { // not implemented yet
-    this.props.history.push('/sell/')
+    this.props.history.push({
+      pathname: `/buy/${wyreAccountSyntax}`,
+      account: this.state.account
+    })
   }
 
   render () {
@@ -159,12 +169,12 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
         <div>
           <StartHeader text="Fee" classes={classes} />
           <StartParagraph classes={classes}>
-          The following fees are applied for buying and selling cryptocurrency with Wyre:
-            <ul className={classes.feeList}>
-              <li>Edge Wallet 0.5%</li>
-              <li>Wyre 0.5%</li>
-            </ul>
+            The following fees are applied for buying and selling cryptocurrency with Wyre:
           </StartParagraph>
+          <ul className={classes.feeList}>
+            <li>Edge Wallet 0.5%</li>
+            <li>Wyre 0.5%</li>
+          </ul>
         </div>
         <Divider className={classes.divider} />
         <div>

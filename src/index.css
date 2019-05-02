@@ -60,3 +60,25 @@ body,
   word-wrap: "break-word";
   flex-wrap: "wrap";
 }
+
+.pending-container {
+  padding: 20px;
+  background-color: #FFF;
+}
+
+.pending-header {
+  color: #0e4b75;
+  padding: 5px 0;
+  font-size: 17pt;
+  font-weight: 400;
+  font-family: 'Source Sans Pro', sans-serif !important;
+  line-height: 1.35417em;
+}
+
+.pending-body {
+  font-size: 14pt;
+  color: rgba(0, 0, 0, 0.87);
+  font-weight: 400;
+  font-family: 'Source Sans Pro', sans-serif !important;
+  line-height: 1.46429em;
+}

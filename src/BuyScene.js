@@ -6,7 +6,6 @@ import { withStyles } from 'material-ui/styles'
 import Card, { CardContent } from 'material-ui/Card'
 import Typography from 'material-ui/Typography'
 import { core, ui } from 'edge-libplugin'
-import fakeWallets from './fake/wallets.js'
 import * as API from './api'
 import {
   Support,
@@ -15,8 +14,30 @@ import {
   PrimaryButton,
   SecondaryButton
 } from './components'
+import { EDGE_ACCOUNT_ID, INITIAL_WALLETS, WYRE_ENV, ENVIRONMENT } from './env.js'
 
 import './inline.css'
+
+const StartHeader = (props: HeaderProps) => {
+  return (
+    <Typography variant="headline" component="h3" className={props.classes.h3}>
+      {props.text}
+    </Typography>
+  )
+}
+
+type ParagraphProps = {
+  classes: Object,
+  children: any
+}
+
+const StartParagraph = (props: ParagraphProps) => {
+  return (
+    <Typography component="p" className={props.classes.p}>
+      {props.children}
+    </Typography>
+  )
+}
 
 const buyStyles = theme => ({
   card: {
@@ -65,7 +86,8 @@ class BuyScene extends Component<BuySceneProps, BuySceneState> {
   sessionsId: string
   constructor (props) {
     super(props)
-    const wallets = fakeWallets
+    console.log('inside BuyScene constructor')
+    const wallets = INITIAL_WALLETS
     this.state = {
       drawerOpen: false,
       wallets: wallets,
@@ -78,7 +100,7 @@ class BuyScene extends Component<BuySceneProps, BuySceneState> {
   componentDidMount = async () => {
     // string given to wyre to identify this specific user
     window.scrollTo(0, 0)
-    this.loadWallets()
+    if (ENVIRONMENT === 'production') this.loadWallets()
   }
 
   loadWallets = () => {
@@ -123,10 +145,10 @@ class BuyScene extends Component<BuySceneProps, BuySceneState> {
     const addressPrefix = currencyCode === 'BTC' ? 'bitcoin:' : 'ethereum:'
     try {
       const widget = new window.Wyre.Widget({
-        env: 'production',
-        accountId: 'AC-FJN8L976EW4',
+        env: WYRE_ENV,
+        accountId: EDGE_ACCOUNT_ID,
         auth: {
-          type: 'secretKey',
+          "type": "secretKey",
           secretKey: wyreAccount
         },
         operation: {
@@ -135,10 +157,29 @@ class BuyScene extends Component<BuySceneProps, BuySceneState> {
           dest: `${addressPrefix}${publicAddress}`
         }
       })
+      widget.on('account', function (data) {
+        core.debugLevel(0, `LOGGING Wyre account accesssed: ${JSON.stringify(data)}`)
+        console.log(`LOGGING Wyre account accesssed: ${JSON.stringify(data)}`)
+        const key = 'wyreIdentifier'
+        const value = data.accountId
+        const success = core.writeData(key, data.accountId)
+      })
+      widget.on('complete', function (data) {
+        core.debugLevel(0, `LOGGING Wyre account completed: ${JSON.stringify(data)}`)
+        console.log(`LOGGING Wyre account completed: ${JSON.stringify(data)}`)
+        const key = 'wyreIdentifier'
+        const value = data.accountId
+        const success = core.writeData(key, data.accountId)
+      })
+      widget.on('ready', function(e) {
+        core.debugLevel(0, `LOGGING widget on-ready`)
+        console.log(`LOGGING widget on-ready`)
+      })
       widget.open()
       setTimeout(() => this.props.history.goBack(), 2000)
     } catch (e) {
       core.debugLevel(0, 'Opening widget error is: ' + e)
+      console.log('Opening widget error is: ' + e)
     }
   }
 
@@ -161,17 +202,30 @@ class BuyScene extends Component<BuySceneProps, BuySceneState> {
     /* Check if this wallets fiat currency is supported */
     /* If we don't support this wallet's currency switch to the default */
     this.closeWallets()
-    const response = await core.getAddress(wallet.id, wallet.currencyCode)
+    let publicAddress
+    if (ENVIRONMENT === 'production') {
+      const coreAddress = await core.getAddress(wallet.id, wallet.currencyCode)
+      publicAddress = coreAddress.address.publicAddress
+    } else {
+      const selectedWallet = this.state.wallets.find(edgeWallet => (wallet.currencyCode === edgeWallet.currencyCode) && (wallet.id === edgeWallet.id))
+      publicAddress = selectedWallet.address.publicAddress
+    }
+    core.debugLevel(0, `LOGGING wallet address is: ${JSON.stringify(publicAddress)}`)
+    core.debugLevel(0, `LOGGING selected wallet is: ${JSON.stringify(wallet)}`)
+
     this.setState({
       selectedWallet: wallet,
-      publicAddress: response.address.publicAddress
+      publicAddress: publicAddress
     })
     ui.title(`Buy ${wallet.currencyCode}`)
     window.localStorage.setItem('last_wallet', wallet.id)
   }
 
   render () {
-    const { classes } = this.props
+    const { classes, location } = this.props
+    if (location && location.account && location.account.status === 'PENDING') {
+      return this.renderPending()
+    }
     const { selectedWallet, publicAddress } = this.state
     return (
       <div>
@@ -227,6 +281,23 @@ class BuyScene extends Component<BuySceneProps, BuySceneState> {
           onHeaderClick={this.closeWallets}
           onClose={this.closeWallets}
           wallets={this.state.wallets} />
+      </div>
+    )
+  }
+
+  renderPending = () => {
+    return (
+      <div className={'pending-container'}>
+        <div>
+          <h3 className={'pending-header'}>Account Verification Pending</h3>
+          <p className={'pending-body'}>
+            Your account verification is currently pending. This process typically takes a few days. Thank you for your patience.
+          </p>
+          <br />
+          <div>
+            <PrimaryButton onClick={this.props.history.goBack}>Back</PrimaryButton>
+          </div>
+        </div>
       </div>
     )
   }
