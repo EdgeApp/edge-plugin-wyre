@@ -1,5 +1,4 @@
 import fakeWallets from './fake/wallets.js'
-import { core } from 'edge-libplugin'
 
 export const ENVIRONMENT = process.env.NODE_ENV
 const API_DOMAIN = ENVIRONMENT === `production` ? `sendwyre` : `testwyre`
@@ -14,4 +13,4 @@ export const FAKE_USER_ID = `AC_XUR8VF7PAUR` // AC_XUR8VF7PAUR
 export const INITIAL_WALLETS = ENVIRONMENT === 'production' ? [] : fakeWallets
 export const WYRE_ENV = ENVIRONMENT === 'production' ? 'prod' : 'test'
 console.log(`LOGGING env.js says environment is: ${ENVIRONMENT}`)
-core.debugLevel(0, `LOGGING env.js says environment is: ${ENVIRONMENT}`)
+// core.debugLevel(0, `LOGGING env.js says environment is: ${ENVIRONMENT}`)

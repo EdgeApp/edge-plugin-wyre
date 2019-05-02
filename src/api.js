@@ -58,9 +58,9 @@ export async function getUserId () {
   let inCore = true
   try {
     id = await core.readData('simplex_user_id')
-    core.debugLevel(0, 'Found user key in core')
+    // core.debugLevel(0, 'Found user key in core')
   } catch (e) {
-    core.debugLevel(0, 'No existing key in core')
+    // core.debugLevel(0, 'No existing key in core')
     inCore = false
   }
   if (!id) {
@@ -68,14 +68,14 @@ export async function getUserId () {
   }
   if (!id) {
     id = uuidv1()
-    core.debugLevel(0, 'Generating id "' + id + "' ")
+    // core.debugLevel(0, 'Generating id "' + id + "' ")
   }
   if (!inCore) {
     try {
       await core.writeData('simplex_user_id', id)
-      core.debugLevel(0, 'Wrote key to core')
+      // core.debugLevel(0, 'Wrote key to core')
     } catch (e) {
-      core.debugLevel(0, 'Unable to write key to core. Storing in localStorage')
+      // core.debugLevel(0, 'Unable to write key to core. Storing in localStorage')
       window.localStorage.setItem('simplex_user_id', id)
     }
   }

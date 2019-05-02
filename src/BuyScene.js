@@ -14,7 +14,7 @@ import {
   PrimaryButton,
   SecondaryButton
 } from './components'
-import { EDGE_ACCOUNT_ID, INITIAL_WALLETS, WYRE_ENV, ENVIRONMENT } from './env.js'
+import { EDGE_ACCOUNT_ID, INITIAL_WALLETS, WYRE_ENV, ENVIRONMENT, API_URL } from './env.js'
 
 import './inline.css'
 
@@ -79,21 +79,23 @@ type BuySceneState = {
   wallets: any,
   wyreAccount: string | null,
   selectedWallet: Object | null,
-  publicAddress: string
+  publicAddress: string,
+  accountStatus: string
 }
 
 class BuyScene extends Component<BuySceneProps, BuySceneState> {
   sessionsId: string
   constructor (props) {
     super(props)
-    console.log('inside BuyScene constructor')
+  // console.log('inside BuyScene constructor')
     const wallets = INITIAL_WALLETS
     this.state = {
       drawerOpen: false,
       wallets: wallets,
-      wyreAccount: props.match.params.accountId || null,
+      wyreAccount: props.match.params.accountId,
       selectedWallet: null,
-      publicAddress: ''
+      publicAddress: '',
+      accountStatus: (props.location && props.location.account && props.location.account.status) || ''
     }
   }
 
@@ -158,28 +160,41 @@ class BuyScene extends Component<BuySceneProps, BuySceneState> {
         }
       })
       widget.on('account', function (data) {
-        core.debugLevel(0, `LOGGING Wyre account accesssed: ${JSON.stringify(data)}`)
-        console.log(`LOGGING Wyre account accesssed: ${JSON.stringify(data)}`)
+        // core.debugLevel(0, `LOGGING Wyre account accesssed: ${JSON.stringify(data)}`)
+      // console.log(`LOGGING Wyre account accesssed: ${JSON.stringify(data)}`)
         const key = 'wyreIdentifier'
         const value = data.accountId
         const success = core.writeData(key, data.accountId)
       })
-      widget.on('complete', function (data) {
-        core.debugLevel(0, `LOGGING Wyre account completed: ${JSON.stringify(data)}`)
-        console.log(`LOGGING Wyre account completed: ${JSON.stringify(data)}`)
+      widget.on('complete', async (data) => {
+        // core.debugLevel(0, `LOGGING X Wyre account completed: ${JSON.stringify(data)}`)
+      // console.log(`LOGGING Wyre account completed: ${JSON.stringify(data)}`)
         const key = 'wyreIdentifier'
         const value = data.accountId
-        const success = core.writeData(key, data.accountId)
+        const success = await core.writeData(key, value)
+        const getAccountResponse = await fetch(`${API_URL}accounts/${value}`, {
+          headers: {
+            'Authorization': `Bearer ${this.state.wyreAccount}`
+          }
+        })
+        // core.debugLevel(0, `y LOGGING getAccountResponse is: ${JSON.stringify(getAccountResponse)}`)
+      // console.log(`LOGGING getAccountResponse is: ${JSON.stringify(getAccountResponse)}`)
+        const account = await getAccountResponse.json()
+        // core.debugLevel(0, `z LOGGING account is: ${JSON.stringify(account)}`)
+      // console.log(`LOGGING account is: ${JSON.stringify(account)}`)
+        this.setState({
+          accountStatus: account.status
+        })
       })
       widget.on('ready', function(e) {
-        core.debugLevel(0, `LOGGING widget on-ready`)
-        console.log(`LOGGING widget on-ready`)
+        // core.debugLevel(0, `LOGGING widget on-ready`)
+      // console.log(`LOGGING widget on-ready`)
       })
       widget.open()
       setTimeout(() => this.props.history.goBack(), 2000)
     } catch (e) {
-      core.debugLevel(0, 'Opening widget error is: ' + e)
-      console.log('Opening widget error is: ' + e)
+      // core.debugLevel(0, 'Opening widget error is: ' + e)
+    // console.log('Opening widget error is: ' + e)
     }
   }
 
@@ -210,8 +225,8 @@ class BuyScene extends Component<BuySceneProps, BuySceneState> {
       const selectedWallet = this.state.wallets.find(edgeWallet => (wallet.currencyCode === edgeWallet.currencyCode) && (wallet.id === edgeWallet.id))
       publicAddress = selectedWallet.address.publicAddress
     }
-    core.debugLevel(0, `LOGGING wallet address is: ${JSON.stringify(publicAddress)}`)
-    core.debugLevel(0, `LOGGING selected wallet is: ${JSON.stringify(wallet)}`)
+    // core.debugLevel(0, `LOGGING wallet address is: ${JSON.stringify(publicAddress)}`)
+    // core.debugLevel(0, `LOGGING selected wallet is: ${JSON.stringify(wallet)}`)
 
     this.setState({
       selectedWallet: wallet,
@@ -222,8 +237,8 @@ class BuyScene extends Component<BuySceneProps, BuySceneState> {
   }
 
   render () {
-    const { classes, location } = this.props
-    if (location && location.account && location.account.status === 'PENDING') {
+    const { classes } = this.props
+    if (this.state.accountStatus === 'PENDING') {
       return this.renderPending()
     }
     const { selectedWallet, publicAddress } = this.state
