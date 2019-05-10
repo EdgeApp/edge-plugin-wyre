@@ -1,22 +1,24 @@
 // @flow
 
-import PropTypes from 'prop-types'
-import React, { Component } from 'react'
-import { withStyles } from 'material-ui/styles'
-import Card, { CardContent } from 'material-ui/Card'
-import Typography from 'material-ui/Typography'
-import { core, ui } from 'edge-libplugin'
-import fakeWallets from './fake/wallets.js'
-import * as API from './api'
-import {
-  Support,
-  PoweredBy,
-  WalletDrawer,
-  PrimaryButton,
-  SecondaryButton
-} from './components'
-
 import './inline.css'
+
+import * as API from './api'
+
+import Card, { CardContent } from 'material-ui/Card'
+import {
+  PoweredBy,
+  PrimaryButton,
+  SecondaryButton,
+  Support,
+  WalletDrawer
+} from './components'
+import React, { Component } from 'react'
+import { core, ui } from 'edge-libplugin'
+
+import PropTypes from 'prop-types'
+import Typography from 'material-ui/Typography'
+import fakeWallets from './fake/wallets.js'
+import { withStyles } from 'material-ui/styles'
 
 const buyStyles = theme => ({
   card: {
@@ -181,7 +183,7 @@ class BuyScene extends Component<BuySceneProps, BuySceneState> {
               {this.state.selectedWallet ? (
                 `Wallet: ${this.state.selectedWallet.name} (${this.state.selectedWallet.currencyCode})`
               ) : (
-                'Change Destination Wallet'
+                'Choose Destination Wallet'
               ) }
             </PrimaryButton>
             {publicAddress && (
