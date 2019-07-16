@@ -1,59 +1,31 @@
 // @flow
-import * as API from './api'
-
 import React, { Component } from 'react'
 
-import ChooseWalletButton from './components/ChooseWalletButton'
-import THEME from './constants/themeConstants.js'
-import { TertiaryButton } from './components/TertiaryButton'
-import type { WalletDetails } from './types'
+import ChooseWalletButton from '../components/ChooseWalletButton'
+import { Redirect } from "react-router-dom";
+import { SUPPORTED_SELL_DIGITAL_CURRENCIES } from '../constants/index'
+import THEME from '../constants/themeConstants.js'
+import { TertiaryButton } from '../components/TertiaryButton'
+import type { WalletDetails } from '../types/AppTypes'
 import { withStyles } from 'material-ui/styles'
 
 type Props = {
   history: Object,
   classes: Object,
-  wyreAccount: string,
-  onSellClick(): void
+  wallet: WalletDetails | null,
+  onSellClick(): void,
+  selectWallet(): void,
+  buy(): void
 }
 type State = {
-  currencyCode: string | null,
-  wallet: WalletDetails | null,
-  walletName: string | null,
-  currencyIcon: string | null
-
 }
 
 class BuySellScene extends Component<Props, State> {
-  constructor (props: Props) {
-    super(props)
-    this.state = {
-      currencyCode: null,
-      wallet: null,
-      walletName: null,
-      currencyIcon: null
-    }
-  }
 
-  selectWallet = async () =>{
-    window.edgeProvider.consoleLog(' select wallet')
-    const currencyCode = await window.edgeProvider.chooseCurrencyWallet(['ETH','BTC','DIA'])
-    window.edgeProvider.consoleLog('currency code' + currencyCode)
-    if (currencyCode) {
-      const wallet = await window.edgeProvider.getCurrentWalletInfo()
-      window.edgeProvider.consoleLog('wallet' + currencyCode)
-      window.edgeProvider.consoleLog(wallet)
-      if(wallet) {
-        this.setState({
-          currencyCode: currencyCode,
-          wallet: wallet,
-          walletName: wallet.name,
-          currencyIcon: wallet.currencyIcon
-        })
-      }
-    }
-  }
-  buy = () => {
-    const { wallet, currencyCode } = this.state
+
+  /* buy = () => {
+    const { wallet } = this.props
+    const { currencyCode } =  wallet
     const { wyreAccount } = this.props
     if (!wallet) return
     const addressPrefix = currencyCode === 'BTC' ? 'bitcoin:' : 'ethereum:'
@@ -75,46 +47,48 @@ class BuySellScene extends Component<Props, State> {
     } catch (e) {
       window.edgeProvider.consoleLog('Error on Widget thingy')
     }
-  }
+  } */
   renderButtonInsides = () => {
-    const { classes } = this.props
-    const currencyIcon = this.state.currencyIcon || ''
-    if (this.state.walletName) {
-      return <ChooseWalletButton text={this.state.walletName} image={currencyIcon}/>
+    const { classes, wallet } = this.props
+    if (wallet) {
+      return <ChooseWalletButton text={wallet.name} image={wallet.currencyIcon}/>
     }
     return <div className={classes.whiteText} >
       Choose Wallet
     </div>
   }
   isBuyDisabled =() => {
-    if(!this.state.wallet) {
+    if(!this.props.wallet) {
       return true
     }
     return false
   }
   isSellDisabled =() => {
-    if(!this.state.wallet) {
+    if(!this.props.wallet) {
       return true
     }
-    if(!API.SUPPORTED_SELL_DIGITAL_CURRENCIES.includes(this.state.currencyCode)){
+    if(!SUPPORTED_SELL_DIGITAL_CURRENCIES.includes(this.props.wallet.currencyCode)){
       return true
     }
     return false
   }
 
+  onSellClick = () => {
+    this.props.onSellClick()
+  }
   render () {
     const { classes } = this.props
     return <div className={classes.container}>
       <div className={classes.containerInside}>
         <TertiaryButton
-          onClick={this.selectWallet}
+          onClick={this.props.selectWallet}
           lineColor={THEME.COLORS.WHITE}
           isCustom  >
             {this.renderButtonInsides()}
         </TertiaryButton>
         <div className={classes.space40} />
         <TertiaryButton
-          onClick={this.buy}
+          onClick={this.props.buy}
           lineColor={THEME.COLORS.ACCENT_MINT}
           disabled={this.isBuyDisabled()}>
           <div className={classes.greenText} >
@@ -123,7 +97,7 @@ class BuySellScene extends Component<Props, State> {
         </TertiaryButton>
         <div className={classes.space10} />
         <TertiaryButton
-          onClick={this.props.onSellClick}
+          onClick={this.onSellClick}
           lineColor={THEME.COLORS.ACCENT_MINT}
           disabled={this.isSellDisabled()}>
           <div className={classes.greenText}>

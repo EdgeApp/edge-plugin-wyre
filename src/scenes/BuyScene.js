@@ -13,7 +13,7 @@ import {
 } from './components'
 import React, { Component } from 'react'
 
-import type { WalletDetails } from './types'
+import type { WalletDetails } from '../types/AppTypes'
 import { core } from 'edge-libplugin'
 import { withStyles } from 'material-ui/styles'
 

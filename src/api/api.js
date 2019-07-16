@@ -1,7 +1,18 @@
 // @flow
-import {API_SECRET_KEY, API_URL, V2_API_URL} from './env'
+import {API_SECRET_KEY, API_URL, V2_API_URL} from '../env'
 
-import { encodeGetSig } from './utils'
+import { encodeGetSig } from '../utils'
+
+export const SUPPORTED_DIGITAL_CURRENCIES = [
+  'BTC', 'ETH', 'DAI'
+]
+export const SUPPORTED_SELL_DIGITAL_CURRENCIES = [
+  'BTC', 'ETH'
+]
+
+export const SUPPORTED_FIAT_CURRENCIES = [
+  'USD', 'EUR'
+]
 
 export const INITIAL_KEYS = [
   'wyreAccountId',

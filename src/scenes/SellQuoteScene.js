@@ -8,69 +8,32 @@ import React, { Component } from 'react'
 import { CircularProgress } from 'material-ui/Progress'
 import { INITIAL_KEYS } from './api'
 import { PrimaryButton } from './components'
-import SellAmountInputContainer from './components/SellAmountInputContainer.js'
-import THEME from './constants/themeConstants.js'
+import SellAmountInputContainer from '../components/SellAmountInputContainer.js'
+import THEME from '../constants/themeConstants.js'
 import type {WalletDetails} from './types'
 import { withStyles } from 'material-ui/styles'
 
 type Props = {
   history: Object,
-  classes: Object
+  classes: Object,
+  wallet: WalletDetails,
+  bankName: string
 }
 type State = {
-  wallet: WalletDetails | null,
-  bankName: string
-  /* currencyCode: string | null,
-  wallet: WalletDetails | null,
-  walletName: string | null,
-  currencyIcon: string | null */
-
 }
 
 class SellQuoteScene extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props)
-    this.state = {
-      wallet: null,
-      bankName: ''
-    }
-  }
-  componentDidMount = async () => {
-    const localStore = await window.edgeProvider.readData(INITIAL_KEYS)
-    const wallet = await window.edgeProvider.getCurrentWalletInfo()
-    window.edgeProvider.consoleLog('local')
-    window.edgeProvider.consoleLog(localStore)
 
-    this.setState({
-      wallet: wallet,
-      bankName: localStore.wyreAccountName
-    })
-    /*
-    'wyreAccountId',
-    'wyreAccountStatus',
-    'wyreAccountId_id',
-    'wyrePaymentMethodId',
-    'wyreNetworkTxId',
-    'wyreAccountName',
-    'wyreBTC',
-    'wyreETH'
-    */
-  }
   render () {
     const { classes } = this.props
-    if (!this.state.wallet ) {
-      return <div className={classes.containerSpinner}>
-      <CircularProgress size={60} />
-    </div>
-    }
     return (<div className={classes.container} >
       <div className={classes.containerInsideTop} >
         <div className={classes.chooseAmount} >
           Choose Amount
         </div>
         <SellAmountInputContainer
-          image={this.state.wallet.currencyIcon}
-          currencyCode={this.state.wallet.currencyCode}
+          image={this.props.wallet.currencyIcon}
+          currencyCode={this.props.wallet.currencyCode}
           label={'Sell'}
           />
         <SellAmountInputContainer
@@ -81,7 +44,7 @@ class SellQuoteScene extends Component<Props, State> {
               Deposit To:
             </div>
             <div className={classes.dpRight} >
-              {this.state.bankName}
+              {this.props.bankName}
             </div>
           </div>
       </div>
