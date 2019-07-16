@@ -1,13 +1,13 @@
 // @flow
 
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import { HashRouter as Router, Route } from 'react-router-dom'
-import { withStyles, createMuiTheme } from 'material-ui/styles'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import { Route, HashRouter as Router } from 'react-router-dom'
+import { createMuiTheme, withStyles } from 'material-ui/styles'
 
-import StartScene from './StartScene'
 import BuyScene from './BuyScene'
+import BuySellScene  from './BuySellScene'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import StartScene from './StartScene'
 
 const theme = createMuiTheme({
   palette: {
@@ -31,6 +31,10 @@ export const routes = [{
 }, {
   path: '/buy/:accountId',
   main: BuyScene,
+  exact: true
+}, {
+  path: '/buySell',
+  main: BuySellScene,
   exact: true
 }]
 

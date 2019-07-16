@@ -1,28 +1,219 @@
 // @flow
 
-import PropTypes from 'prop-types'
-import React, { Component } from 'react'
-import { withStyles } from 'material-ui/styles'
-import Divider from 'material-ui/Divider'
-import Typography from 'material-ui/Typography'
-import { genRandomString } from './utils.js'
 import './inline.css'
-import { ui, core } from 'edge-libplugin'
-import { PrimaryButton, TertiaryButton, SupportLink } from './components'
 
-type StartSceneState = {
-  wyreAccount: string | null
-}
+// import { ui, core } from 'edge-libplugin'
+import { EdgeButton, PrimaryButton, StartHeader, StartParagraph, SupportLink } from './components'
+import React, { Component } from 'react'
+import { addBlockChainToAccount, getAccount, getApiKeys, getPaymentMethods } from './api'
+
+import BuySellScene from './BuySellScene'
+import { CircularProgress } from 'material-ui/Progress'
+import Divider from 'material-ui/Divider'
+import Grid from 'material-ui/Grid'
+import PendingScreenComponent from './components/PendingScreenComponent'
+import SignUpComponent from './components/SignUpComponent'
+import { genRandomString } from './utils.js'
+import { withStyles } from 'material-ui/styles'
 
 type StartSceneProps = {
   history: Object,
   classes: Object
 }
 
+type StartSceneState = {
+  wyreAccount: string | null,
+  accountStatus: string | null,
+  initError: boolean,
+  initDataLoaded: boolean
+}
+
+const APPROVED: string = 'APPROVED'
+const PENDING: string = 'PENDING'
+const NOT_STARTED: string = 'NOT_STARTED'
+
+const INITIAL_KEYS = [
+  'wyreAccountId',
+  'wyreAccountStatus',
+  'wyreAccountId_id',
+  'wyrePaymentMethodId',
+  'wyreNetworkTxId',
+  'wyreAccountName',
+  'wyreBTC',
+  'wyreETH'
+]
+
+class StartScene extends Component<StartSceneProps, StartSceneState> {
+  constructor (props: StartSceneProps) {
+    super(props)
+    this.state = {
+      wyreAccount: null,
+      accountStatus: null,
+      initError: false,
+      initDataLoaded: false
+    }
+  }
+
+  componentDidMount2 = async () => {
+    const value = undefined // 'h22UWNTboATPWOf4KZzTnE5X6OZzxuWe'
+    // await window.edgeProvider.writeData({wyreAccountId: value})
+    await window.edgeProvider.writeData({wyreAccountStatus: value})
+    window.edgeProvider.consoleLog('RESET IT')
+  }
+  componentDidMount = async () => {
+    window.scrollTo(0, 0)
+    try {
+      // window.edgeProvider.consoleLog('Logging It ')
+      const localStore = await window.edgeProvider.readData(INITIAL_KEYS)
+      window.edgeProvider.consoleLog('localStore')
+      window.edgeProvider.consoleLog(localStore)
+      if(localStore.wyreAccountStatus === APPROVED) {
+        this.setState({
+          wyreAccount: localStore.wyreAccountId,
+          accountStatus: localStore.wyreAccountStatus,
+          initDataLoaded: true,
+        })
+        return
+      }
+      if(localStore.wyreAccountStatus === PENDING) {
+        const accountDetail = await getAccount(localStore.wyreAccountId_id, localStore.wyreAccountId)
+        await window.edgeProvider.writeData({wyreAccountStatus: accountDetail.status})
+        this.setState({
+          wyreAccount: localStore.wyreAccountId,
+          accountStatus: accountDetail.status,
+          initDataLoaded: true
+        })
+        this.setState({
+          wyreAccount: localStore.wyreAccountId,
+          accountStatus: localStore.wyreAccountStatus,
+          initDataLoaded: true,
+        })
+        return
+      }
+      if (localStore.wyreAccountId) {
+        this.setState({
+          wyreAccount: localStore.wyreAccountId,
+          accountStatus: localStore.wyreAccountStatus,
+          initDataLoaded: true
+        },
+        async () => {
+          /* window.edgeProvider.consoleLog('current status ' + localStore.wyreAccountStatus)
+          window.edgeProvider.consoleLog(this.state) */
+          if (!localStore.wyreAccountId_account && localStore.accountStatus !== NOT_STARTED) {
+            // This recovers legacy account information
+            const result = await getPaymentMethods(localStore.wyreAccountId)
+            const parseResult = result.data[0]
+            const accountID = parseResult.owner.substring(8)
+            await window.edgeProvider.writeData({wyrePaymentMethodId: parseResult.id})
+            await window.edgeProvider.writeData({wyreAccountId_id: accountID})
+            await window.edgeProvider.writeData({wyreAccountName: parseResult.name})
+            if (parseResult.blockchains.BTC) {
+              await window.edgeProvider.writeData({wyreBTC: parseResult.blockchains.BTC})
+            }
+            if (parseResult.blockchains.ETH) {
+              await window.edgeProvider.writeData({wyreETH: parseResult.blockchains.ETH})
+            }
+
+            const accountDetail = await getAccount(accountID, localStore.wyreAccountId)
+            window.edgeProvider.consoleLog('account Detail')
+            window.edgeProvider.consoleLog(accountDetail)
+            await window.edgeProvider.writeData({wyreAccountStatus: accountDetail.status})
+            this.setState({
+              wyreAccount: localStore.wyreAccountId,
+              accountStatus: accountDetail.status,
+              initDataLoaded: true
+            })
+          }
+        })
+      } else {
+        try {
+          window.edgeProvider.consoleLog('Creating it all')
+          const accountId = genRandomString(32)
+          const key = 'wyreAccountId'
+          const value = accountId
+          await window.edgeProvider.writeData({[key]: value})
+          await window.edgeProvider.writeData({wyreAccountStatus: NOT_STARTED})
+          this.setState({
+            wyreAccount: accountId,
+            accountStatus: NOT_STARTED,
+            initDataLoaded: true
+          })
+
+        } catch (e) {
+          this.setState({
+            initError: true
+          })
+        }
+      }
+    } catch (e) {
+      this.setState({
+        initError: true
+      })
+      // launch error alert
+    }
+  }
+
+  initUser = async () => {
+    const { wyreAccount } = this.state
+    const widget = new window.Wyre.Widget({
+      env: 'test',
+      accountId: 'AC-FJN8L976EW4',
+      auth: {
+        type: 'secretKey',
+        secretKey: wyreAccount
+      },
+      operation: {
+        type: 'onramp'
+      }
+    })
+    widget.open('complete', async function(e) {
+      // onboarding was completed successfully!
+      window.edgeProvider.consoleLog('Widget on complete');
+      window.edgeProvider.consoleLog(e);
+      await window.edgeProvider.writeData({wyreAccountStatus: PENDING})
+      await window.edgeProvider.writeData({wyreAccountId_id: e.accountId})
+      await window.edgeProvider.writeData({wyrePaymentMethodId: e.paymentMethodId})
+      await window.edgeProvider.writeData({wyrePaymentMethodId: e.wyreNetworkTxId})
+      this.setState({
+        accountStatus: PENDING
+      })
+    });
+  }
+
+
+  render () {
+    const classes = this.props.classes
+    if (!this.state.initDataLoaded || !this.state.accountStatus) {
+      return <div className={classes.containerSpinner}>
+      <CircularProgress size={60} />
+    </div>
+    }
+    if(this.state.accountStatus === NOT_STARTED) {
+      window.edgeProvider.consoleLog('Not Started ')
+      return <SignUpComponent  onPress={this.initUser}/>
+    }
+    if(this.state.accountStatus === PENDING) {
+      window.edgeProvider.consoleLog('PENDING ')
+      return <PendingScreenComponent  onPress={this.initUser}/>
+    }
+    window.edgeProvider.consoleLog('Last stop')
+    return <BuySellScene wyreAccount={this.state.wyreAccount}/>
+  }
+}
+
 const startStyles = (theme: Object) => ({
   container: {
     backgroundColor: '#FFF',
     padding: '20px'
+  },
+  containerSpinner: {
+    display: 'flex',
+    flex: '1',
+    width: '100%',
+    height: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around'
   },
   h3: {
     color: theme.palette.primary.main,
@@ -41,156 +232,5 @@ const startStyles = (theme: Object) => ({
   }
 })
 
-type HeaderProps = {
-  classes: Object,
-  text?: string
-}
-
-const StartHeader = (props: HeaderProps) => {
-  return (
-    <Typography variant="headline" component="h3" className={props.classes.h3}>
-      {props.text}
-    </Typography>
-  )
-}
-
-type ParagraphProps = {
-  classes: Object,
-  children: any
-}
-
-const StartParagraph = (props: ParagraphProps) => {
-  return (
-    <Typography component="p" className={props.classes.p}>
-      {props.children}
-    </Typography>
-  )
-}
-
-
-class StartScene extends Component<StartSceneProps, StartSceneState> {
-  constructor (props: StartSceneProps) {
-    super(props)
-    this.state = {
-      wyreAccount: null
-    }
-  }
-
-  UNSAFE_componentWillMount = async () => {
-    ui.title('Buy with Wyre')
-    window.scrollTo(0, 0)
-    window.localStorage.removeItem('last_crypto_amount')
-    window.localStorage.removeItem('last_fiat_amount')
-  }
-
-  componentDidMount = async () => {
-    try {
-      const key = 'wyreAccountId'
-      const wyreAccount: string = await core.readData(key)
-      if (wyreAccount) {
-        this.setState({
-          wyreAccount
-        })
-      } else {
-        // this code may never get executed
-        const accountId = genRandomString(32)
-        const key = 'wyreAccountId'
-        const value = accountId
-        const success = await core.writeData(key, value)
-        if (success) {
-          this.setState({
-            wyreAccount: accountId
-          })
-        } else {
-          core.debugLevel(0, 'LOGGING Trouble setting wyre account')
-        }
-      }
-    } catch (e) {
-      core.debugLevel(0, 'LOGGING Trouble getting wyre account (does not exist?)')
-      const accountId = genRandomString(32)
-      const key = 'wyreAccountId'
-      const value = accountId
-      const success = await core.writeData(key, value)
-      if (success) {
-        this.setState({
-          wyreAccount: accountId
-        })
-      } else {
-        core.debugLevel(0, 'LOGGING Trouble setting wyre account after not existing')
-      }
-    }
-  }
-
-  _buy = () => {
-    const { wyreAccount } = this.state
-    core.debugLevel(0, 'LOGGING routing to /buy/ scene with wyreAccount: ', wyreAccount)
-    let wyreAccountSyntax = wyreAccount ? wyreAccount : ''
-    this.props.history.push(`/buy/${wyreAccountSyntax}`)
-  }
-
-  _sell = () => { // not implemented yet
-    this.props.history.push('/sell/')
-  }
-  _gotoEvents = () => {
-    const { wyreAccount } = this.state
-    const widget = new window.Wyre.Widget({
-      env: 'production',
-      accountId: 'AC-FJN8L976EW4',
-      auth: {
-        type: 'secretKey',
-        secretKey: wyreAccount
-      },
-      operation: {
-        type: 'onramp'
-      }
-    })
-    widget.open()
-  }
-  render () {
-    const classes = this.props.classes
-    return (
-      <div className={classes.container}>
-        <div className="text-center">
-          <div className="iconLogo" />
-        </div>
-        <div>
-          <StartHeader text="Wyre" classes={classes} />
-          <StartParagraph classes={classes}>
-            Wyre is a compliant fiat to crypto exchange allowing user to safely buy and sell cryptocurrency with a bank account directly from Edge.
-          </StartParagraph>
-        </div>
-        <Divider className={classes.divider} />
-        <div>
-          <StartHeader text="Fee" classes={classes} />
-          <StartParagraph classes={classes}>
-          The following fees are applied for buying and selling cryptocurrency with Wyre:
-            <ul className={classes.feeList}>
-              <li>Edge Wallet 0.5%</li>
-              <li>Wyre 0.5%</li>
-            </ul>
-          </StartParagraph>
-        </div>
-        <Divider className={classes.divider} />
-        <div>
-          <StartHeader text="Time" classes={classes} />
-          <StartParagraph classes={classes}>
-            Initial account verification usually takes 1 business day and transactions settle in 3-5 business days.
-          </StartParagraph>
-        </div>
-        <Divider className={classes.divider} />
-        <div>
-          <StartHeader text="Support" classes={classes} />
-          <StartParagraph classes={classes}>
-            For support, please contact <SupportLink />.
-          </StartParagraph>
-        </div>
-        <Divider className={classes.divider} />
-        <div>
-          <PrimaryButton onClick={this._buy}>Buy</PrimaryButton>
-        </div>
-      </div>
-    )
-  }
-}
 
 export default withStyles(startStyles)(StartScene)

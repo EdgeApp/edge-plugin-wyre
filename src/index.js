@@ -1,6 +1,27 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import App from './App'
+// @flow
 import './index.css'
 
-ReactDOM.render(<App />, document.getElementById('root'))
+import App from './App'
+import React from 'react'
+import ReactDOM from 'react-dom'
+
+const root = document.getElementById('root')
+
+function mountTheApp () {
+  if (root !== null) {
+    ReactDOM.render(<App />, root)
+  }
+}
+function getEdgeProvider (callback: Function) {
+  if (window.edgeProvider != null) {
+    callback(window.edgeProvider)
+  } else {
+    document.addEventListener('edgeProviderReady', function () {
+      callback(window.edgeProvider)
+    })
+  }
+}
+
+if (window.navigator.userAgent.indexOf('app.edge') >= 0) {
+  getEdgeProvider(mountTheApp)
+}

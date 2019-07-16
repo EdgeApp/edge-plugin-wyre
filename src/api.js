@@ -1,4 +1,105 @@
-import PropTypes from 'prop-types'
+// @flow
+import {API_SECRET_KEY, API_URL, V2_API_URL} from './env'
+
+import { encodeGetSig } from './utils'
+
+export const SUPPORTED_DIGITAL_CURRENCIES = [
+  'BTC', 'ETH', 'DAI'
+]
+export const SUPPORTED_SELL_DIGITAL_CURRENCIES = [
+  'BTC', 'ETH'
+]
+
+export const SUPPORTED_FIAT_CURRENCIES = [
+  'USD', 'EUR'
+]
+
+export async function addBlockChainToAccount(token: string) {
+  //https://api.sendwyre.com/v2/paymentMethod/:paymentMethodId/attach
+  const data = {
+    blockchain: 'ALL'
+  }
+  const request = {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer '+ token,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  }
+  const url = V2_API_URL + 'paymentMethod/:paymentMethodId/attach'
+  window.edgeProvider.consoleLog(' API -  '+ url)
+  return window.fetch(url, request)
+}
+
+export async function getApiKeys(token: string) {
+  // https://api.sendwyre.com/v2/apiKeys
+  window.edgeProvider.consoleLog(' token -  '+ token)
+  //V2_API_URL
+  const data = {
+    desc: 'Edge Wallet',
+    type: 'FULL',
+    ipWhitelist: []
+  }
+  const request = {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer '+ token,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  }
+  const url = V2_API_URL + 'apiKeys'
+  window.edgeProvider.consoleLog(' API -  '+ url)
+  window.edgeProvider.consoleLog(' request -  ')
+  window.edgeProvider.consoleLog(request)
+  const result = window.fetch(url, request)
+  window.edgeProvider.consoleLog(' result -  ')
+  window.edgeProvider.consoleLog(result)
+  return result
+}
+
+export async function getPaymentMethods(token: string) {
+  // https://api.sendwyre.com/v2/apiKeys
+  console.log(' token -  '+ token)
+  //V2_API_URL
+  const request = {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer '+ token,
+      'Content-Type': 'application/json'
+    }
+  }
+  const url ='https://api.sendwyre.com/v2/paymentMethods' // V2_API_URL + 'apiKeys'
+  console.log(' API -  ', url)
+
+  console.log('request', request)
+  const result = await window.fetch(url, request)
+
+  const newData = result.json()
+  console.log('newData ', newData)
+  return newData
+}
+
+export async function getAccount(account: string, token: string) {
+  const timestamp = new Date().getMilliseconds()
+  const data = {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer '+ token,
+      'Content-Type': 'application/json'
+    }
+  }
+  const url = 'https://api.sendwyre.com/v2/account/' + account + '?timestamp=' + timestamp
+  const result = await window.fetch(url, data)
+  const newData = result.json()
+  return newData
+}
+/* import PropTypes from 'prop-types'
 import React from 'react'
 import uuidv1 from 'uuid/v1'
 import { core } from 'edge-libplugin'
@@ -30,13 +131,7 @@ export function requestAbort () {
   }
 }
 
-export const SUPPORTED_DIGITAL_CURRENCIES = [
-  'BTC', 'ETH', 'DAI'
-]
 
-export const SUPPORTED_FIAT_CURRENCIES = [
-  'USD', 'EUR'
-]
 
 export const DEV = process.env.NODE_ENV === 'development'
 
@@ -138,4 +233,4 @@ export const SimplexForm = (props) => {
 
 SimplexForm.propTypes = {
   quote: PropTypes.object.isRequired
-}
+} */

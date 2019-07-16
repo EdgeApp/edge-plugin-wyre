@@ -1,0 +1,58 @@
+import { buttonStyle, buttonStyleHollow } from '../styles/styles'
+
+// @flow
+import Button from 'material-ui/Button'
+import React from 'react'
+import THEME from '../constants/themeConstants.js'
+import { WalletDetails } from '../types'
+
+type Props = {
+  onClick(): void,
+  lineColor: string,
+  children: any,
+  disabled: boolean,
+  isCustom?: boolean
+}
+const getStyle = (lineColor, isCustom = false, isDisabled = false) => {
+  if (isCustom) {
+    return {
+      ...buttonStyleHollow,
+      backgroundColor: THEME.COLORS.CLEAR,
+      height: '50px',
+      color: THEME.COLORS.ACCENT_MINT,
+      border: `2px solid ${lineColor}`,
+    }
+  }
+  if (isDisabled) {
+    return {
+      ...buttonStyle,
+      backgroundColor: THEME.COLORS.CLEAR,
+      height: '50px',
+      color: THEME.COLORS.GRAY_2,
+      border: `2px solid ${THEME.COLORS.GRAY_2}`,
+    }
+  }
+  return {
+    ...buttonStyle,
+    backgroundColor: THEME.COLORS.CLEAR,
+    color: THEME.COLORS.ACCENT_MINT,
+    border: `2px solid ${lineColor}`,
+    height: '50px',
+    disabledButton: {
+      border: `2px solid ${THEME.COLORS.GRAY_2}`,
+      color: THEME.COLORS.GRAY_2,
+    }
+  }
+}
+export const TertiaryButton = (props: Props) => {
+  return (
+    <Button
+      variant="raised"
+      onClick={props.onClick}
+      disabled={props.disabled}
+      style={getStyle(props.lineColor, props.isCustom, props.disabled)}
+      fullWidth>
+      {props.children}
+    </Button>
+  )
+}

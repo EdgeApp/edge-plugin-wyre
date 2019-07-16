@@ -3,23 +3,26 @@
   "version": "0.1.2",
   "private": true,
   "devDependencies": {
-    "babel-eslint": "^7.1.1",
+    "babel-eslint": "^8.1.0",
     "babel-jest": "^20.0.3",
     "edge-libplugin": "https://github.com/EdgeApp/edge-libplugin.git#9048d04",
-    "eslint": "^4.12.1",
-    "eslint-config-standard": "^11.0.0-beta.0",
+    "eslint": "^4.17.1",
     "eslint-plugin-flowtype": "^2.35.0",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-node": "^5.2.1",
     "eslint-plugin-promise": "^3.6.0",
     "eslint-plugin-react": "^7.3.0",
     "eslint-plugin-standard": "^3.0.1",
-    "flow-bin": "^0.66.0",
-    "husky": "^0.14.3",
-    "material-ui": "^1.0.0-beta.39",
+    "flow-bin": "^0.65.0",
+    "husky": "^1.3.1",
+    "import-sort-cli": "^5.0.0",
+    "js-sha256":"^0.9.0",
+    "lint-staged": "^6.1.1",
+    "material-ui": "1.0.0-beta.39",
+    "prettier-eslint-cli": "^4.7.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-router-dom": "^4.2.2",
+    "react-router-dom": "^5.0.0",
     "react-scripts": "1.1.1",
     "rimraf": "^2.6.2",
     "uuid": "^3.2.1"
@@ -34,7 +37,22 @@
     "lint": "eslint --parser babel-eslint ./src",
     "lint:fix": "npm run lint -- --fix",
     "flow:0": "flow; exit 0",
-    "flow": "flow"
+    "flow": "flow",
+    "precommit": "flow"
+  },
+  "lint-staged": {
+    "ignore": [
+      "**/flow-typed/npm/*.js"
+    ],
+    "linters": {
+      "*.js": [
+        "eslint",
+        "prettier-eslint --list-different"
+      ]
+    }
+  },
+  "prettier": {
+    "printWidth": 160
   },
   "files": [
     "target/index.html",
