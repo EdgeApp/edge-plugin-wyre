@@ -4,8 +4,8 @@ import './inline.css'
 
 // import { ui, core } from 'edge-libplugin'
 import { EdgeButton, PrimaryButton, StartHeader, StartParagraph, SupportLink } from './components'
+import { INITIAL_KEYS, addBlockChainToAccount, getAccount, getPaymentMethods } from './api'
 import React, { Component } from 'react'
-import { addBlockChainToAccount, getAccount, getApiKeys, getPaymentMethods } from './api'
 
 import BuySellScene from './BuySellScene'
 import { CircularProgress } from 'material-ui/Progress'
@@ -32,16 +32,6 @@ const APPROVED: string = 'APPROVED'
 const PENDING: string = 'PENDING'
 const NOT_STARTED: string = 'NOT_STARTED'
 
-const INITIAL_KEYS = [
-  'wyreAccountId',
-  'wyreAccountStatus',
-  'wyreAccountId_id',
-  'wyrePaymentMethodId',
-  'wyreNetworkTxId',
-  'wyreAccountName',
-  'wyreBTC',
-  'wyreETH'
-]
 
 class StartScene extends Component<StartSceneProps, StartSceneState> {
   constructor (props: StartSceneProps) {
@@ -54,19 +44,13 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
     }
   }
 
-  componentDidMount2 = async () => {
-    const value = undefined // 'h22UWNTboATPWOf4KZzTnE5X6OZzxuWe'
-    // await window.edgeProvider.writeData({wyreAccountId: value})
-    await window.edgeProvider.writeData({wyreAccountStatus: value})
-    window.edgeProvider.consoleLog('RESET IT')
-  }
   componentDidMount = async () => {
     window.scrollTo(0, 0)
     try {
       // window.edgeProvider.consoleLog('Logging It ')
       const localStore = await window.edgeProvider.readData(INITIAL_KEYS)
-      window.edgeProvider.consoleLog('localStore')
-      window.edgeProvider.consoleLog(localStore)
+      /* window.edgeProvider.consoleLog('localStore')
+      window.edgeProvider.consoleLog(localStore) */
       if(localStore.wyreAccountStatus === APPROVED) {
         this.setState({
           wyreAccount: localStore.wyreAccountId,
@@ -115,8 +99,8 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
             }
 
             const accountDetail = await getAccount(accountID, localStore.wyreAccountId)
-            window.edgeProvider.consoleLog('account Detail')
-            window.edgeProvider.consoleLog(accountDetail)
+            /* window.edgeProvider.consoleLog('account Detail')
+            window.edgeProvider.consoleLog(accountDetail) */
             await window.edgeProvider.writeData({wyreAccountStatus: accountDetail.status})
             this.setState({
               wyreAccount: localStore.wyreAccountId,
@@ -127,7 +111,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
         })
       } else {
         try {
-          window.edgeProvider.consoleLog('Creating it all')
+          // window.edgeProvider.consoleLog('Creating it all')
           const accountId = genRandomString(32)
           const key = 'wyreAccountId'
           const value = accountId
@@ -168,8 +152,8 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
     })
     widget.open('complete', async function(e) {
       // onboarding was completed successfully!
-      window.edgeProvider.consoleLog('Widget on complete');
-      window.edgeProvider.consoleLog(e);
+      /* window.edgeProvider.consoleLog('Widget on complete');
+      window.edgeProvider.consoleLog(e); */
       await window.edgeProvider.writeData({wyreAccountStatus: PENDING})
       await window.edgeProvider.writeData({wyreAccountId_id: e.accountId})
       await window.edgeProvider.writeData({wyrePaymentMethodId: e.paymentMethodId})
@@ -178,6 +162,10 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
         accountStatus: PENDING
       })
     });
+  }
+
+  gotoSell = () => {
+    this.props.history.push(`/sellQuote`)
   }
 
 
@@ -197,7 +185,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
       return <PendingScreenComponent  onPress={this.initUser}/>
     }
     window.edgeProvider.consoleLog('Last stop')
-    return <BuySellScene wyreAccount={this.state.wyreAccount}/>
+    return <BuySellScene wyreAccount={this.state.wyreAccount} onSellClick={this.gotoSell}/>
   }
 }
 

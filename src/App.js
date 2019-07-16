@@ -7,6 +7,7 @@ import { createMuiTheme, withStyles } from 'material-ui/styles'
 import BuyScene from './BuyScene'
 import BuySellScene  from './BuySellScene'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import SellQuoteScene from './SellQuoteScene'
 import StartScene from './StartScene'
 
 const theme = createMuiTheme({
@@ -35,6 +36,10 @@ export const routes = [{
 }, {
   path: '/buySell',
   main: BuySellScene,
+  exact: true
+}, {
+  path: '/sellQuote',
+  main: SellQuoteScene,
   exact: true
 }]
 

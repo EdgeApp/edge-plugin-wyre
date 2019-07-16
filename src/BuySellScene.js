@@ -12,7 +12,8 @@ import { withStyles } from 'material-ui/styles'
 type Props = {
   history: Object,
   classes: Object,
-  wyreAccount: string
+  wyreAccount: string,
+  onSellClick(): void
 }
 type State = {
   currencyCode: string | null,
@@ -32,9 +33,6 @@ class BuySellScene extends Component<Props, State> {
       currencyIcon: null
     }
   }
-  renderWalletButton = () => {
-
-  }
 
   selectWallet = async () =>{
     window.edgeProvider.consoleLog(' select wallet')
@@ -48,7 +46,8 @@ class BuySellScene extends Component<Props, State> {
         this.setState({
           currencyCode: currencyCode,
           wallet: wallet,
-          walletName: wallet.name
+          walletName: wallet.name,
+          currencyIcon: wallet.currencyIcon
         })
       }
     }
@@ -103,24 +102,6 @@ class BuySellScene extends Component<Props, State> {
     return false
   }
 
-  makeSpend = async () => {
-    const spendTarget = {
-      nativeAmount: '431980',
-      publicAddress: '3A3GmsQBw6kAEt9ySkGca3SusWey9Sswiu',
-      otherParams: {}
-    }
-    try {
-      const result = await window.edgeProvider.requestSpend ([spendTarget])
-      window.edgeProvider.consoleLog('e I have my result already wtf... ')
-      window.edgeProvider.consoleLog(result)
-    } catch(e) {
-      window.edgeProvider.consoleLog('e I have my error wtf... ')
-      window.edgeProvider.consoleLog(e)
-    }
-
-
-  }
-
   render () {
     const { classes } = this.props
     return <div className={classes.container}>
@@ -142,7 +123,7 @@ class BuySellScene extends Component<Props, State> {
         </TertiaryButton>
         <div className={classes.space10} />
         <TertiaryButton
-          onClick={this.makeSpend}
+          onClick={this.props.onSellClick}
           lineColor={THEME.COLORS.ACCENT_MINT}
           disabled={this.isSellDisabled()}>
           <div className={classes.greenText}>

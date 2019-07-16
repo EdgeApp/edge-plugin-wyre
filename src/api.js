@@ -14,6 +14,17 @@ export const SUPPORTED_FIAT_CURRENCIES = [
   'USD', 'EUR'
 ]
 
+export const INITIAL_KEYS = [
+  'wyreAccountId',
+  'wyreAccountStatus',
+  'wyreAccountId_id',
+  'wyrePaymentMethodId',
+  'wyreNetworkTxId',
+  'wyreAccountName',
+  'wyreBTC',
+  'wyreETH'
+]
+
 export async function addBlockChainToAccount(token: string) {
   //https://api.sendwyre.com/v2/paymentMethod/:paymentMethodId/attach
   const data = {
@@ -33,7 +44,7 @@ export async function addBlockChainToAccount(token: string) {
   return window.fetch(url, request)
 }
 
-export async function getApiKeys(token: string) {
+/* export async function getApiKeys(token: string) {
   // https://api.sendwyre.com/v2/apiKeys
   window.edgeProvider.consoleLog(' token -  '+ token)
   //V2_API_URL
@@ -59,12 +70,9 @@ export async function getApiKeys(token: string) {
   window.edgeProvider.consoleLog(' result -  ')
   window.edgeProvider.consoleLog(result)
   return result
-}
+} */
 
 export async function getPaymentMethods(token: string) {
-  // https://api.sendwyre.com/v2/apiKeys
-  console.log(' token -  '+ token)
-  //V2_API_URL
   const request = {
     method: 'GET',
     headers: {
