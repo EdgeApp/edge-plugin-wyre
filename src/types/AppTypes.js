@@ -49,7 +49,7 @@ export type SellQuoteData = {
   reversalReason: string | null,
   reversingSubStatus : string | null,
   source :string,
-  sourceAmount: 32.8,
+  sourceAmount: number,
   sourceCurrency: string,
   status : string,
   statusHistories:Array<any>,
