@@ -1,6 +1,6 @@
-import type { Action } from '../types/ReduxTypes'
 // @flow
-import type {PinData} from '../types/AppTypes'
+import type { Action } from '../types/ReduxTypes'
+import type {SellQuoteData} from '../types/AppTypes'
 
 export type WyreState = {
   secretKey: string | null,
@@ -10,18 +10,10 @@ export type WyreState = {
   networkTxId: string | null,
   accountName: string | null,
   btcAddress: string | null,
-  ethAddress: string | null
+  ethAddress: string | null,
+  exchangeRates: Object,
+  quote: SellQuoteData | null
 }
-/* export const INITIAL_KEYS = [
-  'wyreAccountId',
-  'wyreAccountStatus',
-  'wyreAccountId_id',
-  'wyrePaymentMethodId',
-  'wyreNetworkTxId',
-  'wyreAccountName',
-  'wyreBTC',
-  'wyreETH'
-] */
 
 export const initialState = {
   secretKey: null,
@@ -31,14 +23,14 @@ export const initialState = {
   networkTxId: null,
   accountName: null,
   btcAddress: null,
-  ethAddress: null
+  ethAddress: null,
+  exchangeRates: {},
+  quote: null
 }
 
 export const WyreReducer = (state: WyreState = initialState, action: Action): WyreState => {
   switch (action.type) {
     case 'LOCAL_DATA_INIT':
-      window.edgeProvider.consoleLog('Wyre Reducer LOCAL_DATA_INIT')
-      window.edgeProvider.consoleLog(action.data)
       return {
         ...state,
         secretKey: action.data.wyreAccountId,
@@ -50,6 +42,14 @@ export const WyreReducer = (state: WyreState = initialState, action: Action): Wy
         btcAddress: action.data.wyreBTC,
         ethAddress: action.data.wyreETH
       }
+    case 'ON_EXCHANGE_RATE':
+      return {...state , exchangeRates: action.data}
+
+    case 'ON_QUOTE':
+      return {...state , quote: action.data}
+
+    case 'RESET_QUOTE':
+      return {...state , quote: null}
     default:
       // window.edgeProvider.consoleLog('Wyre Reducer Default')
       return state

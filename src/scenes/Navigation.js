@@ -4,11 +4,9 @@ import React, { Component } from 'react'
 import { Route, HashRouter as Router } from 'react-router-dom'
 import { createMuiTheme, withStyles } from 'material-ui/styles'
 
-// import BuyScene from './BuyScene'
-// import BuySellScene  from './BuySellScene'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import { SellQuoteSceneConnector as SellQuoteScene } from '../connectors/SellQuoteSceneConnector'
-// import SellQuoteScene from './SellQuoteScene'
+import { SellQuoteRequestSceneConnector as SellQuoteRequestScene } from '../connectors/SellQuoteRequestSceneConnector'
+import { SellQuoteSceneConnector as SellQuoteScene } from '../connectors/SellQuoteScreenConnector.js'
 import { StartSceneConnector as StartScene } from '../connectors/StartSceneConnector'
 import history from '../history/history';
 
@@ -27,29 +25,16 @@ const theme = createMuiTheme({
   shadows: ['none']
 })
 
-/* export const routes = [{
-  path: '/',
-  main: StartScene,
-  exact: true
-}, {
-  path: '/buy/:accountId',
-  main: BuyScene,
-  exact: true
-}, {
-  path: '/buySell',
-  main: BuySellScene,
-  exact: true
-}, {
-  path: '/sellQuote',
-  main: SellQuoteScene,
-  exact: true
-}] */
 export const routes = [{
   path: '/',
   main: StartScene,
   exact: true
 }, {
-  path: '/SellQuote',
+  path: '/sellQuoteRequest',
+  main: SellQuoteRequestScene,
+  exact: true
+}, {
+  path: '/sellQuote',
   main: SellQuoteScene,
   exact: true
 }]

@@ -7,3 +7,7 @@ export const selectWallet = () => async (dispatch: Dispatch, getState: GetState)
     dispatch({type: 'WALLET_LOADED', data: wallet})
   }
 }
+export const confirmQuote = (history: Object) => async (dispatch: Dispatch, getState: GetState) => {
+  history.go(-2)
+}
+

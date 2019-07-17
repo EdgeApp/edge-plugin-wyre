@@ -2,7 +2,6 @@
 import React, { Component } from 'react'
 
 import ChooseWalletButton from '../components/ChooseWalletButton'
-import { Redirect } from "react-router-dom";
 import { SUPPORTED_SELL_DIGITAL_CURRENCIES } from '../constants/index'
 import THEME from '../constants/themeConstants.js'
 import { TertiaryButton } from '../components/TertiaryButton'
@@ -83,6 +82,7 @@ class BuySellScene extends Component<Props, State> {
         <TertiaryButton
           onClick={this.props.selectWallet}
           lineColor={THEME.COLORS.WHITE}
+          disabled={false}
           isCustom  >
             {this.renderButtonInsides()}
         </TertiaryButton>

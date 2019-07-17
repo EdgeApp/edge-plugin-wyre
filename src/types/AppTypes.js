@@ -21,3 +21,39 @@ export type WalletDetails = {
   currencyIcon: string,
   currencyIconDark: string
 }
+
+export type SellQuoteData = {
+  blockchainTx: string | null,
+  cancelledAt: string | null,
+  completedAt: string | null,
+  createdAt: number,
+  customId: string | null,
+  dest : string,
+  destAmount: number,
+  destCurrency: string,
+  exchangeRate: number,
+  expiresAt: number,
+  failureReason: string | null,
+  fees : {
+    BTC?: number,
+    ETH?: number,
+    USD: number
+  },
+  BTC?: number,
+  ETH?: number,
+  USD: number,
+  id: string,
+  message : string | null,
+  owner : string,
+  pendingSubStatus: string | null,
+  reversalReason: string | null,
+  reversingSubStatus : string | null,
+  source :string,
+  sourceAmount: 32.8,
+  sourceCurrency: string,
+  status : string,
+  statusHistories:Array<any>,
+  totalFees :0.8,
+  updatedAt :null
+}
+

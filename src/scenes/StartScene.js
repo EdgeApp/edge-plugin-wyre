@@ -2,19 +2,13 @@
 
 import './inline.css'
 
-import { APPROVED, NOT_STARTED, PENDING } from '../constants/index'
-// import { ui, core } from 'edge-libplugin'
-import { EdgeButton, PrimaryButton, StartHeader, StartParagraph, SupportLink } from './components'
+import { NOT_STARTED, PENDING } from '../constants/index'
 import React, { Component } from 'react'
-import { addBlockChainToAccount, getAccount, getPaymentMethods } from './api'
 
 import { BuySellSceneConnector } from '../connectors/BuySellSceneConnector'
 import { CircularProgress } from 'material-ui/Progress'
-import Divider from 'material-ui/Divider'
-import Grid from 'material-ui/Grid'
 import PendingScreenComponent from '../components/PendingScreenComponent'
 import SignUpComponent from '../components/SignUpComponent'
-import { genRandomString } from '../utils.js'
 import { withStyles } from 'material-ui/styles'
 
 type StartSceneProps = {
@@ -65,12 +59,8 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
   } */
 
   gotoSell = () => {
-    window.edgeProvider.consoleLog('GOtot Sell ')
-    window.edgeProvider.consoleLog(this.props)
-    console.log(this.props)
-    this.props.history.push(`/sellQuote`)
+    this.props.history.push(`/sellQuoteRequest`)
   }
-
 
   render () {
     const classes = this.props.classes

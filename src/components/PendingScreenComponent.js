@@ -1,8 +1,7 @@
 // @flow
-import { PrimaryButton, StartHeader, StartParagraph, SupportLink } from '../scenes/components'
 import React, { Component } from 'react'
+import { StartHeader, StartParagraph } from '../scenes/components'
 
-import Divider from 'material-ui/Divider'
 import { withStyles } from 'material-ui/styles'
 
 type Props = {

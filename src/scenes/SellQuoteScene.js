@@ -1,61 +1,107 @@
-import { } from './components'
-
 // @flow
-import * as API from './api'
-
 import React, { Component } from 'react'
+import type {SellQuoteData, WalletDetails} from '../types/AppTypes'
 
 import { CircularProgress } from 'material-ui/Progress'
-import { INITIAL_KEYS } from './api'
 import { PrimaryButton } from './components'
-import SellAmountInputContainer from '../components/SellAmountInputContainer.js'
 import THEME from '../constants/themeConstants.js'
-import type {WalletDetails} from './types'
 import { withStyles } from 'material-ui/styles'
 
 type Props = {
   history: Object,
   classes: Object,
   wallet: WalletDetails,
-  bankName: string
+  bankName: string,
+  quote: SellQuoteData | null,
+  confirmQuote(Object): void
 }
 type State = {
 }
 
 class SellQuoteScene extends Component<Props, State> {
-
+  confirm = () => {
+    this.props.confirmQuote(this.props.history)
+  }
   render () {
     const { classes } = this.props
+    const { quote, wallet } = this.props
+    if(!quote) {
+      return <div className={classes.containerSpinner}>
+      <CircularProgress size={60} />
+    </div>
+    }
+
+    const usdAmount = quote.sourceAmount * quote.exchangeRate
+    const totalFees = quote.totalFees * quote.exchangeRate
+    const totalAmount = quote.sourceAmount - quote.totalFees
+    const totalAmountFiat = totalAmount * quote.exchangeRate
     return (<div className={classes.container} >
       <div className={classes.containerInsideTop} >
         <div className={classes.chooseAmount} >
-          Choose Amount
+          <div className={classes.amountText} >
+            {quote.sourceAmount}
+          </div>
+          Amount to be sold
         </div>
-        <SellAmountInputContainer
-          image={this.props.wallet.currencyIcon}
-          currencyCode={this.props.wallet.currencyCode}
-          label={'Sell'}
-          />
-        <SellAmountInputContainer
-          label={'Receive'}
-          currencyCode={'USD'}/>
-          <div className={classes.depositBox} >
-            <div className={classes.dpLeft} >
-              Deposit To:
-            </div>
-            <div className={classes.dpRight} >
-              {this.props.bankName}
+        <div className={classes.depositBox} >
+          <div className={classes.dpLeft} >
+            {this.props.wallet.currencyCode} Price:
+          </div>
+          <div className={classes.dpRight} >
+            ${ Math.round(usdAmount * 100) / 100 }
+          </div>
+        </div>
+        <div className={classes.depositBox} >
+          <div className={classes.dpLeft} >
+            Deposit To:
+          </div>
+          <div className={classes.dpRight} >
+            {this.props.bankName}
+          </div>
+        </div>
+        <div className={classes.depositBox} >
+          <div className={classes.dpLeft} >
+            Source Wallet:
+          </div>
+          <div className={classes.dpRight} >
+            {wallet.name}
+          </div>
+        </div>
+        <div className={classes.shim} />
+        <div className={classes.depositBox} >
+          <div className={classes.dpLeft} >
+            <div className={classes.stack} >
+              <div className={classes.greenLeft} >
+                Fee:
+              </div>
+              <div className={classes.greenLeft} >
+                Total:
+              </div>
             </div>
           </div>
+          <div className={classes.dpRight} >
+            <div className={classes.stack} >
+              <div className={classes.green} >
+                $ {Math.round(totalFees * 100) / 100}
+              </div>
+              <div className={classes.green} >
+                $ {Math.round(totalAmountFiat * 100) / 100}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div className={classes.containerInsideBottom} >
-        <PrimaryButton onClick={this.next}>Next</PrimaryButton>
+        <PrimaryButton onClick={this.confirm}>Confirm</PrimaryButton>
       </div>
     </div>)
   }
 }
 
 const styles = theme => ({
+  shim: {
+    height: '15px'
+  },
   container: {
     width: '100%',
     height: '100%',
@@ -95,20 +141,20 @@ const styles = theme => ({
     height: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
+    backgroundImage: 'linear-gradient(to right, #0E4B75 , #0D2145)'
   },
   depositBox: {
     display: 'flex',
     width: '100%',
     height: '60px',
-    borderTop: '0.5px solid #FFF',
     borderBottom: '0.5px solid #FFF'
   },
   dpLeft: {
     flexGrow: 1,
     display: 'flex',
     minWidth: '90px',
-    maxWidth: '90px',
+    maxWidth: '130px',
     fontSize: '16px',
     color: THEME.COLORS.WHITE,
     flexDirection: 'row',
@@ -123,62 +169,20 @@ const styles = theme => ({
     alignItems: 'center',
     justifyContent: 'flex-end'
   },
-
-
-
-  buttonContainer: {
+  amountText: {
+    fontSize: 32
+  },
+  stack: {
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'column'
   },
-  imageContainer: {
-    position: 'relative',
-    width: '20%'
+  green: {
+    color: THEME.COLORS.ACCENT_MINT,
+    textAlign: 'right'
   },
-  textContainer: {
-    position: 'relative',
-    width: '90%',
-    backgroundColor: THEME.COLORS.ACCENT_RED
-  },
-  space40: {
-    height: '40px'
-  },
-  space10: {
-    height: '10px'
-  },
-  whiteText: {
-    fontSize: 17,
-    color: THEME.COLORS.WHITE
-  },
-  greenText: {
-    fontSize: 17,
-    color: THEME.COLORS.WHITE
-  },
-  card: {
-    margin: '20px 0px',
-    padding: '0px 10px'
-  },
-  h3: {
-    color: theme.palette.primary.main,
-    padding: 0,
-    margin: '10px 0',
-    fontSize: '16px',
-    fontWeight: 'bold'
-  },
-  warning: {
-    color: theme.palette.primary.error,
-    padding: 10,
-    margin: '10px 0',
-    fontSize: '16px',
-    fontWeight: 'bold'
-  },
-  conversion: {
-    fontSize: '24pt',
-    color: theme.palette.primary.main
-  },
-  p: {
-    color: '#999',
-    paddingBottom: '10px',
-    textAlign: 'center'
+  greenLeft: {
+    color: THEME.COLORS.ACCENT_MINT,
+    textAlign: 'left'
   }
 })
 

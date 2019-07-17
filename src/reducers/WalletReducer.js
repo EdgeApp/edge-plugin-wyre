@@ -1,5 +1,5 @@
-import type { Action } from '../types/ReduxTypes'
 // @flow
+import type { Action } from '../types/ReduxTypes'
 import type { WalletDetails } from '../types/AppTypes'
 
 export type WalletState = {

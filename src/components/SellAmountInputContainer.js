@@ -1,12 +1,8 @@
 // @flow
 import React, { Component } from 'react'
 
-import { CircularProgress } from 'material-ui/Progress'
 import Input from 'material-ui/Input';
-/* import { InputAdornment } from 'material-ui/Input'*/
 import THEME from '../constants/themeConstants.js'
-import TextField from 'material-ui/TextField'
-// import type {WalletDetails} from '../types'
 import { withStyles } from 'material-ui/styles'
 
 type Props = {
@@ -14,7 +10,9 @@ type Props = {
   classes: Object,
   image?: string,
   currencyCode: string,
-  label: string
+  label: string,
+  value: string,
+  onChange(string): void
 }
 type State = {
   // wallet: WalletDetails | null,
@@ -29,12 +27,12 @@ class SellAmountInputContainer extends Component <Props, State> {
   renderImage = () => {
     const { classes } = this.props
     if (this.props.image) {
-      return <img src={this.props.image} className={classes.image}/>
+      return <img src={this.props.image} className={classes.image} alt={'logo'}/>
     }
     return null
   }
-  onChange = (arg: string) => {
-
+  onChange = (event: Object) => {
+    this.props.onChange(event.target.value)
   }
   render () {
     const { classes } = this.props
@@ -44,7 +42,13 @@ class SellAmountInputContainer extends Component <Props, State> {
           {this.props.label}:
         </div>
         <div className={classes.inputBottom} >
-          <Input className={classes.inputComponent} disableUnderline={true}/>
+          <Input
+            className={classes.inputComponent}
+            disableUnderline={true}
+            onChange={this.onChange}
+            value={this.props.value}
+            type={'number'}
+            />
         </div>
       </div>
       <div className={classes.vl}>

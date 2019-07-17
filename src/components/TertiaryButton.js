@@ -1,10 +1,9 @@
+// @flow
 import { buttonStyle, buttonStyleHollow } from '../styles/styles'
 
-// @flow
 import Button from 'material-ui/Button'
 import React from 'react'
 import THEME from '../constants/themeConstants.js'
-import { WalletDetails } from '../types'
 
 type Props = {
   onClick(): void,
