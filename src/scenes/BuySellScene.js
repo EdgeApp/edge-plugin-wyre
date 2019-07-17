@@ -20,33 +20,6 @@ type State = {
 }
 
 class BuySellScene extends Component<Props, State> {
-
-
-  /* buy = () => {
-    const { wallet } = this.props
-    const { currencyCode } =  wallet
-    const { wyreAccount } = this.props
-    if (!wallet) return
-    const addressPrefix = currencyCode === 'BTC' ? 'bitcoin:' : 'ethereum:'
-    try {
-      const widget = new window.Wyre.Widget({
-        env: 'production',
-        accountId: 'AC-FJN8L976EW4',
-        auth: {
-          type: 'secretKey',
-          secretKey: wyreAccount
-        },
-        operation: {
-          type: 'onramp',
-          destCurrency: currencyCode,
-          dest: `${addressPrefix}${wallet.receiveAddress.publicAddress}`
-        }
-      })
-      widget.open()
-    } catch (e) {
-      window.edgeProvider.consoleLog('Error on Widget thingy')
-    }
-  } */
   renderButtonInsides = () => {
     const { classes, wallet } = this.props
     if (wallet) {
