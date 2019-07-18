@@ -6,7 +6,6 @@ import { createMuiTheme, withStyles } from 'material-ui/styles'
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import { SellQuoteRequestSceneConnector as SellQuoteRequestScene } from '../connectors/SellQuoteRequestSceneConnector'
-import { SellQuoteSceneConnector as SellQuoteScene } from '../connectors/SellQuoteScreenConnector.js'
 import { StartSceneConnector as StartScene } from '../connectors/StartSceneConnector'
 import history from '../history/history';
 
@@ -32,10 +31,6 @@ export const routes = [{
 }, {
   path: '/sellQuoteRequest',
   main: SellQuoteRequestScene,
-  exact: true
-}, {
-  path: '/sellQuote',
-  main: SellQuoteScene,
   exact: true
 }]
 

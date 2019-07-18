@@ -1,6 +1,5 @@
 // @flow
 import type { Action } from '../types/ReduxTypes'
-import type {SellQuoteData} from '../types/AppTypes'
 
 export type WyreState = {
   secretKey: string | null,
@@ -11,8 +10,7 @@ export type WyreState = {
   accountName: string | null,
   btcAddress: string | null,
   ethAddress: string | null,
-  exchangeRates: Object,
-  quote: SellQuoteData | null
+  exchangeRates: Object
 }
 
 export const initialState = {
@@ -24,8 +22,7 @@ export const initialState = {
   accountName: null,
   btcAddress: null,
   ethAddress: null,
-  exchangeRates: {},
-  quote: null
+  exchangeRates: {}
 }
 
 export const WyreReducer = (state: WyreState = initialState, action: Action): WyreState => {
@@ -44,12 +41,6 @@ export const WyreReducer = (state: WyreState = initialState, action: Action): Wy
       }
     case 'ON_EXCHANGE_RATE':
       return {...state , exchangeRates: action.data}
-
-    case 'ON_QUOTE':
-      return {...state , quote: action.data}
-
-    case 'RESET_QUOTE':
-      return {...state , quote: null}
     default:
       // window.edgeProvider.consoleLog('Wyre Reducer Default')
       return state

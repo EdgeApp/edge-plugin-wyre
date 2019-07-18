@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from 'react'
 
+import { CircularProgress } from 'material-ui/Progress'
 import { PrimaryButton } from './components'
 import SellAmountInputContainer from '../components/SellAmountInputContainer.js'
 import THEME from '../constants/themeConstants.js'
@@ -15,7 +16,7 @@ type Props = {
   exchangeRatesFrom: number,
   exchangeRatesTo: number,
   getExchangeRate(): void,
-  getQuote(string,string): void
+  confirmQuote(string,string, Object): void
 }
 type State = {
   cryptoAmount: string,
@@ -34,8 +35,7 @@ class SellQuoteRequestScene extends Component<Props, State> {
     this.props.getExchangeRate()
   }
   next = () => {
-    this.props.getQuote(this.state.cryptoAmount, this.state.fiatAmount)
-    this.props.history.push('/sellQuote')
+    this.props.confirmQuote(this.state.cryptoAmount, this.state.fiatAmount, this.props.history)
   }
   changeCrypto = (arg: string) => {
     window.edgeProvider.consoleLog('arg: ' + arg)
@@ -60,6 +60,11 @@ class SellQuoteRequestScene extends Component<Props, State> {
   }
   render () {
     const { classes } = this.props
+    if (!this.props.exchangeRatesFrom) {
+      return <div className={classes.containerSpinner}>
+      <CircularProgress size={60} />
+    </div>
+    }
     return (<div className={classes.container} >
       <div className={classes.containerInsideTop} >
         <div className={classes.chooseAmount} >

@@ -1,7 +1,7 @@
 // @flow
 
 import type { Dispatch, State } from '../types/ReduxTypes'
-import { getExchangeRate, getSellQuote, initInfo } from '../actions/indexActions'
+import { confirmQuote, getExchangeRate, initInfo } from '../actions/indexActions'
 
 import SellQuoteRequestScene from '../scenes/SellQuoteRequestScene'
 import { connect } from 'react-redux'
@@ -26,7 +26,7 @@ const mapStateToProps = (state: State, ownProps: SROwnsProps) => {
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   initInfo: () => dispatch(initInfo()),
   getExchangeRate: () => dispatch(getExchangeRate()),
-  getQuote: (crypto: string, fiat: string) => dispatch(getSellQuote(crypto,fiat))
+  confirmQuote: (crypto: string, fiat: string, history: Object) => dispatch(confirmQuote(crypto,fiat, history))
 })
 export const SellQuoteRequestSceneConnector = connect(
   mapStateToProps,
