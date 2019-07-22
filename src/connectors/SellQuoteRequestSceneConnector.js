@@ -10,8 +10,6 @@ type SROwnsProps = {
   history: Object
 }
 const mapStateToProps = (state: State, ownProps: SROwnsProps) => {
-  window.edgeProvider.consoleLog('WE are mapping to prop')
-  window.edgeProvider.consoleLog(state.Wyre.exchangeRates)
   const wallet = state.Wallet.wallet
   const pairFrom = wallet && wallet.currencyCode ? wallet.currencyCode+'USD' : 0
   const pairTo = wallet && wallet.currencyCode ? 'USD'+wallet.currencyCode : 0

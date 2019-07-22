@@ -1,17 +1,20 @@
 // @flow
 import React, { Component } from 'react'
+import type { WalletDetails, WyreTransaction } from '../types/AppTypes'
 
 import ChooseWalletButton from '../components/ChooseWalletButton'
 import { SUPPORTED_SELL_DIGITAL_CURRENCIES } from '../constants/index'
 import THEME from '../constants/themeConstants.js'
 import { TertiaryButton } from '../components/TertiaryButton'
-import type { WalletDetails } from '../types/AppTypes'
+import { TransactionItem } from '../components/TransactionItem.js'
+import { colors } from 'material-ui';
 import { withStyles } from 'material-ui/styles'
 
 type Props = {
   history: Object,
   classes: Object,
   wallet: WalletDetails | null,
+  transactions: Array<WyreTransaction>,
   onSellClick(): void,
   selectWallet(): void,
   buy(): void
@@ -48,41 +51,72 @@ class BuySellScene extends Component<Props, State> {
   onSellClick = () => {
     this.props.onSellClick()
   }
+  renderItems = () => {
+    const { classes, transactions } = this.props
+    const items = transactions.map((transaction: WyreTransaction) => {
+      return <TransactionItem transaction={transaction} />
+    })
+    return items
+  }
+  renderTransactions = () => {
+    const { classes, transactions } = this.props
+    if (transactions.length > 0) {
+      return <div className={classes.scroller} >
+        {this.renderItems()}
+      </div>
+    }
+    return null
+  }
   render () {
     const { classes } = this.props
     return <div className={classes.container}>
       <div className={classes.containerInside}>
-        <TertiaryButton
-          onClick={this.props.selectWallet}
-          lineColor={THEME.COLORS.WHITE}
-          disabled={false}
-          isCustom  >
-            {this.renderButtonInsides()}
-        </TertiaryButton>
-        <div className={classes.space40} />
-        <TertiaryButton
-          onClick={this.props.buy}
-          lineColor={THEME.COLORS.ACCENT_MINT}
-          disabled={this.isBuyDisabled()}>
-          <div className={classes.greenText} >
-            Buy
+        <div className={classes.buttonsContainer} >
+          <TertiaryButton
+            onClick={this.props.selectWallet}
+            lineColor={THEME.COLORS.WHITE}
+            disabled={false}
+            isCustom  >
+              {this.renderButtonInsides()}
+          </TertiaryButton>
+          <div className={classes.space40} />
+          <TertiaryButton
+            onClick={this.props.buy}
+            lineColor={THEME.COLORS.ACCENT_MINT}
+            disabled={this.isBuyDisabled()}>
+            <div className={classes.greenText} >
+              Buy
+            </div>
+          </TertiaryButton>
+          <div className={classes.space10} />
+          <TertiaryButton
+            onClick={this.onSellClick}
+            lineColor={THEME.COLORS.ACCENT_MINT}
+            disabled={this.isSellDisabled()}>
+            <div className={classes.greenText}>
+              Sell
+            </div>
+          </TertiaryButton>
+        </div>
+        <div className={classes.transactionsContainer} >
+          <div className={classes.transactionsTitle} >
+            Transactions
           </div>
-        </TertiaryButton>
-        <div className={classes.space10} />
-        <TertiaryButton
-          onClick={this.onSellClick}
-          lineColor={THEME.COLORS.ACCENT_MINT}
-          disabled={this.isSellDisabled()}>
-          <div className={classes.greenText}>
-            Sell
-          </div>
-        </TertiaryButton>
+          {this.renderTransactions()}
+        </div>
       </div>
     </div>
   }
 }
 
 const styles = theme => ({
+  scroller: {
+    flexGrow: 1,
+    position: 'relative',
+    width: '100%',
+    maxHeight: '80%',
+    overflowY: 'scroll'
+  },
   container: {
     width: '100%',
     height: '100%',
@@ -91,10 +125,28 @@ const styles = theme => ({
     backgroundImage: 'linear-gradient(to right, #0E4B75 , #0D2145)'
   },
   containerInside: {
+    display: 'flex',
+    flexDirection:'column',
     position: 'relative',
     width: '90%',
     height: '100%',
     paddingTop: '50px'
+  },
+  buttonsContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: 1,
+    width: '100%',
+    minHeight: '200px',
+    maxHeight: '200px'
+  },
+  transactionsContainer: {
+    paddingTop: '25px',
+    display: 'flex',
+    flexGrow: 1,
+    flexDirection: 'column',
+    width: '100%',
+
   },
   buttonContainer: {
     display: 'flex',
@@ -148,6 +200,15 @@ const styles = theme => ({
   p: {
     color: '#999',
     paddingBottom: '10px',
+    textAlign: 'center'
+  },
+  transactionsTitle: {
+    flexGrow: 1,
+    minHeight: '20px',
+    maxHeight: '20px',
+    color: THEME.COLORS.WHITE,
+    paddingBottom: '17px',
+    width: '100%',
     textAlign: 'center'
   }
 })

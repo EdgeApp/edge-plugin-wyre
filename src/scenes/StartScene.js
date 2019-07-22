@@ -15,8 +15,8 @@ type StartSceneProps = {
   history: Object,
   classes: Object,
   accountStatus: string | null,
-  initInfo(): void,
-  initUser(): void
+  wyreAccount: string | null,
+  initInfo(): void
 }
 
 type StartSceneState = {
@@ -31,8 +31,8 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
     this.props.initInfo()
   }
 
-  /* initUser = async () => {
-    const { wyreAccount } = this.state
+  initUser = async () => {
+    const { wyreAccount } = this.props
     const widget = new window.Wyre.Widget({
       env: 'test',
       accountId: 'AC-FJN8L976EW4',
@@ -45,10 +45,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
       }
     })
     widget.open('complete', async function(e) {
-      // onboarding was completed successfully!
-      /* window.edgeProvider.consoleLog('Widget on complete');
-      window.edgeProvider.consoleLog(e); */
-     /* await window.edgeProvider.writeData({wyreAccountStatus: PENDING})
+     await window.edgeProvider.writeData({wyreAccountStatus: PENDING})
       await window.edgeProvider.writeData({wyreAccountId_id: e.accountId})
       await window.edgeProvider.writeData({wyrePaymentMethodId: e.paymentMethodId})
       await window.edgeProvider.writeData({wyrePaymentMethodId: e.wyreNetworkTxId})
@@ -56,7 +53,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
         accountStatus: PENDING
       })
     });
-  } */
+  }
 
   gotoSell = () => {
     this.props.history.push(`/sellQuoteRequest`)
@@ -70,14 +67,11 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
     </div>
     }
     if(this.props.accountStatus === NOT_STARTED) {
-      window.edgeProvider.consoleLog('Not Started ')
-      return <SignUpComponent  onPress={this.props.initUser}/>
+      return <SignUpComponent  onPress={this.initUser}/>
     }
     if(this.props.accountStatus === PENDING) {
-      window.edgeProvider.consoleLog('PENDING ')
       return <PendingScreenComponent />
     }
-    window.edgeProvider.consoleLog('Ready to render the buySell ')
     return <BuySellSceneConnector onSellClick={this.gotoSell}/>
   }
 }

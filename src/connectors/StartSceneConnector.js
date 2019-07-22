@@ -10,10 +10,10 @@ type StartSceneProps = {
   history: Object
 }
 const mapStateToProps = (state: State, ownProps: StartSceneProps) => {
-  // window.edgeProvider.consoleLog('WE are mapping to prop')
   return {
     accountStatus:  state.Wyre.accountStatus,
-    history: ownProps.history
+    history: ownProps.history,
+    wyreAccount: state.Wyre.secretKey
   }
 }
 const mapDispatchToProps = (dispatch: Dispatch) => ({

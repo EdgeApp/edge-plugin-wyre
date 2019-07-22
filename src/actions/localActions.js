@@ -5,6 +5,7 @@ import { getAccount, getPaymentMethods } from '../api/api'
 
 import type { LocalStorage } from '../types/AppTypes'
 import { genRandomString } from '../utils'
+import { getTransactions } from '../actions/indexActions'
 
 export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => {
   const localStore: LocalStorage = await window.edgeProvider.readData(INITIAL_KEYS)
@@ -13,6 +14,8 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
   if(localStore.wyreAccountStatus === APPROVED) {
     window.edgeProvider.consoleLog('APPROVED DISPATCH')
     dispatch({type: 'LOCAL_DATA_INIT', data: localStore})
+
+    dispatch(getTransactions())
     return
   }
   if(localStore.wyreAccountStatus === PENDING) {

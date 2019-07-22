@@ -27,6 +27,20 @@ export async function getSellQuoteAPI(token: string, fiat: string, cryptoCurrenc
   return newData
 }
 
+export async function getTransferHistory(token: string) {
+  const request = {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer '+ token,
+      'Content-Type': 'application/json'
+    }
+  }
+  const url ='https://api.sendwyre.com/v3/transfers' // V2_API_URL + 'apiKeys'
+  const result = await window.fetch(url, request)
+  const newData = result.json()
+  return newData
+}
 
 export async function getExchangeRates(token: string) {
   const request = {

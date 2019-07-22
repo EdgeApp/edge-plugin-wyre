@@ -10,10 +10,9 @@ type BuySellOwnProps = {
   onSellClick(): void
 }
 const mapStateToProps = (state: State, ownProps: BuySellOwnProps) => {
-  window.edgeProvider.consoleLog('WE are mapping to prop')
-  window.edgeProvider.consoleLog(ownProps)
   return {
-    wallet: state.Wallet.wallet
+    wallet: state.Wallet.wallet,
+    transactions: state.Transactions.transactions
   }
 }
 const mapDispatchToProps = (dispatch: Dispatch, ownProps: BuySellOwnProps) => ({
