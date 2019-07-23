@@ -3,9 +3,10 @@ import React, { Component } from 'react'
 import type { WalletDetails, WyreTransaction } from '../types/AppTypes'
 
 import ChooseWalletButton from '../components/ChooseWalletButton'
+import { PoweredBy } from '../components/PoweredBy'
 import { SUPPORTED_SELL_DIGITAL_CURRENCIES } from '../constants/index'
 import THEME from '../constants/themeConstants.js'
-import { TertiaryButton } from '../components/TertiaryButton'
+import { TertiaryButton, } from '../components/TertiaryButton'
 import { TransactionItem } from '../components/TransactionItem.js'
 import { colors } from 'material-ui';
 import { withStyles } from 'material-ui/styles'
@@ -68,8 +69,12 @@ class BuySellScene extends Component<Props, State> {
     return null
   }
   render () {
-    const { classes } = this.props
+    const { classes, wallet } = this.props
+    const currencyCode = wallet ? wallet.currencyCode : ''
+    const buyText = this.props.wallet ? 'Buy ' + currencyCode + ' with Wyre ' : 'Buy'
+    const sellText = this.props.wallet ? 'Sell ' + currencyCode + ' with Wyre ' : 'Sell'
     return <div className={classes.container}>
+      <PoweredBy />
       <div className={classes.containerInside}>
         <div className={classes.buttonsContainer} >
           <TertiaryButton
@@ -85,7 +90,7 @@ class BuySellScene extends Component<Props, State> {
             lineColor={THEME.COLORS.ACCENT_MINT}
             disabled={this.isBuyDisabled()}>
             <div className={classes.greenText} >
-              Buy
+              {buyText}
             </div>
           </TertiaryButton>
           <div className={classes.space10} />
@@ -94,7 +99,7 @@ class BuySellScene extends Component<Props, State> {
             lineColor={THEME.COLORS.ACCENT_MINT}
             disabled={this.isSellDisabled()}>
             <div className={classes.greenText}>
-              Sell
+              {sellText}
             </div>
           </TertiaryButton>
         </div>
@@ -130,7 +135,7 @@ const styles = theme => ({
     position: 'relative',
     width: '90%',
     height: '100%',
-    paddingTop: '50px'
+    paddingTop: '20px'
   },
   buttonsContainer: {
     display: 'flex',

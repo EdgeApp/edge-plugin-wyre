@@ -2,6 +2,10 @@
 import type { Dispatch, GetState } from '../types/ReduxTypes'
 import { getExchangeRates, getTransferHistory } from '../api/api.js'
 
+export const finishTransaction = (history: Object) => async (dispatch: Dispatch, getState: GetState) => {
+  history.go(-2)
+  dispatch(getTransactions())
+}
 export const getTransactions = () => async (dispatch: Dispatch, getState: GetState) => {
   window.edgeProvider.consoleLog('#### gettingTransferHistory')
   const state = getState()

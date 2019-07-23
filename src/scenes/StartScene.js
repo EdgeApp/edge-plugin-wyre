@@ -34,14 +34,24 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
   initUser = async () => {
     const { wyreAccount } = this.props
     const widget = new window.Wyre.Widget({
-      env: 'test',
+      env: 'production',
       accountId: 'AC-FJN8L976EW4',
       auth: {
         type: 'secretKey',
         secretKey: wyreAccount
       },
       operation: {
-        type: 'onramp'
+        type: 'onramp',
+        /*
+        The following hard coded address is to simplify the sign up process
+        It is never used. When the plugin uses the widget in the future
+        a new address the user chooses is added for the destination based on their
+        wallet choice. This use of the widget is solely to do onboarding KYC
+        and an address is needed or their is a screen to type out one by hand.
+        This will be removed once Wyre finishes refactoring their widget
+        */
+        destCurrency: 'BTC',
+        dest: `bitcoin: 1HX7kW3HeHhiakNAEF8VF3cFhHW9RrrXKQ`
       }
     })
     widget.open('complete', async function(e) {

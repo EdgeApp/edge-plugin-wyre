@@ -43,7 +43,7 @@ export const confirmQuote = (crypto: string, fiat: string, history: Object) => a
   window.edgeProvider.consoleLog('edgeTransaction')
   window.edgeProvider.consoleLog(edgeTransaction)
   if (edgeTransaction) {
-    history.go(-1)
+    history.push('/ConfirmationScene')
   }
 }
 /* export const getSellQuote = (crypto: string, fiat: string) => async (dispatch: Dispatch, getState: GetState) => {

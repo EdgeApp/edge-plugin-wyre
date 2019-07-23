@@ -1,8 +1,8 @@
+import { PoweredBy, PrimaryButton } from './components'
 // @flow
 import React, { Component } from 'react'
 
 import { CircularProgress } from 'material-ui/Progress'
-import { PrimaryButton } from './components'
 import SellAmountInputContainer from '../components/SellAmountInputContainer.js'
 import THEME from '../constants/themeConstants.js'
 import type {WalletDetails} from '../types/AppTypes'
@@ -66,6 +66,7 @@ class SellQuoteRequestScene extends Component<Props, State> {
     </div>
     }
     return (<div className={classes.container} >
+      <PoweredBy />
       <div className={classes.containerInsideTop} >
         <div className={classes.chooseAmount} >
           Choose Amount
@@ -78,6 +79,7 @@ class SellQuoteRequestScene extends Component<Props, State> {
           value={this.state.cryptoAmount}
           />
         <SellAmountInputContainer
+          image={'https://developer.airbitz.co/content/country-logos/united-states-of-america.png'}
           label={'Receive'}
           currencyCode={'USD'}
           onChange={this.changeFiat}
@@ -115,7 +117,7 @@ const styles = theme => ({
     width: '90%',
     minHeight: '320px',
     maxHeight: '320px',
-    paddingTop: '50px'
+    paddingTop: '20px'
   },
   containerInsideBottom: {
     flexGrow: 1,

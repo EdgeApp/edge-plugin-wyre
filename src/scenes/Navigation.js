@@ -4,6 +4,7 @@ import React, { Component } from 'react'
 import { Route, HashRouter as Router } from 'react-router-dom'
 import { createMuiTheme, withStyles } from 'material-ui/styles'
 
+import { ConfirmationScreenConnector as Confirmation } from '../connectors/ConfirmationScreenConnector'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import { SellQuoteRequestSceneConnector as SellQuoteRequestScene } from '../connectors/SellQuoteRequestSceneConnector'
 import { StartSceneConnector as StartScene } from '../connectors/StartSceneConnector'
@@ -31,6 +32,10 @@ export const routes = [{
 }, {
   path: '/sellQuoteRequest',
   main: SellQuoteRequestScene,
+  exact: true
+}, {
+  path: '/ConfirmationScene',
+  main: Confirmation,
   exact: true
 }]
 

@@ -50,12 +50,6 @@ class SignUpComponent extends Component<Props, {}> {
         </div>
         <Divider className={classes.divider} />
         <div>
-          <div>
-            <StartHeader text="Sign Up/ Select Wallet" classes={classes} />
-            <StartParagraph classes={classes}>
-              We need a wallet.
-            </StartParagraph>
-          </div>
           <PrimaryButton onClick={this.props.onPress}>Create Account</PrimaryButton>
         </div>
       </div>
