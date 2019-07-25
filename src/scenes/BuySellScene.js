@@ -74,8 +74,9 @@ class BuySellScene extends Component<Props, State> {
     const sellText = this.props.wallet ? 'Sell ' + currencyCode + ' with Wyre ' : 'Sell'
     const textStyle = this.isSellDisabled() ? classes.disableText : classes.greenText
     return <div className={classes.container}>
-      <PoweredBy />
+
       <div className={classes.containerInside}>
+        <PoweredBy />
         <div className={classes.buttonsContainer} >
           <TertiaryButton
             onClick={this.props.selectWallet}
@@ -121,17 +122,15 @@ const styles = theme => ({
     width: '100%'
   },
   container: {
-    width: '100%',
-    height: '100%',
-    paddingLeft: '5%',
-    paddingRight: '5%',
-    paddingBottom: '50px',
-    backgroundImage: 'linear-gradient(to right, #0E4B75 , #0D2145)'
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center'
   },
   containerInside: {
+    position:'relative',
     display: 'flex',
     flexDirection:'column',
-    position: 'relative',
     width: '90%',
     height: '85%',
     paddingTop: '20px'
@@ -197,13 +196,6 @@ const styles = theme => ({
   h3: {
     color: theme.palette.primary.main,
     padding: 0,
-    margin: '10px 0',
-    fontSize: '16px',
-    fontWeight: 'bold'
-  },
-  warning: {
-    color: theme.palette.primary.error,
-    padding: 10,
     margin: '10px 0',
     fontSize: '16px',
     fontWeight: 'bold'

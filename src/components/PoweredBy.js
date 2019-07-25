@@ -4,11 +4,14 @@ import THEME from '../constants/themeConstants.js'
 import { withStyles } from 'material-ui/styles'
 const powerThemes = theme => ({
   container: {
+    position: 'relative',
+    width: '100%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    paddingRight: '5%',
-    paddingTop: '10px'
+    paddingTop: '10px',
+    paddingBottom: '10px',
+    flex: 1
   },
   containerInner: {
     display: 'flex',
@@ -23,8 +26,7 @@ const powerThemes = theme => ({
   logoWrapper: {
     borderRadius: '6px',
     backgroundColor: THEME.COLORS.WHITE,
-    padding: '4px',
-    marginRight: '5%',
+    padding: '4px'
   },
   shim: {
     width: '10px'

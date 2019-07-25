@@ -66,73 +66,76 @@ class SellQuoteRequestScene extends Component<Props, State> {
     </div>
     }
     return (<div className={classes.container} >
-      <PoweredBy />
-      <div className={classes.containerInsideTop} >
-        <div className={classes.chooseAmount} >
-          Choose Amount
-        </div>
-        <SellAmountInputContainer
-          image={this.props.wallet.currencyIcon}
-          currencyCode={this.props.wallet.currencyCode}
-          label={'Sell'}
-          onChange={this.changeCrypto}
-          value={this.state.cryptoAmount}
-          />
-        <SellAmountInputContainer
-          image={'https://developer.airbitz.co/content/country-logos/united-states-of-america.png'}
-          label={'Receive'}
-          currencyCode={'USD'}
-          onChange={this.changeFiat}
-          value={this.state.fiatAmount}
-          />
-          <div className={classes.depositBox} >
-            <div className={classes.dpLeft} >
-              Deposit To:
-            </div>
-            <div className={classes.dpRight} >
-              {this.props.bankName}
-            </div>
+        <div className={classes.containerInsideTop} >
+          <PoweredBy />
+          <div className={classes.chooseAmount} >
+            Choose Amount
           </div>
-      </div>
-      <div className={classes.containerInsideBottom} >
-        <PrimaryButton onClick={this.next}>Next</PrimaryButton>
-      </div>
+          <SellAmountInputContainer
+            image={this.props.wallet.currencyIcon}
+            currencyCode={this.props.wallet.currencyCode}
+            label={'Sell'}
+            onChange={this.changeCrypto}
+            value={this.state.cryptoAmount}
+            />
+          <SellAmountInputContainer
+            image={'https://developer.airbitz.co/content/country-logos/united-states-of-america.png'}
+            label={'Receive'}
+            currencyCode={'USD'}
+            onChange={this.changeFiat}
+            value={this.state.fiatAmount}
+            />
+            <div className={classes.depositBox} >
+              <div className={classes.dpLeft} >
+                Deposit To:
+              </div>
+              <div className={classes.dpRight} >
+                {this.props.bankName}
+              </div>
+            </div>
+        </div>
+        <div className={classes.containerInsideBottom} >
+          <PrimaryButton onClick={this.next}>Next</PrimaryButton>
+        </div>
     </div>)
   }
 }
 
 const styles = theme => ({
   container: {
-    width: '100%',
-    height: '100%',
-    paddingLeft: '5%',
-    paddingRight: '5%',
     display: 'flex',
-    flexDirection: 'column',
-    backgroundImage: 'linear-gradient(to right, #0E4B75 , #0D2145)'
+    flex: 1,
+    height: '100%',
+    alignItems: 'center',
+    flexDirection: 'column'
   },
   containerInsideTop: {
-    flexGrow: 2,
+    display: 'flex',
     position: 'relative',
+    flexDirection: 'column',
+    flexGrow: 3,
     width: '90%',
     minHeight: '320px',
     maxHeight: '320px',
     paddingTop: '20px'
   },
   containerInsideBottom: {
-    flexGrow: 1,
     display: 'flex',
+    flexGrow: 2,
+    flexDirection: 'column',
     position: 'relative',
     width: '90%',
     paddingBottom: '10px',
-    alignItems: 'flex-end'
+    alignItems: 'center',
+    justifyContent: 'flex-end'
   },
   chooseAmount: {
     alignItems: 'center',
     textAlign: 'center',
     fontSize: '17px',
     color: THEME.COLORS.WHITE,
-    marginBottom: '25px'
+    marginBottom: '25px',
+    marginTop: '10px'
   },
   containerSpinner: {
     display: 'flex',
