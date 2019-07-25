@@ -9,7 +9,8 @@ export const styles = {
 }
 export const buttonStyle = {
   textTransform: 'none',
-  padding: '15px 0',
+  paddingRight: '15px',
+  paddingLeft: '15px',
   margin: '5px 0',
   borderRadius: '5px',
 }

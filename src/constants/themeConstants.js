@@ -85,6 +85,7 @@ export const THEME = {
     OFF_WHITE: '#F6F6F6',
     CLEAR: 'rgba(0, 0, 0, 0)',
     OPACITY_WHITE: 'rgba(255, 255, 255, 0.1)',
+    OPACITY_WHITE_TWO: 'rgba(255, 255, 255, 0.5)',
 
     TRANSPARENT: 'transparent',
     MODAL_BOX: 'rgba(0, 0, 0, .6)',

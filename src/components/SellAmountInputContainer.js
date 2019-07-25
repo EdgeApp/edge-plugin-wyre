@@ -1,8 +1,8 @@
 // @flow
 import React, { Component } from 'react'
 
-import Input from 'material-ui/Input';
 import THEME from '../constants/themeConstants.js'
+import TextField from 'material-ui/TextField'
 import { withStyles } from 'material-ui/styles'
 
 type Props = {
@@ -42,8 +42,14 @@ class SellAmountInputContainer extends Component <Props, State> {
           {this.props.label}:
         </div>
         <div className={classes.inputBottom} >
-          <Input
-            className={classes.inputComponent}
+          <TextField
+            InputProps={{
+              classes: {
+                input: classes.resize
+              },
+              disableUnderline: true,
+              fillWidth: true
+            }}
             disableUnderline={true}
             onChange={this.onChange}
             value={this.props.value}
@@ -51,16 +57,12 @@ class SellAmountInputContainer extends Component <Props, State> {
             />
         </div>
       </div>
-      <div className={classes.vl}>
-      </div>
       <div className={classes.currencyContainer}>
+        <div className={classes.vl}></div>
         {this.renderImage()}
         <div className={classes.currencyCode}>
           {this.props.currencyCode}
         </div>
-      </div>
-      <div className={classes.arrowContainer}>
-
       </div>
     </div>
   }
@@ -78,6 +80,10 @@ const styles = theme => ({
     flexDirection: 'row',
     alignItems: 'center'
   },
+  resize: {
+    fontSize: '21px',
+    width: '60%'
+  },
   containerSpinner: {
     display: 'flex',
     flex: '1',
@@ -88,37 +94,26 @@ const styles = theme => ({
     justifyContent: 'space-around'
   },
   inputContainer: {
+    display: 'flex',
     position: 'relative',
     height: '64px',
-    flexGrow: 2,
-    display: 'flex',
     flexDirection: 'column'
   },
   vl: {
-    flexGrow: 1,
     minWidth: '1px',
     maxWidth: '1px',
-    borderLeft: '1px solid black',
-    height: '90%'
+    borderLeft: '1px solid #979797',
+    height: '40px',
+    marginRight: '14px'
   },
   currencyContainer: {
     position: 'relative',
-    flexGrow: 1,
     display: 'flex',
-    maxWidth: '100px',
-    minWidth: '100px',
     height: '100%',
-    paddingLeft: '13px',
-    paddingRight: '13px',
     flexDirection: 'row',
-    alignItems: 'center'
-  },
-  arrowContainer: {
-    position: 'relative',
-    flexGrow: 1,
-    maxWidth: '20px',
-    minWidth: '20px',
-    height: '100%'
+    alignItems: 'center',
+    paddingRight: '10px',
+    borderRadius: '6px'
   },
   image: {
     width: '30px',
@@ -126,26 +121,32 @@ const styles = theme => ({
   },
   currencyCode: {
     fontSize: '17px',
+    width: '60px',
     marginLeft: '10px'
   },
   inputTop: {
-    flex: 1,
+    flexGrow: 1,
     display: 'flex',
+    maxHeight: '21px',
+    width: '50%',
     flexDirection: 'row',
     paddingLeft: '10px',
     fontSize: '11px',
     color: '#363636',
-    alignItems: 'center'
+    alignItems: 'flex-end'
   },
   inputBottom: {
-    flex: 1,
+    flexGrow: 1,
+    display: 'flex',
+    width: '90%',
     paddingLeft: '10px',
-    paddingRight: '10px'
+    paddingRight: '10px',
+    fontSize: '21px'
   },
   inputComponent : {
     position: 'relative',
-    width: '100%',
-    height: '100%'
+    width: '50%',
+    fontSize: '21px'
   }
 
 

@@ -16,13 +16,10 @@ class ChooseWalletButton extends Component<Props> {
   render () {
     const { classes } = this.props
     return <div className={classes.buttonContainer}>
-    <div className={classes.imageContainer}>
-      <img src={this.props.image} className={classes.image} alt={'logo'}/>
-    </div>
-    <div className={classes.textContainer}>
-      <div className={classes.whiteText} >
-        {this.props.text}
-      </div>
+    <img src={this.props.image} className={classes.image} alt={'logo'}/>
+    <div className={classes.shim} />
+    <div className={classes.whiteText} >
+      {this.props.text}
     </div>
   </div>
   }
@@ -34,21 +31,15 @@ const styles = theme => ({
     display: 'flex',
     width:'100%',
     height:'100%',
-    flexDirection: 'row'
-  },
-  imageContainer: {
-    position: 'relative',
-    width: '20%'
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   image: {
     width: '30px',
     height: '30px'
   },
-  textContainer: {
-    display: 'flex',
-    position: 'relative',
-    width: '90%',
-    alignItems: 'center'
+  shim: {
+    width: '14px'
   },
   whiteText: {
     fontSize: 17,

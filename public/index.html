@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=100vw, initial-scale=1, maximum-scale=1.0, shrink-to-fit=no, height=100vh">
+    <meta name="viewport" content="width=100vw, initial-scale=1, maximum-scale=1.0, shrink-to-fit=no, user-scalable=no, height=100vh">
     <meta name="theme-color" content="#000000">
     <script src="https://verify.sendwyre.com/js/widget-loader.js"></script>
     <!--
@@ -27,6 +27,7 @@
       You need to enable JavaScript to run this app.
     </noscript>
     <div id="root"></div>
+
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
@@ -38,4 +39,10 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </body>
+  <style type="text/css">
+    #container {
+      overflow-x:hidden;
+      width:100%;
+    }
+  </style>
 </html>

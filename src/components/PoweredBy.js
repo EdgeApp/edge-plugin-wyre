@@ -1,14 +1,19 @@
 // @flow
 import React from 'react'
 import THEME from '../constants/themeConstants.js'
-import Typography from 'material-ui/Typography'
 import { withStyles } from 'material-ui/styles'
 const powerThemes = theme => ({
   container: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    paddingRight: '5%'
+    paddingRight: '5%',
+    paddingTop: '10px'
+  },
+  containerInner: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-end'
   },
   logo: {
     height: '30px',
@@ -22,12 +27,16 @@ const powerThemes = theme => ({
     marginRight: '5%',
   },
   shim: {
-    width: '20px'
+    width: '10px'
   },
   p: {
     color: THEME.COLORS.WHITE,
-    textAlign: 'center',
-    padding: '20px 0'
+    textAlign: 'right',
+    fontSize: 11
+  },
+  p2: {
+    color: THEME.COLORS.OPACITY_WHITE_TWO,
+    textAlign: 'right',
   }
 })
 type Props = {
@@ -36,9 +45,15 @@ type Props = {
 const PoweredBy = withStyles(powerThemes)((props: Props) => {
   return (
     <div className={props.classes.container}>
-      <Typography component="p" className={props.classes.p}>
-        Powered by Wyre
-      </Typography>
+      <div className={props.classes.containerInner} >
+        <div className={props.classes.p} >
+          Powered by
+        </div>
+        <div className={props.classes.p} >
+          support: support@sendwyre.com
+        </div>
+
+      </div>
       <div className={props.classes.shim} />
       <div className={props.classes.logoWrapper} >
         <div className={`iconLogo ${props.classes.logo}`} />

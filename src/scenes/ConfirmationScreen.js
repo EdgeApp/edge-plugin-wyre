@@ -1,11 +1,8 @@
 // @flow
 import React, { Component } from 'react'
 
-import { CircularProgress } from 'material-ui/Progress'
 import { PrimaryButton } from './components'
-import SellAmountInputContainer from '../components/SellAmountInputContainer.js'
 import THEME from '../constants/themeConstants.js'
-import type {WalletDetails} from '../types/AppTypes'
 import { withStyles } from 'material-ui/styles'
 
 type Props = {

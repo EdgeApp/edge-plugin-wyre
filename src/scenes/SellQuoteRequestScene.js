@@ -1,5 +1,5 @@
-import { PoweredBy, PrimaryButton } from './components'
 // @flow
+import { PoweredBy, PrimaryButton } from './components'
 import React, { Component } from 'react'
 
 import { CircularProgress } from 'material-ui/Progress'

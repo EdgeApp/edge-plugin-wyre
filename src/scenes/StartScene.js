@@ -33,6 +33,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
 
   initUser = async () => {
     const { wyreAccount } = this.props
+    window.edgeProvider.consoleLog('init user wyre account', wyreAccount)
     const widget = new window.Wyre.Widget({
       env: 'production',
       accountId: 'AC-FJN8L976EW4',
@@ -51,7 +52,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
         This will be removed once Wyre finishes refactoring their widget
         */
         destCurrency: 'BTC',
-        dest: `bitcoin: 1HX7kW3HeHhiakNAEF8VF3cFhHW9RrrXKQ`
+        dest: `bitcoin:1HX7kW3HeHhiakNAEF8VF3cFhHW9RrrXKQ`
       }
     })
     widget.open('complete', async function(e) {
@@ -64,7 +65,22 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
       })
     });
   }
-
+/*
+const widget = new window.Wyre.Widget({
+        env: 'production',
+        accountId: 'AC-FJN8L976EW4',
+        auth: {
+          type: 'secretKey',
+          secretKey: wyreAccount
+        },
+        operation: {
+          type: 'onramp',
+          destCurrency: currencyCode,
+          dest: `${addressPrefix}${wallet.receiveAddress.publicAddress}`
+        }
+      })
+      widget.open()
+      */
   gotoSell = () => {
     this.props.history.push(`/sellQuoteRequest`)
   }

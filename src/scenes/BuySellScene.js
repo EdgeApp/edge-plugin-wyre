@@ -8,7 +8,6 @@ import { SUPPORTED_SELL_DIGITAL_CURRENCIES } from '../constants/index'
 import THEME from '../constants/themeConstants.js'
 import { TertiaryButton, } from '../components/TertiaryButton'
 import { TransactionItem } from '../components/TransactionItem.js'
-import { colors } from 'material-ui';
 import { withStyles } from 'material-ui/styles'
 
 type Props = {
@@ -53,7 +52,7 @@ class BuySellScene extends Component<Props, State> {
     this.props.onSellClick()
   }
   renderItems = () => {
-    const { classes, transactions } = this.props
+    const { transactions } = this.props
     const items = transactions.map((transaction: WyreTransaction) => {
       return <TransactionItem transaction={transaction} />
     })
@@ -73,6 +72,7 @@ class BuySellScene extends Component<Props, State> {
     const currencyCode = wallet ? wallet.currencyCode : ''
     const buyText = this.props.wallet ? 'Buy ' + currencyCode + ' with Wyre ' : 'Buy'
     const sellText = this.props.wallet ? 'Sell ' + currencyCode + ' with Wyre ' : 'Sell'
+    const textStyle = this.isSellDisabled() ? classes.disableText : classes.greenText
     return <div className={classes.container}>
       <PoweredBy />
       <div className={classes.containerInside}>
@@ -89,7 +89,7 @@ class BuySellScene extends Component<Props, State> {
             onClick={this.props.buy}
             lineColor={THEME.COLORS.ACCENT_MINT}
             disabled={this.isBuyDisabled()}>
-            <div className={classes.greenText} >
+            <div className={textStyle} >
               {buyText}
             </div>
           </TertiaryButton>
@@ -98,14 +98,14 @@ class BuySellScene extends Component<Props, State> {
             onClick={this.onSellClick}
             lineColor={THEME.COLORS.ACCENT_MINT}
             disabled={this.isSellDisabled()}>
-            <div className={classes.greenText}>
+            <div className={textStyle}>
               {sellText}
             </div>
           </TertiaryButton>
         </div>
         <div className={classes.transactionsContainer} >
           <div className={classes.transactionsTitle} >
-            Transactions
+            Transaction History
           </div>
           {this.renderTransactions()}
         </div>
@@ -118,15 +118,14 @@ const styles = theme => ({
   scroller: {
     flexGrow: 1,
     position: 'relative',
-    width: '100%',
-    maxHeight: '80%',
-    overflowY: 'scroll'
+    width: '100%'
   },
   container: {
     width: '100%',
     height: '100%',
     paddingLeft: '5%',
     paddingRight: '5%',
+    paddingBottom: '50px',
     backgroundImage: 'linear-gradient(to right, #0E4B75 , #0D2145)'
   },
   containerInside: {
@@ -134,7 +133,7 @@ const styles = theme => ({
     flexDirection:'column',
     position: 'relative',
     width: '90%',
-    height: '100%',
+    height: '85%',
     paddingTop: '20px'
   },
   buttonsContainer: {
@@ -151,7 +150,14 @@ const styles = theme => ({
     flexGrow: 1,
     flexDirection: 'column',
     width: '100%',
-
+    fontSize: '17px',
+    paddingBottom: '20px'
+  },
+  bottomPad: {
+    display: 'flex',
+    flexGrow: 1,
+    maxHeight: '20px',
+    minHeight: '20px'
   },
   buttonContainer: {
     display: 'flex',
@@ -178,7 +184,11 @@ const styles = theme => ({
   },
   greenText: {
     fontSize: 17,
-    color: THEME.COLORS.WHITE
+    color: THEME.COLORS.ACCENT_MINT
+  },
+  disableText: {
+    fontSize: 17,
+    color: THEME.COLORS.GRAY_2
   },
   card: {
     margin: '20px 0px',

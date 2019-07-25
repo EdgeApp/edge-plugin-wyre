@@ -1,7 +1,6 @@
 // @flow
 import React from 'react'
 import THEME from '../constants/themeConstants.js'
-import Typography from 'material-ui/Typography'
 import type { WyreTransaction } from '../types/AppTypes'
 import { withStyles } from 'material-ui/styles'
 const limitStyles = theme => ({
@@ -9,12 +8,12 @@ const limitStyles = theme => ({
     position: 'relative',
     display: 'flex',
     width: '100%',
-    height: '70px',
     border: '1px solid #FFFFFF',
     boxSizing: 'border-box',
     borderRadius: '6px',
     marginBottom: '14px',
     paddingTop: '9px',
+    paddingBottom: '9px',
     paddingLeft: '11px',
     paddingRight: '11px',
     flexDirection: 'row'

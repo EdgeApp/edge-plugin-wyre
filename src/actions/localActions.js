@@ -8,14 +8,14 @@ import { genRandomString } from '../utils'
 import { getTransactions } from '../actions/indexActions'
 
 export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => {
-  // window.edgeProvider.consoleLog('localStore')
+  window.edgeProvider.consoleLog('localStore 123')
+  await window.edgeProvider.writeData({'wyreAccountStatus': APPROVED})
+  let localStore: LocalStorage = await window.edgeProvider.readData(INITIAL_KEYS)
   try {
-    const localStore: LocalStorage = await window.edgeProvider.readData(INITIAL_KEYS)
     // window.edgeProvider.consoleLog(localStore)
     if(localStore.wyreAccountStatus === APPROVED) {
       // window.edgeProvider.consoleLog('APPROVED DISPATCH')
       dispatch({type: 'LOCAL_DATA_INIT', data: localStore})
-
       dispatch(getTransactions())
       return
     }
@@ -28,8 +28,9 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
       return
     }
     const secret = localStore.wyreAccountId
+    // window.edgeProvider.consoleLog('secret '+ secret)
     if (secret) {
-      // window.edgeProvider.consoleLog('started to get data from them ')
+      window.edgeProvider.consoleLog('started to get data from them ')
       if (!localStore.wyreAccountId_account && localStore.accountStatus !== NOT_STARTED) {
         const result = await getPaymentMethods(secret)
         /* window.edgeProvider.consoleLog('getPaymentMethods ')
@@ -58,15 +59,22 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
         return
       }
     } else {
+      // window.edgeProvider.consoleLog('I am in the else')
       const accountId = genRandomString(32)
-      const key = 'wyreAccountId'
       const value = accountId
-      await window.edgeProvider.writeData({[key]: value})
-      await window.edgeProvider.writeData({wyreAccountStatus: NOT_STARTED})
-      const localStore: LocalStorage = await window.edgeProvider.readData(INITIAL_KEYS)
-      dispatch({type: 'LOCAL_DATA_INIT', data: localStore})
+      await window.edgeProvider.writeData({'wyreAccountId': value})
+      // window.edgeProvider.consoleLog('I am in the else 2')
+      await window.edgeProvider.writeData({'wyreAccountStatus': NOT_STARTED})
+      const localStore2: LocalStorage = await window.edgeProvider.readData(INITIAL_KEYS)
+      // window.edgeProvider.consoleLog('I am in the else 3')
+      dispatch({type: 'LOCAL_DATA_INIT', data: localStore2})
     }
   } catch (e) {
+    if(localStore.wyreAccountId) {
+      localStore.wyreAccountStatus = NOT_STARTED
+      dispatch({type: 'LOCAL_DATA_INIT', data: localStore})
+      await window.edgeProvider.writeData({wyreAccountStatus: NOT_STARTED})
+    }
     window.edgeProvider.consoleLog('localStore Error')
     window.edgeProvider.consoleLog(e)
   }
