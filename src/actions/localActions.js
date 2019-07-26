@@ -8,8 +8,6 @@ import { genRandomString } from '../utils'
 import { getTransactions } from '../actions/indexActions'
 
 export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => {
-  window.edgeProvider.consoleLog('localStore 123')
-  await window.edgeProvider.writeData({'wyreAccountStatus': APPROVED})
   let localStore: LocalStorage = await window.edgeProvider.readData(INITIAL_KEYS)
   try {
     // window.edgeProvider.consoleLog(localStore)
@@ -63,7 +61,7 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
       const accountId = genRandomString(32)
       const value = accountId
       await window.edgeProvider.writeData({'wyreAccountId': value})
-      // window.edgeProvider.consoleLog('I am in the else 2')
+      window.edgeProvider.consoleLog('I am in the else 2')
       await window.edgeProvider.writeData({'wyreAccountStatus': NOT_STARTED})
       const localStore2: LocalStorage = await window.edgeProvider.readData(INITIAL_KEYS)
       // window.edgeProvider.consoleLog('I am in the else 3')
