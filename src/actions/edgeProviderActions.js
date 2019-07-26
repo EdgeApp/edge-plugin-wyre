@@ -39,7 +39,13 @@ export const confirmQuote = (crypto: string, fiat: string, history: Object) => a
     nativeAmount: sourceAmount.toString()
   }
   window.edgeProvider.consoleLog('confirmQuote 3')
-  const edgeTransaction = await window.edgeProvider.requestSpend([info])
+  const metadata = {
+    name: 'Wyre',
+    category: 'Exchange:Sell ' + currencyCode,
+    notes: 'Sell '+ currencyCode + '. Requested: $' + fiat
+  }
+  const edgeTransaction = await window.edgeProvider.requestSpend([info], { metadata })
+  // const edgeTransaction = await window.edgeProvider.requestSpend([info])
   window.edgeProvider.consoleLog('edgeTransaction')
   window.edgeProvider.consoleLog(edgeTransaction)
   if (edgeTransaction) {

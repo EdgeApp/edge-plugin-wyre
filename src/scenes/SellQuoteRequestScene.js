@@ -93,6 +93,9 @@ class SellQuoteRequestScene extends Component<Props, State> {
                 {this.props.bankName}
               </div>
             </div>
+            <div className={classes.disclaimer} >
+              Receive amount is an estimate. Actual rate is determined at the time funds are received.
+            </div>
         </div>
         <div className={classes.containerInsideBottom} >
           <PrimaryButton onClick={this.next}>Next</PrimaryButton>
@@ -171,6 +174,15 @@ const styles = theme => ({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end'
+  },
+  disclaimer: {
+    flex: 1,
+    display: 'flex',
+    fontSize: '12px',
+    width: '100%',
+    color: THEME.COLORS.WHITE,
+    flexDirection: 'column',
+    marginTop: '20px'
   }
 })
 

@@ -26,8 +26,12 @@ class ConfirmationScene extends Component<Props, State> {
             Congratulations
           </div>
           <div className={classes.smallText} >
-            Transaction was successful
+            Transaction was successful.
           </div>
+          <div className={classes.smallText} >
+          Funds will show in your bank account in 1-2 days.
+          </div>
+
         </div>
       </div>
       <div className={classes.containerBottom} >

@@ -44,15 +44,18 @@ const powerThemes = theme => ({
 type Props = {
   classes: Object
 }
+const onClick = () => {
+  // window.open('mailto:support@sendwyre.com', '_blank')
+}
 const PoweredBy = withStyles(powerThemes)((props: Props) => {
   return (
-    <div className={props.classes.container}>
+    <div className={props.classes.container} onClick={onClick}>
       <div className={props.classes.containerInner} >
         <div className={props.classes.p} >
           Powered by
         </div>
         <div className={props.classes.p} >
-          support: support@sendwyre.com
+          support@sendwyre.com
         </div>
 
       </div>
