@@ -180,6 +180,7 @@ const styles = theme => ({
     display: 'flex',
     fontSize: '12px',
     width: '100%',
+    textAlign: 'center',
     color: THEME.COLORS.WHITE,
     flexDirection: 'column',
     marginTop: '20px'

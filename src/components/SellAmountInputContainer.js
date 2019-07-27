@@ -126,6 +126,7 @@ const styles = theme => ({
   },
   inputTop: {
     flexGrow: 1,
+    position: 'relative',
     display: 'flex',
     maxHeight: '21px',
     width: '50%',
@@ -133,7 +134,7 @@ const styles = theme => ({
     paddingLeft: '10px',
     fontSize: '11px',
     color: '#363636',
-    alignItems: 'flex-end'
+    paddingTop: '20px'
   },
   inputBottom: {
     flexGrow: 1,
