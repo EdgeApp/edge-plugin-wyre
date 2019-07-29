@@ -42,7 +42,7 @@ export const confirmQuote = (crypto: string, fiat: string, history: Object) => a
   const metadata = {
     name: 'Wyre',
     category: 'Exchange:Sell ' + currencyCode,
-    notes: 'Sell '+ currencyCode + 'from ' + wallet.name +' to Wyre at address: ' + address +'. Sell amount ' + fiat +'. For assistance, please contact support@sendwyre.com.'
+    notes: 'Sell '+ currencyCode + ' from ' + wallet.name +' to Wyre at address: ' + address +'. Sell amount ' + fiat +'. For assistance, please contact support@sendwyre.com.'
   }
   const edgeTransaction = await window.edgeProvider.requestSpend([info], { metadata })
   // const edgeTransaction = await window.edgeProvider.requestSpend([info])

@@ -134,12 +134,15 @@ const styles = theme => ({
     paddingLeft: '10px',
     fontSize: '11px',
     color: '#363636',
-    paddingTop: '20px'
+    paddingTop: '12px'
   },
   inputBottom: {
+    position: 'relative',
+    top: '-8px',
     flexGrow: 1,
     display: 'flex',
     width: '90%',
+
     paddingLeft: '10px',
     paddingRight: '10px',
     fontSize: '21px'
