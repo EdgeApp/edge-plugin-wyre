@@ -45,7 +45,7 @@ type Props = {
   classes: Object
 }
 const onClick = () => {
-  // window.open('mailto:support@sendwyre.com', '_blank')
+  window.edgeProvider.openEmailApp('support@sendwyre.com')
 }
 const PoweredBy = withStyles(powerThemes)((props: Props) => {
   return (
