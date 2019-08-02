@@ -46,9 +46,11 @@ export const buyCurrency = () => async (dispatch: Dispatch, getState: GetState) 
           dest: `${addressPrefix}${wallet.receiveAddress.publicAddress}`
         }
       })
-      widget.open()
+      widget.open('complete', async function(e) {
+        await window.edgeProvider.trackConversion('buy crypto: ' + currencyCode)
+       });
     } catch (e) {
-      window.edgeProvider.consoleLog('Error on Widget thingy')
+      window.edgeProvider.consoleLog('Error on Widget')
     }
   }
 
