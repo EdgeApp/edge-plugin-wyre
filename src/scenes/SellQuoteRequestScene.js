@@ -3,7 +3,7 @@ import { PoweredBy, PrimaryButton } from './components'
 import React, { Component } from 'react'
 
 import { CircularProgress } from 'material-ui/Progress'
-import SellAmountInputContainer from '../components/SellAmountInputContainer.js'
+import SellAmountFiatBigInputContainer from '../components/SellAmountFiatBigInputContainer.js'
 import THEME from '../constants/themeConstants.js'
 import type {WalletDetails} from '../types/AppTypes'
 import { withStyles } from 'material-ui/styles'
@@ -35,7 +35,10 @@ class SellQuoteRequestScene extends Component<Props, State> {
     this.props.getExchangeRate()
   }
   next = () => {
-    this.props.confirmQuote(this.state.cryptoAmount, this.state.fiatAmount, this.props.history)
+    window.edgeProvider.consoleLog('next value ', this.state.fiatAmount)
+    if(this.state.fiatAmount !== ''){
+      this.props.confirmQuote(this.state.cryptoAmount, this.state.fiatAmount, this.props.history)
+    }
   }
   changeCrypto = (arg: string) => {
     window.edgeProvider.consoleLog('arg: ' + arg)
@@ -58,6 +61,16 @@ class SellQuoteRequestScene extends Component<Props, State> {
       cryptoAmount: crypto.toString()
     })
   }
+  renderReceive = () => {
+    const { classes } = this.props
+    if(this.state.cryptoAmount !== '') {
+      return <div className={classes.receiveAmount} >
+      You will receive {this.state.cryptoAmount} {this.props.wallet.currencyCode}
+    </div>
+    }
+    return <div className={classes.receiveAmount} />
+  }
+
   render () {
     const { classes } = this.props
     if (!this.props.exchangeRatesFrom) {
@@ -71,20 +84,11 @@ class SellQuoteRequestScene extends Component<Props, State> {
           <div className={classes.chooseAmount} >
             Choose Amount
           </div>
-          <SellAmountInputContainer
-            image={this.props.wallet.currencyIcon}
-            currencyCode={this.props.wallet.currencyCode}
-            label={'Sell'}
-            onChange={this.changeCrypto}
-            value={this.state.cryptoAmount}
-            />
-          <SellAmountInputContainer
-            image={'https://developer.airbitz.co/content/country-logos/united-states-of-america.png'}
-            label={'Receive'}
-            currencyCode={'USD'}
+          <SellAmountFiatBigInputContainer
             onChange={this.changeFiat}
             value={this.state.fiatAmount}
             />
+            {this.renderReceive()}
             <div className={classes.depositBox} >
               <div className={classes.dpLeft} >
                 Deposit To:
@@ -137,8 +141,8 @@ const styles = theme => ({
     textAlign: 'center',
     fontSize: '17px',
     color: THEME.COLORS.WHITE,
-    marginBottom: '25px',
-    marginTop: '10px'
+    marginBottom: '30px',
+    marginTop: '20px'
   },
   containerSpinner: {
     display: 'flex',
@@ -184,6 +188,17 @@ const styles = theme => ({
     color: THEME.COLORS.WHITE,
     flexDirection: 'column',
     marginTop: '20px'
+  },
+  receiveAmount: {
+    flex: 1,
+    display: 'flex',
+    fontSize: '13px',
+    width: '100%',
+    textAlign: 'center',
+    color: THEME.COLORS.WHITE,
+    flexDirection: 'column',
+    marginTop: '20px',
+    marginBottom: '60px'
   }
 })
 
