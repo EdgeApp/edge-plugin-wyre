@@ -47,7 +47,7 @@ export const buyCurrency = () => async (dispatch: Dispatch, getState: GetState) 
         }
       })
       widget.open('complete', async function(e) {
-        await window.edgeProvider.trackConversion('buy crypto: ' + currencyCode)
+        await window.edgeProvider.trackConversion()
        });
     } catch (e) {
       window.edgeProvider.consoleLog('Error on Widget')
