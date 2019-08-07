@@ -2,49 +2,76 @@
 import React, { Component } from 'react'
 
 import THEME from '../constants/themeConstants.js'
-import TextField from 'material-ui/TextField'
 import { withStyles } from 'material-ui/styles'
 
 type Props = {
   history: Object,
   classes: Object,
-  value: string,
   onChange(string): void
 }
 type State = {
-  // wallet: WalletDetails | null,
-  /* currencyCode: string | null,
-  wallet: WalletDetails | null,
-  walletName: string | null,
-  currencyIcon: string | null */
+  value: string,
+  clicked: boolean
 
 }
 
 class SellAmountFiatBigInputContainer extends Component <Props, State> {
+  inputRef: any
+  constructor(props: Props) {
+    super(props)
+    this.state = {
+      value: '',
+      clicked: false
+    }
+    // $FlowFixMe
+    this.inputRef = React.createRef()
+  }
   onChange = (event: Object) => {
-    const val = event.target.value.substring(1)
+    const val = event.target.value
+    this.setState({
+      value: val
+    })
     this.props.onChange(val)
+  }
+  componentDidUpdate() {
+    if(this.inputRef.current) {
+      this.inputRef.current.focus()
+    }
+  }
+  onClick = () => {
+   this.setState({
+      clicked: true
+    })
+  }
+  renderDollarSign = () => {
+    if(this.state.clicked) {
+      return '$'
+    }
+    return null
+  }
+  renderInput = () => {
+    const { classes } = this.props
+    const newWidth = 30 * this.state.value.length
+    if(this.state.clicked) {
+      return <input
+        ref={this.inputRef} // {(input) => { this.myRef = input }}
+        type="tel"
+        className={classes.input}
+        style={{width: newWidth + 'px'}}
+        value={this.state.value}
+        onChange={this.onChange}
+      />
+    }
+    return <div className={classes.static}>Enter Amount</div>
   }
   render () {
     const { classes } = this.props
-    const stringValue = '$' + this.props.value
+    const newWidth = 30 * this.state.value.length
     return <div className={classes.container}>
         <div className={classes.inputBottom} >
-          <TextField
-            InputProps={{
-              classes: {
-                input: classes.resize
-              },
-              disableUnderline: true,
-              fillWidth: true,
-              autoFocus: true
-            }}
-            disableUnderline={true}
-            onChange={this.onChange}
-            value={stringValue}
-            type={'tel'}
-            autoFocus={true}
-            />
+          <div className={classes.innerDiv} onClick={this.onClick}>
+            {this.renderDollarSign()}{this.renderInput()}
+          </div>
         </div>
     </div>
   }
@@ -59,28 +86,42 @@ const styles = theme => ({
     height: '81px',
     marginBottom: '20px'
   },
-  resize: {
-    fontSize: '64px',
-    textAlign: "center",
+  input: {
+    fontSize: '50px',
+    border: '0px',
+    marginLeft: '-10px',
+    color: THEME.COLORS.WHITE,
+    backgroundColor: THEME.COLORS.TRANSPARENT
+  },
+  static: {
+    fontSize: '24px',
+    border: '1px solid ' + THEME.COLORS.OPACITY_WHITE_TWO,
+    borderRadius: '6px',
+    paddingTop: '10px',
+    paddingBottom: '10px',
+    paddingRight: '15px',
+    paddingLeft: '15px',
+    color: THEME.COLORS.WHITE
+  },
+  innerDiv: {
+    flexDirection: 'row',
+    position: 'relative',
+    minWidth: '30px',
+    fontSize: '50px',
     color: THEME.COLORS.WHITE
   },
   inputBottom: {
     position: 'relative',
     flexGrow: 1,
     display: 'flex',
+    flexDirection: 'column',
     width: '90%',
     alignItems: 'center',
+    justifyContent: 'space-around',
     paddingLeft: '10px',
     paddingRight: '10px',
     fontSize: '21px'
-  },
-  inputComponent : {
-    position: 'relative',
-    width: '50%',
-    fontSize: '21px'
   }
-
-
 })
 
 export default withStyles(styles)(SellAmountFiatBigInputContainer)
