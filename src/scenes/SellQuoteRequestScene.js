@@ -52,10 +52,9 @@ class SellQuoteRequestScene extends Component<Props, State> {
     })
   }
   changeFiat = (arg: string) => {
-    window.edgeProvider.consoleLog('arg: ' + arg)
-    window.edgeProvider.consoleLog('this.props.exchangeRatesFrom: ' + this.props.exchangeRatesFrom)
-    window.edgeProvider.consoleLog(Number(arg) * this.props.exchangeRatesFrom)
-    const crypto = Number(arg) * this.props.exchangeRatesTo
+    const crypto = this.props.wallet.currencyCode === 'BTC'
+      ? Math.round((Number(arg) * this.props.exchangeRatesTo) * 1000000) / 1000000
+      : Number(arg) * this.props.exchangeRatesTo
     this.setState({
       fiatAmount: arg,
       cryptoAmount: crypto.toString()
@@ -65,7 +64,7 @@ class SellQuoteRequestScene extends Component<Props, State> {
     const { classes } = this.props
     if(this.state.cryptoAmount !== '') {
       return <div className={classes.receiveAmount} >
-      You will receive {this.state.cryptoAmount} {this.props.wallet.currencyCode}
+      You will sell {this.state.cryptoAmount} {this.props.wallet.currencyCode}
     </div>
     }
     return <div className={classes.receiveAmount} />
@@ -98,7 +97,7 @@ class SellQuoteRequestScene extends Component<Props, State> {
               </div>
             </div>
             <div className={classes.disclaimer} >
-              Receive amount is an estimate. Actual rate is determined at the time funds are received.
+              Sell amount is an estimate. Actual rate is determined at the time funds are received.
             </div>
         </div>
         <div className={classes.containerInsideBottom} >
