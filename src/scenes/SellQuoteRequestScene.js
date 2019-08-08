@@ -122,7 +122,7 @@ const styles = theme => ({
     flexGrow: 3,
     width: '90%',
     minHeight: '320px',
-    maxHeight: '320px',
+    maxHeight: '360px',
     paddingTop: '20px'
   },
   containerInsideBottom: {
@@ -155,7 +155,7 @@ const styles = theme => ({
   depositBox: {
     display: 'flex',
     width: '100%',
-    height: '60px',
+    height: '102px',
     borderTop: '0.5px solid #FFF',
     borderBottom: '0.5px solid #FFF'
   },

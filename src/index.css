@@ -6,6 +6,10 @@ body {
   background: linear-gradient( to right, #0E4B75, #0D2145);
 }
 
+textarea:focus, input:focus{
+  outline: none;
+}
+
 html,
 body,
 #root,

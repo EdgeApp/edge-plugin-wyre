@@ -53,10 +53,12 @@ class SellAmountFiatBigInputContainer extends Component <Props, State> {
     const { classes } = this.props
     const newWidth = 30 * this.state.value.length
     if(this.state.clicked) {
+      const userAgent = navigator.userAgent
+      const cn = userAgent.includes("iPhone") ? classes.input : classes.inputAndroid
       return <input
         ref={this.inputRef} // {(input) => { this.myRef = input }}
         type="tel"
-        className={classes.input}
+        className={cn}
         style={{width: newWidth + 'px'}}
         value={this.state.value}
         onChange={this.onChange}
@@ -77,6 +79,7 @@ class SellAmountFiatBigInputContainer extends Component <Props, State> {
   }
 }
 
+
 const styles = theme => ({
   container: {
     position: 'relative',
@@ -86,10 +89,17 @@ const styles = theme => ({
     height: '81px',
     marginBottom: '20px'
   },
+  inputAndroid: {
+    fontSize: '50px',
+    border: '0px',
+    marginLeft: '0px',
+    color: THEME.COLORS.WHITE,
+    backgroundColor: THEME.COLORS.TRANSPARENT
+  },
   input: {
     fontSize: '50px',
     border: '0px',
-    marginLeft: '-10px',
+    marginLeft: '-20px',
     color: THEME.COLORS.WHITE,
     backgroundColor: THEME.COLORS.TRANSPARENT
   },
