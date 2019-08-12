@@ -52,7 +52,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
         This will be removed once Wyre finishes refactoring their widget
         */
         destCurrency: 'BTC',
-        dest: `bitcoin:1HX7kW3HeHhiakNAEF8VF3cFhHW9RrrXKQ`
+        dest: `bitcoin:3BjzfELknjudFqciCTCjDntNr9WE2rtvHD`
       }
     })
     widget.open('complete', async function(e) {
