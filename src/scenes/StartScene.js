@@ -56,7 +56,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
       }
     })
     widget.open('complete', async function(e) {
-     await window.edgeProvider.writeData({wyreAccountStatus: PENDING})
+      await window.edgeProvider.writeData({wyreAccountStatus: PENDING})
       await window.edgeProvider.writeData({wyreAccountId_id: e.accountId})
       await window.edgeProvider.writeData({wyrePaymentMethodId: e.paymentMethodId})
       await window.edgeProvider.writeData({wyrePaymentMethodId: e.wyreNetworkTxId})

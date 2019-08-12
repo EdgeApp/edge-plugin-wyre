@@ -1,7 +1,7 @@
 // @flow
 
 export type LocalStorage = {
-  wyreAccountId: string | null,
+  wyreAccountId: string | null, // this is the secret key needed for other tasks
   wyreAccountStatus: string | null,
   wyreAccountId_id: string | null,
   wyrePaymentMethodId: string | null,
