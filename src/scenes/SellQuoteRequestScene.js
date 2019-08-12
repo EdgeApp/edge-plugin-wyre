@@ -80,9 +80,6 @@ class SellQuoteRequestScene extends Component<Props, State> {
     return (<div className={classes.container} >
         <div className={classes.containerInsideTop} >
           <PoweredBy />
-          <div className={classes.chooseAmount} >
-            Choose Amount
-          </div>
           <SellAmountFiatBigInputContainer
             onChange={this.changeFiat}
             value={this.state.fiatAmount}

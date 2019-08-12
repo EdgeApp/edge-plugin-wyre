@@ -1,8 +1,8 @@
 // @flow
 import React, { Component } from 'react'
+import { colors, withStyles } from 'material-ui/styles'
 
 import THEME from '../constants/themeConstants.js'
-import { withStyles } from 'material-ui/styles'
 
 type Props = {
   history: Object,
@@ -44,25 +44,19 @@ class SellAmountFiatBigInputContainer extends Component <Props, State> {
     })
   }
   renderDollarSign = () => {
+    const { classes } = this.props
     if(this.state.clicked) {
-      return '$'
+      return '$' // <div className={classes.dollar} >$</div>
     }
     return null
   }
-  renderInput = () => {
+  renderOptions = () => {
     const { classes } = this.props
-    const newWidth = 30 * this.state.value.length
     if(this.state.clicked) {
-      const userAgent = navigator.userAgent
-      const cn = userAgent.includes("iPhone") ? classes.input : classes.inputAndroid
-      return <input
-        ref={this.inputRef} // {(input) => { this.myRef = input }}
-        type="tel"
-        className={cn}
-        style={{width: newWidth + 'px'}}
-        value={this.state.value}
-        onChange={this.onChange}
-      />
+      return <div className={classes.doRow}>
+          <div className={classes.dollar}>$</div>
+          <div className={classes.inputWrapper}>{this.state.value}</div>
+      </div>
     }
     return <div className={classes.static}>Enter Amount</div>
   }
@@ -72,8 +66,16 @@ class SellAmountFiatBigInputContainer extends Component <Props, State> {
     return <div className={classes.container}>
         <div className={classes.inputBottom} >
           <div className={classes.innerDiv} onClick={this.onClick}>
-            {this.renderDollarSign()}{this.renderInput()}
+            {this.renderOptions()}
           </div>
+          <input
+            ref={this.inputRef} // {(input) => { this.myRef = input }}
+            type="tel"
+            className={classes.inputHidden}
+            style={{width: '2px', height: '2px', opacity: 0}}
+            value={this.state.value}
+            onChange={this.onChange}
+          />
         </div>
     </div>
   }
@@ -81,6 +83,12 @@ class SellAmountFiatBigInputContainer extends Component <Props, State> {
 
 
 const styles = theme => ({
+  doRow: {
+    display: 'flex',
+    position: 'relative',
+    flexDirection: 'row',
+    height: '100%'
+  },
   container: {
     position: 'relative',
     display: 'flex',
@@ -89,19 +97,11 @@ const styles = theme => ({
     height: '81px',
     marginBottom: '20px'
   },
-  inputAndroid: {
-    fontSize: '50px',
-    border: '0px',
-    marginLeft: '0px',
-    color: THEME.COLORS.WHITE,
-    backgroundColor: THEME.COLORS.TRANSPARENT
-  },
-  input: {
-    fontSize: '50px',
+  inputHidden: {
+    fontSize: '2px',
     border: '0px',
     marginLeft: '-20px',
-    color: THEME.COLORS.WHITE,
-    backgroundColor: THEME.COLORS.TRANSPARENT
+    color: THEME.COLORS.WHITE
   },
   static: {
     fontSize: '24px',
@@ -118,6 +118,8 @@ const styles = theme => ({
     position: 'relative',
     minWidth: '30px',
     fontSize: '50px',
+    topMargin: '20px',
+    height: '100%',
     color: THEME.COLORS.WHITE
   },
   inputBottom: {
@@ -131,6 +133,16 @@ const styles = theme => ({
     paddingLeft: '10px',
     paddingRight: '10px',
     fontSize: '21px'
+  },
+  dollar: {
+    paddingTop: '10px',
+    fontSize: '30px',
+    height: '100%',
+    marginRight: '3px'
+  },
+  inputWrapper: {
+    fontSize: '50px',
+    height: '100%'
   }
 })
 
