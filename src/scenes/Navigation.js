@@ -2,10 +2,10 @@
 
 import React, { Component } from 'react'
 import { Route, HashRouter as Router } from 'react-router-dom'
-import { createMuiTheme, withStyles } from 'material-ui/styles'
+import { createMuiTheme, withStyles } from '@material-ui/core/styles'
 
 import { ConfirmationScreenConnector as Confirmation } from '../connectors/ConfirmationScreenConnector'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
 import { SellQuoteRequestSceneConnector as SellQuoteRequestScene } from '../connectors/SellQuoteRequestSceneConnector'
 import { StartSceneConnector as StartScene } from '../connectors/StartSceneConnector'
 import history from '../history/history';

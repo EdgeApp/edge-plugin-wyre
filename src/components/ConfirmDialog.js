@@ -1,11 +1,14 @@
 // @flow
-import Dialog, { DialogContent, DialogContentText, DialogTitle } from 'material-ui/Dialog'
 import React, {Component} from 'react'
 
-import { CircularProgress } from 'material-ui/Progress'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import Dialog from '@material-ui/core/Dialog'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import DialogTitle from '@material-ui/core/DialogTitle'
 import { EdgeButton } from './EdgeButton'
-import Typography from 'material-ui/Typography'
-import { withStyles } from 'material-ui/styles'
+import Typography from '@material-ui/core/Typography'
+import { withStyles } from '@material-ui/core/styles'
 
 const confirmStyles = theme => ({
   title: {

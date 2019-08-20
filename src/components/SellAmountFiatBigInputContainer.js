@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react'
-import { colors, withStyles } from 'material-ui/styles'
+import { colors, withStyles } from '@material-ui/core/styles'
 
 import THEME from '../constants/themeConstants.js'
 
@@ -42,13 +42,6 @@ class SellAmountFiatBigInputContainer extends Component <Props, State> {
    this.setState({
       clicked: true
     })
-  }
-  renderDollarSign = () => {
-    const { classes } = this.props
-    if(this.state.clicked) {
-      return '$' // <div className={classes.dollar} >$</div>
-    }
-    return null
   }
   renderOptions = () => {
     const { classes } = this.props

@@ -2,8 +2,8 @@
 import React, { Component } from 'react'
 
 import THEME from '../constants/themeConstants.js'
-import TextField from 'material-ui/TextField'
-import { withStyles } from 'material-ui/styles'
+import TextField from '@material-ui/core/TextField'
+import { withStyles } from '@material-ui/core/styles'
 
 type Props = {
   history: Object,

@@ -6,10 +6,10 @@ import { NOT_STARTED, PENDING } from '../constants/index'
 import React, { Component } from 'react'
 
 import { BuySellSceneConnector } from '../connectors/BuySellSceneConnector'
-import { CircularProgress } from 'material-ui/Progress'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import PendingScreenComponent from '../components/PendingScreenComponent'
 import SignUpComponent from '../components/SignUpComponent'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 
 type StartSceneProps = {
   history: Object,

@@ -1,5 +1,6 @@
 // @flow
 import type {
+  CryptoFiatAmounts,
   LocalStorage,
   WalletDetails,
   WyreTransaction
@@ -10,3 +11,4 @@ export type Action =
   | { type: 'ON_EXCHANGE_RATE', data: Object}
   | { type: 'ON_CHAINS_ADDED', data: Object}
   | { type: 'ON_TRANSACTION_HISTORY', data: Array<WyreTransaction>}
+  | { type: 'SET_AMOUNTS', data: CryptoFiatAmounts }

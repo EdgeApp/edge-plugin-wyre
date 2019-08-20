@@ -2,6 +2,28 @@
 import type { Dispatch, GetState } from '../types/ReduxTypes'
 import { getExchangeRates, getTransferHistory } from '../api/api.js'
 
+export const changeCrypto = (arg: string, exchangeRate: number) => async (dispatch: Dispatch, getState: GetState) => {
+  const fiat = Number(arg) * exchangeRate
+  const fiatRound = Math.round(fiat * 100) / 100
+  dispatch({type: 'SET_AMOUNTS', data: {
+    cryptoAmount: arg,
+    fiatAmount: fiatRound.toString()
+  }})
+}
+
+export const changeFiat = (arg: string, exchangeRate: number) => async (dispatch: Dispatch, getState: GetState) => {
+  const state = getState()
+  const wallet = state.Wallet.wallet
+  const crypto = wallet && wallet.currencyCode === 'BTC'
+    ? Math.round((Number(arg) * exchangeRate) * 1000000) / 1000000
+    : Number(arg) * exchangeRate
+  dispatch({type: 'SET_AMOUNTS', data: {
+    cryptoAmount: crypto.toString(),
+    fiatAmount: arg
+  }})
+}
+
+
 export const finishTransaction = (history: Object) => async (dispatch: Dispatch, getState: GetState) => {
   history.go(-2)
   dispatch(getTransactions())

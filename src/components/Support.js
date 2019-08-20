@@ -1,8 +1,8 @@
 // @flow
 import React from 'react'
 import {SupportLink} from './SupportLink'
-import Typography from 'material-ui/Typography'
-import { withStyles } from 'material-ui/styles'
+import Typography from '@material-ui/core/Typography'
+import { withStyles } from '@material-ui/core/styles'
 const supportThemes = theme => ({
   p: {
     textAlign: 'center',

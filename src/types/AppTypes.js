@@ -44,3 +44,7 @@ export type WyreTransaction = {
   blockchainTxId: string | null,
   destNickname: string | null
 }
+export type CryptoFiatAmounts = {
+  cryptoAmount: string,
+   fiatAmount: string
+}

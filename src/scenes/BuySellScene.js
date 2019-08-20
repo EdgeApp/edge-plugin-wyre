@@ -8,7 +8,7 @@ import { SUPPORTED_SELL_DIGITAL_CURRENCIES } from '../constants/index'
 import THEME from '../constants/themeConstants.js'
 import { TertiaryButton, } from '../components/TertiaryButton'
 import { TransactionItem } from '../components/TransactionItem.js'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 
 type Props = {
   history: Object,

@@ -2,7 +2,7 @@
 import React from 'react'
 import THEME from '../constants/themeConstants.js'
 import type { WyreTransaction } from '../types/AppTypes'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 const limitStyles = theme => ({
   container: {
     position: 'relative',

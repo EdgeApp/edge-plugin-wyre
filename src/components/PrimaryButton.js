@@ -1,5 +1,5 @@
 // @flow
-import Button from 'material-ui/Button'
+import Button from '@material-ui/core/Button'
 import React from 'react'
 import THEME from '../constants/themeConstants.js'
 import { buttonStyle } from '../styles/styles'

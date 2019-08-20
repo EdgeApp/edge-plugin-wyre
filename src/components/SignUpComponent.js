@@ -2,8 +2,8 @@
 import { PrimaryButton, StartHeader, StartParagraph, SupportLink } from '../scenes/components'
 import React, { Component } from 'react'
 
-import Divider from 'material-ui/Divider'
-import { withStyles } from 'material-ui/styles'
+import Divider from '@material-ui/core/Divider'
+import { withStyles } from '@material-ui/core/styles'
 
 type Props = {
   classes: Object,

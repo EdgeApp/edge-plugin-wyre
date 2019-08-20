@@ -2,7 +2,7 @@
 import React, { Component } from 'react'
 import { StartHeader, StartParagraph } from '../scenes/components'
 
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 
 type Props = {
   classes: Object

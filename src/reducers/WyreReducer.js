@@ -10,7 +10,9 @@ export type WyreState = {
   accountName: string | null,
   btcAddress: string | null,
   ethAddress: string | null,
-  exchangeRates: Object
+  exchangeRates: Object,
+  cryptoAmount: string | null,
+  fiatAmount: string | null
 }
 
 export const initialState = {
@@ -22,11 +24,16 @@ export const initialState = {
   accountName: null,
   btcAddress: null,
   ethAddress: null,
-  exchangeRates: {}
+  exchangeRates: {},
+  cryptoAmount: null,
+  fiatAmount: null
 }
 
 export const WyreReducer = (state: WyreState = initialState, action: Action): WyreState => {
   switch (action.type) {
+    case 'SET_AMOUNTS':
+      return {...state, cryptoAmount: action.data.cryptoAmount, fiatAmount: action.data.fiatAmount}
+
     case 'LOCAL_DATA_INIT':
       return {
         ...state,
