@@ -50,15 +50,17 @@ class SellQuoteRequestSceneComponent extends Component<Props, State> {
     this.props.getExchangeRate()
   }
   componentDidUpdate() {
-    if(this.inputRef.current) {
-      this.inputRef.current.focus()
+   if(this.inputRef.current) {
+     this.inputRef.current.focus()
     }
   }
   onClick = () => {
+    window.edgeProvider.consoleLog('Clicked  ')
     const cl = this.state.clicked + 1
     this.setState({
       clicked: cl
     })
+    window.edgeProvider.consoleLog('Clicked  ')
   }
   onNext = () => {
     if(this.props.fiatAmount !== ''){
@@ -102,6 +104,7 @@ class SellQuoteRequestSceneComponent extends Component<Props, State> {
             <div className={classes.poweredByRow}>
               <PoweredBy />
             </div>
+            {this.renderInvisible()}
             <div className={classes.chooseAmount} >
               Choose Amount
             </div>
@@ -122,7 +125,6 @@ class SellQuoteRequestSceneComponent extends Component<Props, State> {
             <div className={classes.disclaimer} >
               Sell amount is an estimate. Actual rate is determined at the time funds are received.
             </div>
-            {this.renderInvisible()}
       </div>
       <div className={classes.containerBottom}>
         <PrimaryButton onClick={this.onNext} >Next </PrimaryButton>
@@ -133,6 +135,7 @@ class SellQuoteRequestSceneComponent extends Component<Props, State> {
     const { classes } = this.props
    return  <TextField
       inputRef={this.inputRef}
+      autoFocus
       id="standard-uncontrolled"
       label="Phone Number"
       type="tel"
@@ -143,13 +146,12 @@ class SellQuoteRequestSceneComponent extends Component<Props, State> {
           input: classes.resize,
         },
       }}
-      style={{width: '2px', height: '2px', opacity: 0}}
+      style={{width: '2px', height: '2px', opacity: 0, fontSize: 2, position: 'absolute', top: 0}}
       value={this.state.value}
       className={classes.textField}
       margin="normal"
       onChange={this.onChange}
-      autoFocus
-            />
+    />
   }
 }
 const styles = theme => ({
@@ -256,7 +258,7 @@ const styles = theme => ({
     marginTop: 20
   },
   resize: {
-    fontSize: 17
+    fontSize: 2
   },
 })
 const SellQuoteRequestScene = withStyles(styles)(SellQuoteRequestSceneComponent)
