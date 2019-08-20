@@ -50,17 +50,15 @@ class SellQuoteRequestSceneComponent extends Component<Props, State> {
     this.props.getExchangeRate()
   }
   componentDidUpdate() {
-   if(this.inputRef.current) {
-     this.inputRef.current.focus()
-    }
+   if (this.inputRef.current) {
+    this.inputRef.current.focus()
+   }
   }
   onClick = () => {
-    window.edgeProvider.consoleLog('Clicked  ')
     const cl = this.state.clicked + 1
     this.setState({
       clicked: cl
     })
-    window.edgeProvider.consoleLog('Clicked  ')
   }
   onNext = () => {
     if(this.props.fiatAmount !== ''){
