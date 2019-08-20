@@ -15,8 +15,8 @@ export const changeFiat = (arg: string, exchangeRate: number) => async (dispatch
   const state = getState()
   const wallet = state.Wallet.wallet
   const crypto = wallet && wallet.currencyCode === 'BTC'
-    ? Math.round((Number(arg) * exchangeRate) * 1000000) / 1000000
-    : Number(arg) * exchangeRate
+    ? Math.round((Number(arg) / exchangeRate) * 1000000) / 1000000
+    : Number(arg) / exchangeRate
   dispatch({type: 'SET_AMOUNTS', data: {
     cryptoAmount: crypto.toString(),
     fiatAmount: arg
