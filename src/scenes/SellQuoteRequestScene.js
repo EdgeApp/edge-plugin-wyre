@@ -50,7 +50,7 @@ class SellQuoteRequestSceneComponent extends Component<Props, State> {
     this.props.getExchangeRate()
   }
   componentDidUpdate() {
-   if (this.inputRef.current) {
+   if (this.inputRef.current && this.state.clicked > 0) {
     this.inputRef.current.focus()
    }
   }
@@ -133,7 +133,6 @@ class SellQuoteRequestSceneComponent extends Component<Props, State> {
     const { classes } = this.props
    return  <TextField
       inputRef={this.inputRef}
-      autoFocus
       id="standard-uncontrolled"
       label="Phone Number"
       type="tel"
