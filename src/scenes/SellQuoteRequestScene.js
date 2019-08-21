@@ -41,7 +41,7 @@ class SellQuoteRequestSceneComponent extends Component<Props, State> {
     super(props)
     this.state = {
       value: '',
-      clicked: 1
+      clicked: 0
     }
     // $FlowFixMe
     this.inputRef = React.createRef()
@@ -75,19 +75,22 @@ class SellQuoteRequestSceneComponent extends Component<Props, State> {
   }//
   renderReceive = () => {
     const { classes } = this.props
-    if(this.props.cryptoAmount !== '') {
+    if(this.state.value !== '') {
       return <div className={classes.receiveAmount} >
       You will {this.props.buyOrSell} {this.props.cryptoAmount} {this.props.wallet.currencyCode}
     </div>
     }
-    return <div className={classes.receiveAmount} />
+    return <div className={classes.receiveAmount} >You will {this.props.buyOrSell} 0 {this.props.wallet.currencyCode}</div>
   }
   renderOptions = () => {
     const { classes } = this.props
-    return <div className={classes.doRow}>
+    if(this.state.clicked > 0) {
+      return <div className={classes.doRow}>
         <div className={classes.dollar}>$</div>
         <div className={classes.inputWrapper}>{this.state.value}</div>
-    </div>
+       </div>
+    }
+    return <div className={classes.static}>Enter Amount</div>
   }
   render () {
     const { classes } = this.props
@@ -103,9 +106,6 @@ class SellQuoteRequestSceneComponent extends Component<Props, State> {
               <PoweredBy />
             </div>
             {this.renderInvisible()}
-            <div className={classes.chooseAmount} >
-              Choose Amount
-            </div>
             <div className={classes.amountContainer}>
               <div className={classes.innerDiv} >
                 {this.renderOptions()}
@@ -167,6 +167,18 @@ const styles = theme => ({
     width: '100%',
     borderRadius: 6
   },
+  static: {
+    fontSize: 24,
+    border: '1px solid ' + THEME.COLORS.OPACITY_WHITE_TWO,
+    borderRadius: 6,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingRight: 15,
+    paddingLeft: 15,
+    marginTop: 24,
+    marginBottom: 20,
+    color: THEME.COLORS.WHITE
+  },
   innerDiv: {
     display: 'flex',
     flexDirection: 'row',
@@ -184,7 +196,14 @@ const styles = theme => ({
   doRow: {
     display: 'flex',
     position: 'relative',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    marginTop: 24,
+    height: 69
+  },
+  overWrap: {
+    height: 70,
+    width: 100,
+    backgroundColor: THEME.COLORS.ACCENT_ORANGE
   },
   dollar: {
     paddingTop: 10,
@@ -212,6 +231,7 @@ const styles = theme => ({
     flexShrink: 1,
     display: 'flex',
     fontSize: 13,
+    height: 14,
     width: '100%',
     textAlign: 'center',
     marginTop: 14,
