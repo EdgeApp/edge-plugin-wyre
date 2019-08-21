@@ -36,6 +36,7 @@ const checkOnCurrentStatus = (secret: string, localStore: LocalStorage) => async
     dispatch({type: 'LOCAL_DATA_INIT', data: updatedLocalStore})
     return
   } catch (e) {
+    dispatch({type: 'LOCAL_DATA_INIT', data: localStore})
     window.edgeProvider.consoleLog('######## BROKEN' )
     window.edgeProvider.consoleLog(e)
   }
@@ -43,7 +44,6 @@ const checkOnCurrentStatus = (secret: string, localStore: LocalStorage) => async
 }
 
 export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => {
-
   let localStore: LocalStorage = await window.edgeProvider.readData(INITIAL_KEYS)
   // window.edgeProvider.consoleLog('localStorage From the initInfo')
   try {
