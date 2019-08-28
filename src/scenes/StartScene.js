@@ -35,7 +35,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
     const { wyreAccount } = this.props
     window.edgeProvider.consoleLog('init user wyre account', wyreAccount)
     const widget = new window.Wyre.Widget({
-      env: 'production',
+      env: 'test',
       accountId: 'AC-FJN8L976EW4',
       auth: {
         type: 'secretKey',

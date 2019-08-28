@@ -56,7 +56,7 @@ export const buyCurrency = () => async (dispatch: Dispatch, getState: GetState) 
     const addressPrefix = currencyCode === 'BTC' ? 'bitcoin:' : 'ethereum:'
     try {
       const widget = new window.Wyre.Widget({
-        env: 'production',
+        env: 'test',
         accountId: 'AC-FJN8L976EW4',
         auth: {
           type: 'secretKey',
