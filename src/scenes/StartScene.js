@@ -2,7 +2,7 @@
 
 import './inline.css'
 
-import { NOT_STARTED, PENDING } from '../constants/index'
+import { APPROVED, PENDING } from '../constants/index'
 import React, { Component } from 'react'
 
 import { BuySellSceneConnector } from '../connectors/BuySellSceneConnector'
@@ -92,13 +92,15 @@ const widget = new window.Wyre.Widget({
       <CircularProgress size={60} />
     </div>
     }
-    if(this.props.accountStatus === NOT_STARTED) {
-      return <SignUpComponent  onPress={this.initUser}/>
+    if(this.props.accountStatus === APPROVED) {
+      return <BuySellSceneConnector onSellClick={this.gotoSell}/>
+
     }
     if(this.props.accountStatus === PENDING) {
       return <PendingScreenComponent />
     }
-    return <BuySellSceneConnector onSellClick={this.gotoSell}/>
+    // NOT_STARTED || default
+    return <SignUpComponent  onPress={this.initUser}/>
   }
 }
 

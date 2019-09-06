@@ -12,6 +12,8 @@ export const INITIAL_KEYS = [
 
 export const APPROVED: string = 'APPROVED'
 export const PENDING: string = 'PENDING'
+export const AWAITING_FOLLOWUP: string = 'AWAITING_FOLLOWUP'
+export const REJECTED: string = 'REJECTED'
 export const NOT_STARTED: string = 'NOT_STARTED'
 
 export const SUPPORTED_DIGITAL_CURRENCIES = [

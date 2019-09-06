@@ -1,5 +1,5 @@
 // @flow
-import { APPROVED, INITIAL_KEYS, NOT_STARTED, PENDING } from '../constants/index'
+import { APPROVED, AWAITING_FOLLOWUP, INITIAL_KEYS, NOT_STARTED, PENDING, REJECTED } from '../constants/index'
 import type { Dispatch, GetState } from '../types/ReduxTypes'
 import { getAccount, getPaymentMethods } from '../api/api'
 
@@ -21,26 +21,48 @@ const checkOnCurrentStatus = (secret: string, localStore: LocalStorage) => async
     }
     const parseResult = result.data[0]
     const accountID = parseResult.owner.substring(8)
-    await window.edgeProvider.writeData({wyrePaymentMethodId: parseResult.id})
-    await window.edgeProvider.writeData({wyreAccountId_id: accountID})
-    await window.edgeProvider.writeData({wyreAccountName: parseResult.name})
     if (parseResult.blockchains.BTC) {
-      await window.edgeProvider.writeData({wyreBTC: parseResult.blockchains.BTC})
-    }
-    if (parseResult.blockchains.ETH) {
-      await window.edgeProvider.writeData({wyreETH: parseResult.blockchains.ETH})
+      await window.edgeProvider.writeData({
+        wyreAccountName: parseResult.name,
+        wyreAccountId_id: accountID,
+        wyrePaymentMethodId: parseResult.id,
+        wyreBTC: parseResult.blockchains.BTC
+      })
+    } else if (parseResult.blockchains.ETH) {
+      await window.edgeProvider.writeData({
+        wyreAccountName: parseResult.name,
+        wyreAccountId_id: accountID,
+        wyrePaymentMethodId: parseResult.id,
+        wyreETH: parseResult.blockchains.ETH
+      })
+    } else {
+      await window.edgeProvider.writeData({
+        wyreAccountName: parseResult.name,
+        wyreAccountId_id: accountID,
+        wyrePaymentMethodId: parseResult.id
+      })
     }
     const accountDetail = await getAccount(accountID, secret)
+    // if this account
+    if (accountDetail.status === REJECTED) {
+      window.edgeProvider.displayError('Your payment method has been rejected')
+    }
+    if (accountDetail.status === AWAITING_FOLLOWUP) {
+      window.edgeProvider.displayError('Please re-verify your bank information.')
+    }
     await window.edgeProvider.writeData({wyreAccountStatus: accountDetail.status})
     const updatedLocalStore: LocalStorage = await window.edgeProvider.readData(INITIAL_KEYS)
     dispatch({type: 'LOCAL_DATA_INIT', data: updatedLocalStore})
     return
   } catch (e) {
+    if(!localStore.status) {
+      await window.edgeProvider.writeData({wyreAccountStatus: NOT_STARTED})
+      const updatedLocalStore: LocalStorage = await window.edgeProvider.readData(INITIAL_KEYS)
+      dispatch({type: 'LOCAL_DATA_INIT', data: updatedLocalStore})
+      return
+    }
     dispatch({type: 'LOCAL_DATA_INIT', data: localStore})
-    window.edgeProvider.consoleLog('######## BROKEN' )
-    window.edgeProvider.consoleLog(e)
   }
-
 }
 
 export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => {
