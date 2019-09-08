@@ -72,7 +72,10 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
     // window.edgeProvider.consoleLog(localStore)
     if(localStore.wyreAccountStatus === APPROVED) {
       window.edgeProvider.consoleLog('APPROVED DISPATCH')
-      dispatch({type: 'LOCAL_DATA_INIT', data: localStore})
+      // dispatch({type: 'LOCAL_DATA_INIT', data: localStore})
+      if(localStore.wyreAccountId) {
+        dispatch(checkOnCurrentStatus(localStore.wyreAccountId, localStore))
+      }
       dispatch(getTransactions())
       return
     }
