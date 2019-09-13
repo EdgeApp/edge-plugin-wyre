@@ -19,9 +19,6 @@ export const NOT_STARTED: string = 'NOT_STARTED'
 export const SUPPORTED_DIGITAL_CURRENCIES = [
   'BTC', 'ETH', 'DAI'
 ]
-export const SUPPORTED_SELL_DIGITAL_CURRENCIES = [
-  'BTC', 'ETH'
-]
 
 export const SUPPORTED_FIAT_CURRENCIES = [
   'USD', 'EUR'

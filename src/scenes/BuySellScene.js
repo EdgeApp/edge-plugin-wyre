@@ -4,7 +4,7 @@ import type { WalletDetails, WyreTransaction } from '../types/AppTypes'
 
 import ChooseWalletButton from '../components/ChooseWalletButton'
 import { PoweredBy } from '../components/PoweredBy'
-import { SUPPORTED_SELL_DIGITAL_CURRENCIES } from '../constants/index'
+import { SUPPORTED_DIGITAL_CURRENCIES } from '../constants/index'
 import THEME from '../constants/themeConstants.js'
 import { TertiaryButton, } from '../components/TertiaryButton'
 import { TransactionItem } from '../components/TransactionItem.js'
@@ -42,7 +42,7 @@ class BuySellScene extends Component<Props, State> {
     if(!this.props.wallet) {
       return true
     }
-    if(!SUPPORTED_SELL_DIGITAL_CURRENCIES.includes(this.props.wallet.currencyCode)){
+    if(!SUPPORTED_DIGITAL_CURRENCIES.includes(this.props.wallet.currencyCode)){
       return true
     }
     return false

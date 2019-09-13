@@ -1,10 +1,11 @@
 // @flow
 import type { Dispatch, GetState } from '../types/ReduxTypes'
 
+import { SUPPORTED_DIGITAL_CURRENCIES } from '../constants/index.js'
 import { addBlockChainToAccount } from '../api/api'
 
 export const selectWallet = () => async (dispatch: Dispatch, getState: GetState) => {
-  const currencyCode = await window.edgeProvider.chooseCurrencyWallet(['ETH','BTC','DIA'])
+  const currencyCode = await window.edgeProvider.chooseCurrencyWallet(SUPPORTED_DIGITAL_CURRENCIES)
   if (currencyCode) {
     const wallet = await window.edgeProvider.getCurrentWalletInfo()
     dispatch({type: 'WALLET_LOADED', data: wallet})
