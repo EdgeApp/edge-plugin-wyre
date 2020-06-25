@@ -33,7 +33,12 @@ export const getTransactions = () => async (dispatch: Dispatch, getState: GetSta
   const state = getState()
   const token = state.Wyre.secretKey
   if (!token) return
-  const history = await getTransferHistory(token)
+  let history
+  try {
+    history = await getTransferHistory(token)
+  } catch (e) {
+    return
+  }
   window.edgeProvider.consoleLog(history.data)
   dispatch({type: 'ON_TRANSACTION_HISTORY', data: history.data})
 }
