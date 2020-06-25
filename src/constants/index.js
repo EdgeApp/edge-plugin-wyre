@@ -1,14 +1,4 @@
 // @flow
-export const INITIAL_KEYS = [
-  'wyreAccountId',
-  'wyreAccountStatus',
-  'wyreAccountId_id',
-  'wyrePaymentMethodId',
-  'wyreNetworkTxId',
-  'wyreAccountName',
-  'wyreBTC',
-  'wyreETH'
-]
 
 export const APPROVED: string = 'APPROVED'
 export const PENDING: string = 'PENDING'

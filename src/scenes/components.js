@@ -1,13 +1,5 @@
 // @flow
 
-/* import { CircularProgress } from '@material-ui/core/CircularProgress'
-import Drawer from 'material-ui/Drawer'
-import PropTypes from 'prop-types'
-import React from 'react'
-import THEME from './constants/themeConstants.js'
-import Typography from '@material-ui/core/Typography'
-import { withStyles } from '@material-ui/core/styles' */
-
 export * from '../components/ConfirmDialog.js'
 export * from '../components/EdgeButton.js'
 export * from '../components/DailyLimit'

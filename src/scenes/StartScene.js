@@ -27,13 +27,11 @@ type StartSceneState = {
 class StartScene extends Component<StartSceneProps, StartSceneState> {
 
   componentDidMount = async () => {
-    // window.edgeProvider.consoleLog('Sign In Screen ')
     this.props.initInfo()
   }
 
   initUser = async () => {
     const { wyreAccount } = this.props
-    window.edgeProvider.consoleLog('init user wyre account', wyreAccount)
     const widget = new window.Wyre.Widget({
       env: 'production',
       accountId: 'AC-FJN8L976EW4',
@@ -43,14 +41,6 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
       },
       operation: {
         type: 'onramp',
-        /*
-        The following hard coded address is to simplify the sign up process
-        It is never used. When the plugin uses the widget in the future
-        a new address the user chooses is added for the destination based on their
-        wallet choice. This use of the widget is solely to do onboarding KYC
-        and an address is needed or their is a screen to type out one by hand.
-        This will be removed once Wyre finishes refactoring their widget
-        */
         destCurrency: 'BTC',
         dest: `bitcoin:3BjzfELknjudFqciCTCjDntNr9WE2rtvHD`
       }
@@ -65,22 +55,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
       })
     });
   }
-/*
-const widget = new window.Wyre.Widget({
-        env: 'production',
-        accountId: 'AC-FJN8L976EW4',
-        auth: {
-          type: 'secretKey',
-          secretKey: wyreAccount
-        },
-        operation: {
-          type: 'onramp',
-          destCurrency: currencyCode,
-          dest: `${addressPrefix}${wallet.receiveAddress.publicAddress}`
-        }
-      })
-      widget.open()
-      */
+
   gotoSell = () => {
     this.props.history.push(`/sellQuoteRequest`)
   }

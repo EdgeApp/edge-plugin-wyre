@@ -3,13 +3,11 @@ import { V2_API_URL } from '../env'
 import { asMap, asArray, asObject, asString, asNone, asEither, asNumber, asOptional } from 'cleaners'
 
 export async function getSellQuoteAPI(token: string, fiat: string, cryptoCurrencyCode: string, address: string, bankAccount: string) {
-  window.edgeProvider.consoleLog('getSellQuoteAPI api')
-
   const data = {
     destAmount: Number(fiat),
     sourceCurrency: cryptoCurrencyCode,
     destCurrency: 'USD',
-    dest: bankAccount // cryptoCurrencyCode === 'BTC' ? 'bitcoin:' + address : address,
+    dest: bankAccount
   }
   const request = {
     method: 'POST',
@@ -21,10 +19,8 @@ export async function getSellQuoteAPI(token: string, fiat: string, cryptoCurrenc
     body: JSON.stringify(data)
   }
   const url = 'https://api.sendwyre.com/v3/transfers'
-  window.edgeProvider.consoleLog(' API -  '+ url)
   const result = await window.fetch(url, request)
   const newData = result.json()
-  window.edgeProvider.consoleLog(newData)
   return newData
 }
 
@@ -105,7 +101,6 @@ export async function addBlockChainToAccount(token: string, paymentMethodId: str
     body: JSON.stringify(data)
   }
   const url = V2_API_URL + 'paymentMethod/' + paymentMethodId + '/attach'
-  window.edgeProvider.consoleLog(' API -  '+ url)
   const result = await window.fetch(url, request)
   if (!result.ok) throw new Error('fetchError')
   const newData = asAddBlockChainToAccount(await result.json())

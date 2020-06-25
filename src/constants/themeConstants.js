@@ -29,7 +29,6 @@ export const font = {
   default: 'SourceSansPro-Black'
 }
 
-// https://projects.invisionapp.com/d/main#/console/10954562/239168414/inspect
 export const THEME = {
 
   FOOTER_TABS_HEIGHT: 50,

@@ -45,7 +45,6 @@ export const WyreReducer = (state: WyreState = initialState, action: Action): Wy
     case 'ON_EXCHANGE_RATE':
       return {...state , exchangeRates: action.data}
     default:
-      // window.edgeProvider.consoleLog('Wyre Reducer Default')
       return state
   }
 }

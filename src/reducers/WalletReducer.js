@@ -15,7 +15,6 @@ export const WalletReducer = (state: WalletState = initialState, action: Action)
     case 'WALLET_LOADED':
       return {...state, wallet: action.data}
     default:
-      // window.edgeProvider.consoleLog('Wyre Reducer Default')
       return state
   }
 }

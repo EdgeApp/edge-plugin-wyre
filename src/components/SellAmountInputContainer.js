@@ -14,14 +14,7 @@ type Props = {
   value: string,
   onChange(string): void
 }
-type State = {
-  // wallet: WalletDetails | null,
-  /* currencyCode: string | null,
-  wallet: WalletDetails | null,
-  walletName: string | null,
-  currencyIcon: string | null */
-
-}
+type State = {}
 
 class SellAmountInputContainer extends Component <Props, State> {
   renderImage = () => {
