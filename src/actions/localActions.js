@@ -1,5 +1,5 @@
 // @flow
-import { APPROVED, AWAITING_FOLLOWUP, NOT_STARTED, PENDING, REJECTED, AWAITING_DEPOSIT_VERIFICATION, DISABLED } from '../constants/index'
+import { APPROVED, AWAITING_FOLLOWUP, NOT_STARTED, PENDING, PAYMENT_METHOD_PENDING, REJECTED, AWAITING_DEPOSIT_VERIFICATION, DISABLED } from '../constants/index'
 import type { Dispatch, GetState } from '../types/ReduxTypes'
 import { getAccount, getPaymentMethods, addBlockChainToAccount } from '../api/api'
 
@@ -122,6 +122,8 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
       switch(inactivePaymentMethodArray[0].status) {
         case PENDING:
           window.edgeProvider.displayError('Your payment method is pending and awaiting approval')
+          wyreAccountDetails.wyreAccountStatus = PAYMENT_METHOD_PENDING
+          dispatch({type: 'LOCAL_DATA_INIT', data: wyreAccountDetails})
           break
         case AWAITING_DEPOSIT_VERIFICATION:
           window.edgeProvider.displayError('Your payment method is pending and awaiting deposit verification')

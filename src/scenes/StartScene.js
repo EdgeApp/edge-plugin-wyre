@@ -2,12 +2,13 @@
 
 import './inline.css'
 
-import { APPROVED, PENDING } from '../constants/index'
+import { APPROVED, PENDING, PAYMENT_METHOD_PENDING } from '../constants/index'
 import React, { Component } from 'react'
 
 import { BuySellSceneConnector } from '../connectors/BuySellSceneConnector'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import PendingScreenComponent from '../components/PendingScreenComponent'
+import PendingMethodPendingScreenComponent from '../components/PendingPaymentMethodScreenComponent'
 import SignUpComponent from '../components/SignUpComponent'
 import { withStyles } from '@material-ui/core/styles'
 
@@ -73,6 +74,9 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
     }
     if(this.props.accountStatus === PENDING) {
       return <PendingScreenComponent />
+    }
+    if(this.props.accountStatus === PAYMENT_METHOD_PENDING) {
+      return <PendingMethodPendingScreenComponent />
     }
     // NOT_STARTED || default
     return <SignUpComponent  onPress={this.initUser}/>
