@@ -66,7 +66,7 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
       await window.edgeProvider.displayError('Wyre unavailable. Please try again later.')
       await window.edgeProvider.exitPlugin()
     }
-    wyreAccountDetails.wyreAccountStatus = `NOT_STARTED${e.message}`
+    wyreAccountDetails.wyreAccountStatus = `NOT_STARTED`
     dispatch({type: 'LOCAL_DATA_INIT', data: wyreAccountDetails})
     return
   }
@@ -118,28 +118,25 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
     }
 
     // Show error with recent payment method status
-    if (inactivePaymentMethodArray[0].status === PENDING) {
-      switch(inactivePaymentMethodArray[0].status) {
-        case PENDING:
-          window.edgeProvider.displayError('Your payment method is pending and awaiting approval')
-          wyreAccountDetails.wyreAccountStatus = PAYMENT_METHOD_PENDING
-          dispatch({type: 'LOCAL_DATA_INIT', data: wyreAccountDetails})
-          break
-        case AWAITING_DEPOSIT_VERIFICATION:
-          window.edgeProvider.displayError('Your payment method is pending and awaiting deposit verification')
-          break
-        case REJECTED:
-          window.edgeProvider.displayError('Your payment method has been rejected. Please link another.')
-          break
-        case DISABLED:
-          window.edgeProvider.displayError('Your payment method has been disabled. Please link another.')
-          break
-        case AWAITING_FOLLOWUP:
-          window.edgeProvider.displayError('Please re-verify your bank information.')
-          break
-        default:
-          window.edgeProvider.displayError(`Unknown payment method status ${inactivePaymentMethodArray[0].status}`)
-      }
+    switch(inactivePaymentMethodArray[0].status) {
+      case PENDING:
+        window.edgeProvider.displayError('Your payment method is pending and awaiting approval')
+        wyreAccountDetails.wyreAccountStatus = PAYMENT_METHOD_PENDING
+        break
+      case AWAITING_DEPOSIT_VERIFICATION:
+        window.edgeProvider.displayError('Your payment method is pending and awaiting deposit verification')
+        break
+      case REJECTED:
+        window.edgeProvider.displayError('Your payment method has been rejected. Please link another.')
+        break
+      case DISABLED:
+        window.edgeProvider.displayError('Your payment method has been disabled. Please link another.')
+        break
+      case AWAITING_FOLLOWUP:
+        window.edgeProvider.displayError('Please re-verify your bank information.')
+        break
+      default:
+        window.edgeProvider.displayError(`Unknown payment method status ${inactivePaymentMethodArray[0].status}`)
     }
   }
 
@@ -149,7 +146,7 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
   wyreAccountDetails.sellAddresses = activePaymentMethodArray[0].blockchains
   
   dispatch({type: 'LOCAL_DATA_INIT', data: wyreAccountDetails})
-  if(wyreAccountDetails.wyreAccountStatus === APPROVED) {
+  if (wyreAccountDetails.wyreAccountStatus === APPROVED) {
     dispatch(getTransactions())
   }
 }
