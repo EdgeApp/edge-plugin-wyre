@@ -66,8 +66,6 @@ const TransactionItem = withStyles(limitStyles)((props: Props) => {
   const { transaction, classes } = props
   const transactionType = transaction.destCurrency === 'USD' ? 'Sell' : 'Buy'
   const moneyClass = transactionType === 'Sell' ? classes.cryptoAmountTextSell : classes.cryptoAmountTextBuy
- /*  window.edgeProvider.consoleLog('-- TRANSACTION --')
-  window.edgeProvider.consoleLog(transaction) */
   const date = new Date(transaction.createdAt)
   const dateString = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear()
   const upDown = transactionType === 'Sell' ? '-' : '+'
@@ -101,11 +99,3 @@ const TransactionItem = withStyles(limitStyles)((props: Props) => {
 })
 
 export { TransactionItem }
-
-/*
- return (
-    <Typography component="p" className={props.classes.p}>
-      Daily Limit: {formatRate(dailyLimit, fiat)} / Monthly Limit: {formatRate(monthlyLimit, fiat)}
-    </Typography>
-  )
-  */

@@ -1,14 +1,13 @@
 // @flow
 import { V2_API_URL } from '../env'
+import { asMap, asArray, asObject, asString, asNone, asEither, asNumber, asOptional } from 'cleaners'
 
 export async function getSellQuoteAPI(token: string, fiat: string, cryptoCurrencyCode: string, address: string, bankAccount: string) {
-  window.edgeProvider.consoleLog('getSellQuoteAPI api')
-
   const data = {
     destAmount: Number(fiat),
     sourceCurrency: cryptoCurrencyCode,
     destCurrency: 'USD',
-    dest: bankAccount // cryptoCurrencyCode === 'BTC' ? 'bitcoin:' + address : address,
+    dest: bankAccount
   }
   const request = {
     method: 'POST',
@@ -20,14 +19,37 @@ export async function getSellQuoteAPI(token: string, fiat: string, cryptoCurrenc
     body: JSON.stringify(data)
   }
   const url = 'https://api.sendwyre.com/v3/transfers'
-  window.edgeProvider.consoleLog(' API -  '+ url)
   const result = await window.fetch(url, request)
   const newData = result.json()
-  window.edgeProvider.consoleLog(newData)
   return newData
 }
 
-export async function getTransferHistory(token: string) {
+const asGetTransferHistory = asObject({
+  data: asArray(asObject({
+    status: asString,
+    closedAt: asNumber,
+    createdAt: asNumber,
+    id: asString,
+    customId: asEither(asString, asNone),
+    source: asString,
+    dest: asString,
+    sourceCurrency: asString,
+    destCurrency: asString,
+    sourceAmount: asNumber,
+    destAmount: asNumber,
+    fees: asOptional(asMap(asNumber)),
+    sourceName: asString,
+    destName: asString,
+    message: asEither(asString, asNone),
+    exchangeRate: asEither(asNumber, asNone),
+    blockchainTxId: asEither(asString, asNone),
+    destNickname: asEither(asString, asNone)
+  }))
+})
+
+type GetTransferHistory = $Call<typeof asGetTransferHistory>
+
+export async function getTransferHistory(token: string): Promise<GetTransferHistory> {
   const request = {
     method: 'GET',
     headers: {
@@ -38,7 +60,10 @@ export async function getTransferHistory(token: string) {
   }
   const url ='https://api.sendwyre.com/v3/transfers' // V2_API_URL + 'apiKeys'
   const result = await window.fetch(url, request)
-  const newData = result.json()
+  if (!result.ok) {
+    throw new Error('getTransferHistory failed')
+  }
+  const newData = asGetTransferHistory(await result.json())
   return newData
 }
 
@@ -57,7 +82,11 @@ export async function getExchangeRates(token: string) {
   return newData
 }
 
-export async function addBlockChainToAccount(token: string, paymentMethodId: string) {
+const asAddBlockChainToAccount = asObject({ blockchains: asMap(asString) })
+
+type AddBlockChainToAccount = $Call<typeof asAddBlockChainToAccount>
+
+export async function addBlockChainToAccount(token: string, paymentMethodId: string): Promise<AddBlockChainToAccount> {
   //https://api.sendwyre.com/v2/paymentMethod/:paymentMethodId/attach
   const data = {
     blockchain: 'ALL'
@@ -72,13 +101,26 @@ export async function addBlockChainToAccount(token: string, paymentMethodId: str
     body: JSON.stringify(data)
   }
   const url = V2_API_URL + 'paymentMethod/' + paymentMethodId + '/attach'
-  window.edgeProvider.consoleLog(' API -  '+ url)
   const result = await window.fetch(url, request)
-  const newData = result.json()
+  if (!result.ok) throw new Error('fetchError')
+  const newData = asAddBlockChainToAccount(await result.json())
   return newData
 }
 
-export async function getPaymentMethods(token: string) {
+const asGetPaymentMethods = asObject({
+  data: asArray(asObject({
+    status: asString,
+    owner: asString,
+    id: asString,
+    createdAt: asNumber,
+    name: asString,
+    blockchains: asMap(asString)
+  }))
+})
+
+type GetPaymentMethods = $Call<typeof asGetPaymentMethods>
+
+export async function getPaymentMethods(token: string): Promise<GetPaymentMethods> {
   const request = {
     method: 'GET',
     headers: {
@@ -89,12 +131,18 @@ export async function getPaymentMethods(token: string) {
   }
   const url ='https://api.sendwyre.com/v2/paymentMethods' // V2_API_URL + 'apiKeys'
   const result = await window.fetch(url, request)
-  const newData = result.json()
-  console.log('newData ', newData)
+  if (!result.ok) throw new Error('fetchError')
+  if (result.status === 204) throw new Error('emptyResponse')
+  const newData = asGetPaymentMethods(await result.json())
+  if (newData.data.length < 1) throw new Error('emptyResponse')
   return newData
 }
 
-export async function getAccount(account: string, token: string) {
+const asGetAccount = asObject({ status: asString })
+
+type GetAccount = $Call<typeof asGetAccount>
+
+export async function getAccount(account: string, token: string): Promise<GetAccount> {
   const timestamp = new Date().getMilliseconds()
   const data = {
     method: 'GET',
@@ -106,6 +154,8 @@ export async function getAccount(account: string, token: string) {
   }
   const url = 'https://api.sendwyre.com/v2/account/' + account + '?timestamp=' + timestamp
   const result = await window.fetch(url, data)
-  const newData = result.json()
+  if (!result.ok) throw new Error('fetchError')
+  if (result.status === 204) throw new Error('emptyResponse')
+  const newData = asGetAccount(await result.json())
   return newData
 }

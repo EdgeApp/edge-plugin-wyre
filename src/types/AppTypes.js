@@ -1,14 +1,20 @@
 // @flow
 
 export type LocalStorage = {
-  wyreAccountId: string | null, // this is the secret key needed for other tasks
-  wyreAccountStatus: string | null,
-  wyreAccountId_id: string | null,
-  wyrePaymentMethodId: string | null,
-  wyreNetworkTxId: string | null,
-  wyreAccountName: string | null,
-  wyreBTC: string | null,
-  wyreETH: string | null
+  wyreAccountId: string | null // this is the secret key needed for other tasks
+}
+
+export type WyreAccountDetails = {
+  wyreSecret: string,
+  wyreAccountStatus: string,
+  wyreAccountName: string,
+  wyrePaymentMethodId: string,
+  wyrePaymentMethodName: string,
+  sellAddresses: SellAddresses
+}
+
+export type SellAddresses = {
+  [key: string]: string
 }
 
 export type WalletDetails = {

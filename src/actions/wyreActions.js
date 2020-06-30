@@ -29,26 +29,23 @@ export const finishTransaction = (history: Object) => async (dispatch: Dispatch,
   dispatch(getTransactions())
 }
 export const getTransactions = () => async (dispatch: Dispatch, getState: GetState) => {
-  window.edgeProvider.consoleLog('#### gettingTransferHistory')
   const state = getState()
   const token = state.Wyre.secretKey
   if (!token) return
-  const history = await getTransferHistory(token)
-  window.edgeProvider.consoleLog(history.data)
+  let history
+  try {
+    history = await getTransferHistory(token)
+  } catch (e) {
+    return
+  }
   dispatch({type: 'ON_TRANSACTION_HISTORY', data: history.data})
 }
 //
 export const buyCurrency = () => async (dispatch: Dispatch, getState: GetState) => {
-  window.edgeProvider.consoleLog('Buy Currency Action')
   const state = getState()
   const wallet = state.Wallet.wallet
-  window.edgeProvider.consoleLog('Wallet')
   const wyreAccount = state.Wyre.secretKey
-  window.edgeProvider.consoleLog('Secret Key')
   if (!wallet && !wyreAccount) {
-    window.edgeProvider.consoleLog('Woops')
-    window.edgeProvider.consoleLog(wallet)
-    window.edgeProvider.consoleLog(wyreAccount)
     return
   }
   if (wallet) {
@@ -72,7 +69,8 @@ export const buyCurrency = () => async (dispatch: Dispatch, getState: GetState) 
         await window.edgeProvider.trackConversion()
        });
     } catch (e) {
-      window.edgeProvider.consoleLog('Error on Widget')
+      await window.edgeProvider.displayError('Wyre unavailable. Please try again later.')
+      await window.edgeProvider.exitPlugin()
     }
   }
 
