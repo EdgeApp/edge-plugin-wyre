@@ -138,12 +138,12 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
       default:
         window.edgeProvider.displayError(`Unknown payment method status ${inactivePaymentMethodArray[0].status}`)
     }
+  } else {
+    // Save active payment method details to redux
+    wyreAccountDetails.wyrePaymentMethodId = activePaymentMethodArray[0].id
+    wyreAccountDetails.wyrePaymentMethodName = activePaymentMethodArray[0].name
+    wyreAccountDetails.sellAddresses = activePaymentMethodArray[0].blockchains
   }
-
-  // Save account details to redux
-  wyreAccountDetails.wyrePaymentMethodId = activePaymentMethodArray[0].id
-  wyreAccountDetails.wyrePaymentMethodName = activePaymentMethodArray[0].name
-  wyreAccountDetails.sellAddresses = activePaymentMethodArray[0].blockchains
   
   dispatch({type: 'LOCAL_DATA_INIT', data: wyreAccountDetails})
   if (wyreAccountDetails.wyreAccountStatus === APPROVED) {
