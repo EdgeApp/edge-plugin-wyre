@@ -2,7 +2,7 @@
 
 import './inline.css'
 
-import { APPROVED, PENDING, PAYMENT_METHOD_PENDING } from '../constants/index'
+import { APPROVED, PENDING, PAYMENT_METHOD_PENDING, NO_PAYMENT_METHOD } from '../constants/index'
 import React, { Component } from 'react'
 
 import { BuySellSceneConnector } from '../connectors/BuySellSceneConnector'
@@ -77,6 +77,10 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
     }
     if(this.props.accountStatus === PAYMENT_METHOD_PENDING) {
       return <PendingMethodPendingScreenComponent />
+    }
+    if(this.props.accountStatus === NO_PAYMENT_METHOD) {
+      this.initUser()
+      return
     }
     // NOT_STARTED || default
     return <SignUpComponent  onPress={this.initUser}/>

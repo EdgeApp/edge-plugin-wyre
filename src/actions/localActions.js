@@ -1,5 +1,5 @@
 // @flow
-import { APPROVED, AWAITING_FOLLOWUP, NOT_STARTED, PENDING, PAYMENT_METHOD_PENDING, REJECTED, AWAITING_DEPOSIT_VERIFICATION, DISABLED } from '../constants/index'
+import { APPROVED, NO_PAYMENT_METHOD, AWAITING_FOLLOWUP, NOT_STARTED, PENDING, PAYMENT_METHOD_PENDING, REJECTED, AWAITING_DEPOSIT_VERIFICATION, DISABLED } from '../constants/index'
 import type { Dispatch, GetState } from '../types/ReduxTypes'
 import { getAccount, getPaymentMethods, addBlockChainToAccount } from '../api/api'
 
@@ -116,6 +116,9 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
         inactivePaymentMethodArray.splice(1, 1)
       }
     }
+
+    // Approved accounts without an ACTIVE or PENDING payment method need to be routed directly to the widget after displaying the appropriate error message
+    wyreAccountDetails.wyreAccountStatus = NO_PAYMENT_METHOD
 
     // Show error with recent payment method status
     switch(inactivePaymentMethodArray[0].status) {
