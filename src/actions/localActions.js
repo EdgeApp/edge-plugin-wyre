@@ -1,5 +1,5 @@
 // @flow
-import { APPROVED, NO_PAYMENT_METHOD, AWAITING_FOLLOWUP, NOT_STARTED, PENDING, PAYMENT_METHOD_PENDING, REJECTED, AWAITING_DEPOSIT_VERIFICATION, DISABLED } from '../constants/index'
+import { APPROVED, NEED_WIDGET, AWAITING_FOLLOWUP, NOT_STARTED, PENDING, PAYMENT_METHOD_PENDING, REJECTED, AWAITING_DEPOSIT_VERIFICATION, DISABLED } from '../constants/index'
 import type { Dispatch, GetState } from '../types/ReduxTypes'
 import { getAccount, getPaymentMethods, addBlockChainToAccount } from '../api/api'
 
@@ -47,7 +47,8 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
       await window.edgeProvider.displayError('Error accessing Wyre. Please try again later.')
       await window.edgeProvider.exitPlugin()
     }
-    wyreAccountDetails.wyreAccountStatus = `NOT_STARTED`
+    // If getPaymentMethod fails, send user to info screen with Create Account button
+    wyreAccountDetails.wyreAccountStatus = NOT_STARTED
     dispatch({type: 'LOCAL_DATA_INIT', data: wyreAccountDetails})
     return
   }
@@ -67,7 +68,8 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
       await window.edgeProvider.displayError('Wyre unavailable. Please try again later.')
       await window.edgeProvider.exitPlugin()
     }
-    wyreAccountDetails.wyreAccountStatus = `NOT_STARTED`
+    // If user has already created account but is not APPROVED send directly to widget
+    wyreAccountDetails.wyreAccountStatus = NEED_WIDGET
     dispatch({type: 'LOCAL_DATA_INIT', data: wyreAccountDetails})
     return
   }
@@ -119,7 +121,7 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
     }
 
     // Approved accounts without an ACTIVE or PENDING payment method need to be routed directly to the widget after displaying the appropriate error message
-    wyreAccountDetails.wyreAccountStatus = NO_PAYMENT_METHOD
+    wyreAccountDetails.wyreAccountStatus = NEED_WIDGET
 
     // Show error with recent payment method status
     switch(inactivePaymentMethodArray[0].status) {

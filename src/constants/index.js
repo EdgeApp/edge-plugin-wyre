@@ -8,7 +8,7 @@ export const REJECTED: string = 'REJECTED'
 export const NOT_STARTED: string = 'NOT_STARTED'
 export const AWAITING_DEPOSIT_VERIFICATION: string = 'AWAITING_DEPOSIT_VERIFICATION'
 export const DISABLED: string = 'DISABLED'
-export const NO_PAYMENT_METHOD: string = 'NO_PAYMENT_METHOD'
+export const NEED_WIDGET: string = 'NEED_WIDGET'
 
 export const SUPPORTED_DIGITAL_CURRENCIES = [
   'BTC', 'ETH', 'DAI'
