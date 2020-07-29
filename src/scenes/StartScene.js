@@ -2,7 +2,7 @@
 
 import './inline.css'
 
-import { APPROVED, PENDING, PAYMENT_METHOD_PENDING, NO_PAYMENT_METHOD } from '../constants/index'
+import { APPROVED, NEED_WIDGET, NOT_STARTED, PENDING, PAYMENT_METHOD_PENDING } from '../constants/index'
 import React, { Component } from 'react'
 
 import { BuySellSceneConnector } from '../connectors/BuySellSceneConnector'
@@ -78,12 +78,12 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
     if(this.props.accountStatus === PAYMENT_METHOD_PENDING) {
       return <PendingMethodPendingScreenComponent />
     }
-    if(this.props.accountStatus === NO_PAYMENT_METHOD) {
-      this.initUser()
-      return
+    if(this.props.accountStatus === NOT_STARTED) {
+      return <SignUpComponent  onPress={this.initUser}/>
     }
-    // NOT_STARTED || default
-    return <SignUpComponent  onPress={this.initUser}/>
+    // NEED_WIDGET/unrecognized/default - Account statuses that require existing user to update account info via widget
+    this.initUser()
+    return
   }
 }
 
