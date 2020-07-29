@@ -3,37 +3,38 @@ import { APPROVED, NO_PAYMENT_METHOD, AWAITING_FOLLOWUP, NOT_STARTED, PENDING, P
 import type { Dispatch, GetState } from '../types/ReduxTypes'
 import { getAccount, getPaymentMethods, addBlockChainToAccount } from '../api/api'
 
-import type { LocalStorage, WyreAccountDetails } from '../types/AppTypes'
+import type { WyreAccountDetails } from '../types/AppTypes'
 import { genRandomString } from '../utils'
 import { getTransactions } from '../actions/indexActions'
 
 export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => {
-  let localStorage: LocalStorage
-
   let wyreAccountDetails: WyreAccountDetails = {
     wyreSecret: '',
     wyreAccountStatus: '',
     wyreAccountName: '',
     wyrePaymentMethodId: '',
     wyrePaymentMethodName: '',
-    sellAddresses: {}
+    sellAddresses: {},
+    wyreAccountId: '' // this is the old secret key variable replaced by wyreSecret
   }
 
   try {
-    localStorage = await window.edgeProvider.readData(['wyreAccountId'])
-    wyreAccountDetails.wyreSecret = localStorage.wyreAccountId
+    // If wyreSecret doesn't exist, check for wyreAcountId. If both are undefined create a secret
+    wyreAccountDetails = await window.edgeProvider.readData(['wyreSecret', 'wyreAccountId'])
+    if (wyreAccountDetails.wyreSecret == null) {
+      if (wyreAccountDetails.wyreAccountId == null) {
+        wyreAccountDetails.wyreSecret = genRandomString(32)
+        await window.edgeProvider.writeData({wyreSecret: wyreAccountDetails.wyreSecret})
+        wyreAccountDetails.wyreAccountStatus = NOT_STARTED
+        dispatch({type: 'LOCAL_DATA_INIT', data: wyreAccountDetails})
+        return
+      } else {
+        wyreAccountDetails.wyreSecret = wyreAccountDetails.wyreAccountId
+      }
+    } 
   } catch (e) {
     await window.edgeProvider.displayError('Failed to read data on disk')
     await window.edgeProvider.exitPlugin()
-    return
-  }
-
-  // Check if wyreAccountId exists and create one if it doesn't
-  if (localStorage.wyreAccountId == null) {
-    wyreAccountDetails.wyreSecret = genRandomString(32)
-    await window.edgeProvider.writeData(wyreAccountDetails)
-    wyreAccountDetails.wyreAccountStatus = NOT_STARTED
-    dispatch({type: 'LOCAL_DATA_INIT', data: wyreAccountDetails})
     return
   }
 
