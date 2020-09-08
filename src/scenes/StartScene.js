@@ -2,7 +2,7 @@
 
 import './inline.css'
 
-import { APPROVED, NEED_WIDGET, NOT_STARTED, PENDING, PAYMENT_METHOD_PENDING } from '../constants/index'
+import { APPROVED, NOT_STARTED, PENDING, PAYMENT_METHOD_PENDING } from '../constants/index'
 import React, { Component } from 'react'
 
 import { BuySellSceneConnector } from '../connectors/BuySellSceneConnector'
