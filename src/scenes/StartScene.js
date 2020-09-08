@@ -42,8 +42,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
       },
       operation: {
         type: 'onramp',
-        destCurrency: 'BTC',
-        dest: `bitcoin:3BjzfELknjudFqciCTCjDntNr9WE2rtvHD`
+        destCurrency: 'BTC'
       }
     })
     widget.open('complete', async function(e) {
