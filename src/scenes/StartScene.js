@@ -2,7 +2,7 @@
 
 import './inline.css'
 
-import { APPROVED, NEED_WIDGET, NOT_STARTED, PENDING, PAYMENT_METHOD_PENDING } from '../constants/index'
+import { APPROVED, NOT_STARTED, PENDING, PAYMENT_METHOD_PENDING } from '../constants/index'
 import React, { Component } from 'react'
 
 import { BuySellSceneConnector } from '../connectors/BuySellSceneConnector'
@@ -42,8 +42,7 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
       },
       operation: {
         type: 'onramp',
-        destCurrency: 'BTC',
-        dest: `bitcoin:3BjzfELknjudFqciCTCjDntNr9WE2rtvHD`
+        destCurrency: 'BTC'
       }
     })
     widget.open('complete', async function(e) {
