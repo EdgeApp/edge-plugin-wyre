@@ -11,7 +11,7 @@ export const DISABLED: string = 'DISABLED'
 export const NEED_WIDGET: string = 'NEED_WIDGET'
 
 export const SUPPORTED_DIGITAL_CURRENCIES = [
-  'BTC', 'ETH', 'DAI'
+  'BTC', 'ETH', 'DAI', 'USDC'
 ]
 
 export const SUPPORTED_FIAT_CURRENCIES = [
