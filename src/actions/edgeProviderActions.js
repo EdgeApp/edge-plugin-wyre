@@ -27,7 +27,7 @@ export const confirmQuote = (crypto: string, fiat: string, history: Object) => a
     window.edgeProvider.displayError('Missing Wyre payment method id')
     return
   }
-  const destAddress = state.Wyre.sellAddresses[wallet.currencyCode]
+  const destAddress = state.Wyre.sellAddresses[wallet.currencyCode] ? state.Wyre.sellAddresses[wallet.currencyCode] : state.Wyre.sellAddresses['ETH']
   const { currencyCode } = wallet
   if (!currencyCode)  {
     window.edgeProvider.displayError('Missing currencyCode')
@@ -44,7 +44,7 @@ export const confirmQuote = (crypto: string, fiat: string, history: Object) => a
     category: 'Exchange:Sell ' + currencyCode,
     notes: 'Sell '+ currencyCode + ' from ' + wallet.name +' to Wyre at address: ' + destAddress +'. Sell amount ' + fiat +'. For assistance, please contact support@sendwyre.com.'
   }
-  const edgeTransaction = await window.edgeProvider.requestSpend([info], { metadata })
+  const edgeTransaction = await window.edgeProvider.requestSpend([info], { currencyCode, metadata })
   // const edgeTransaction = await window.edgeProvider.requestSpend([info])
   if (edgeTransaction) {
     history.push('/ConfirmationScene')
