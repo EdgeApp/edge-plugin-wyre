@@ -29,7 +29,7 @@ class ConfirmationScene extends Component<Props, State> {
             Transaction was successful.
           </div>
           <div className={classes.smallText} >
-          Funds will show in your bank account in 1-2 days.
+          Funds will show in your bank account in 4-5 business days.
           </div>
 
         </div>
