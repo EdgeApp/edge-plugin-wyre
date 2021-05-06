@@ -47,8 +47,7 @@ const styles = theme => ({
     flexDirection: 'column',
     width: '100%',
     height: '100%',
-    alignItems: 'center',
-    backgroundImage: 'linear-gradient(to right, #0E4B75 , #0D2145)'
+    alignItems: 'center'
   },
   containerTop: {
     display: 'flex',

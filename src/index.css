@@ -3,7 +3,7 @@ body {
   padding: 0;
   font-family: 'Source Sans Pro', sans-serif;
   background: #FFcc00;
-  background: linear-gradient( to right, #0E4B75, #0D2145);
+  background: linear-gradient( to right, #0D2145, #0C446A);
 }
 
 textarea:focus, input:focus{
