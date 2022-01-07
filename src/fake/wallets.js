@@ -19,4 +19,12 @@ export default [{
   "currencyCode": "ETH",
   "primaryNativeBalance": "ETH",
   "fiatCurrencyCode": "USD"
-}]
+}, , {
+  "id": "Nj1u3gHBw3sNrce+JnPkQcPg5IO/Oe1lrIpJuLkPPt8=",
+  "name": "My Polygon",
+  "type": "wallet:polygon",
+  "currencyCode": "MATIC",
+  "primaryNativeBalance": "MATIC",
+  "fiatCurrencyCode": "USD"
+}
+]

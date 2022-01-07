@@ -42,7 +42,7 @@ class BuySellScene extends Component<Props, State> {
     if(!this.props.wallet) {
       return true
     }
-    if(!SUPPORTED_DIGITAL_CURRENCIES.includes(this.props.wallet.currencyCode)){
+    if(!Object.keys(SUPPORTED_DIGITAL_CURRENCIES).includes(this.props.wallet.currencyCode)){
       return true
     }
     return false

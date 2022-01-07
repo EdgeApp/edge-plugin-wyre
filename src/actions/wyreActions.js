@@ -1,5 +1,6 @@
 // @flow
 import type { Dispatch, GetState } from '../types/ReduxTypes'
+import { SUPPORTED_DIGITAL_CURRENCIES } from '../constants/index.js'
 import { getExchangeRates, getTransferHistory } from '../api/api.js'
 
 export const changeCrypto = (arg: string, exchangeRate: number) => async (dispatch: Dispatch, getState: GetState) => {
@@ -40,7 +41,7 @@ export const getTransactions = () => async (dispatch: Dispatch, getState: GetSta
   }
   dispatch({type: 'ON_TRANSACTION_HISTORY', data: history.data})
 }
-//
+
 export const buyCurrency = () => async (dispatch: Dispatch, getState: GetState) => {
   const state = getState()
   const wallet = state.Wallet.wallet
@@ -50,7 +51,7 @@ export const buyCurrency = () => async (dispatch: Dispatch, getState: GetState) 
   }
   if (wallet) {
     const { currencyCode } =  wallet
-    const addressPrefix = currencyCode === 'BTC' ? 'bitcoin:' : 'ethereum:'
+    const addressPrefix = SUPPORTED_DIGITAL_CURRENCIES[currencyCode]
     try {
       const widget = new window.Wyre.Widget({
         env: 'production',
