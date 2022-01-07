@@ -10,9 +10,14 @@ export const AWAITING_DEPOSIT_VERIFICATION: string = 'AWAITING_DEPOSIT_VERIFICAT
 export const DISABLED: string = 'DISABLED'
 export const NEED_WIDGET: string = 'NEED_WIDGET'
 
-export const SUPPORTED_DIGITAL_CURRENCIES = [
-  'BTC', 'ETH', 'DAI', 'USDC'
-]
+// https://docs.sendwyre.com/v1/docs/srns
+export const SUPPORTED_DIGITAL_CURRENCIES = {
+  'BTC': 'bitcoin:',
+  'ETH': 'ethereum:',
+  'MATIC': 'matic:',
+  'DAI': 'ethereum:', 
+  'USDC': 'ethereum:'
+}
 
 export const SUPPORTED_FIAT_CURRENCIES = [
   'USD', 'EUR'
