@@ -14,7 +14,7 @@ export const NEED_WIDGET: string = 'NEED_WIDGET'
 export const SUPPORTED_DIGITAL_CURRENCIES = {
   'BTC': 'bitcoin:',
   'ETH': 'ethereum:',
-  'MATIC': 'matic:',
+  // 'MATIC': 'matic:',
   'DAI': 'ethereum:', 
   'USDC': 'ethereum:'
 }
