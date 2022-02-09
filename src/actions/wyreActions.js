@@ -50,8 +50,9 @@ export const buyCurrency = () => async (dispatch: Dispatch, getState: GetState) 
     return
   }
   if (wallet) {
-    const { currencyCode } =  wallet
-    const addressPrefix = SUPPORTED_DIGITAL_CURRENCIES[currencyCode]
+    const { currencyCode, pluginId } =  wallet
+    // $FlowFixMe
+    const addressPrefix = SUPPORTED_DIGITAL_CURRENCIES.find(code => code.currencyCode === currencyCode && code.pluginId === pluginId).prefix
     try {
       const widget = new window.Wyre.Widget({
         env: 'production',

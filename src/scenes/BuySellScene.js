@@ -39,10 +39,10 @@ class BuySellScene extends Component<Props, State> {
     return false
   }
   isSellDisabled =() => {
-    if(!this.props.wallet) {
+    if(this.props.wallet == null) {
       return true
     }
-    if(!Object.keys(SUPPORTED_DIGITAL_CURRENCIES).includes(this.props.wallet.currencyCode)){
+    if(SUPPORTED_DIGITAL_CURRENCIES.find(tokenInfo => this.props.wallet != null && tokenInfo.currencyCode === this.props.wallet.currencyCode) == null) {
       return true
     }
     return false
