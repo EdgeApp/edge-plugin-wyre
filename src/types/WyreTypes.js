@@ -28,6 +28,7 @@ export const asGetTransferHistory = asObject({
 })
 
 export const asAddBlockChainToAccount = asObject({ blockchains: asMap(asString) })
+export const asBlockchainMap = asMap(asString)
 export const asGetPaymentMethods = asObject({
   data: asArray(
     asObject({
@@ -41,12 +42,13 @@ export const asGetPaymentMethods = asObject({
       id: asString,
       createdAt: asNumber,
       name: asString,
-      blockchains: asMap(asString)
+      blockchains: asBlockchainMap
     })
   )
 })
 export const asGetAccount = asObject({ status: asString })
 
+export type BlockchainMap = $Call<typeof asBlockchainMap>
 export type GetAccount = $Call<typeof asGetAccount>
 export type GetPaymentMethods = $Call<typeof asGetPaymentMethods>
 export type AddBlockChainToAccount = $Call<typeof asAddBlockChainToAccount>

@@ -14,7 +14,25 @@ import {
 } from '../constants/index'
 import type { WyreAccountDetails } from '../types/AppTypes'
 import type { Dispatch, GetState } from '../types/ReduxTypes'
+import { type BlockchainMap } from '../types/WyreTypes'
 import { genRandomString } from '../utils'
+
+const WYRE_TO_EDGE_CHAIN_MAP = {
+  BTC: 'BTC',
+  MATIC: 'MATIC',
+  AVAXC: 'AVAX',
+  XLM: 'XLM',
+  ETH: 'ETH'
+}
+
+const translateBlockchains = (chains: BlockchainMap): BlockchainMap => {
+  return Object.entries(chains).reduce((prev, curr) => {
+    const [key, val] = curr
+    const newKey = WYRE_TO_EDGE_CHAIN_MAP[key]
+    if (newKey == null) return prev
+    return { ...prev, [newKey]: val }
+  }, {})
+}
 
 export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => {
   let wyreAccountDetails: WyreAccountDetails = {
@@ -165,7 +183,7 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
     // Save active payment method details to redux
     wyreAccountDetails.wyrePaymentMethodId = activePaymentMethodArray[0].id
     wyreAccountDetails.wyrePaymentMethodName = activePaymentMethodArray[0].name
-    wyreAccountDetails.sellAddresses = activePaymentMethodArray[0].blockchains
+    wyreAccountDetails.sellAddresses = translateBlockchains(activePaymentMethodArray[0].blockchains)
   }
 
   dispatch({ type: 'LOCAL_DATA_INIT', data: wyreAccountDetails })
