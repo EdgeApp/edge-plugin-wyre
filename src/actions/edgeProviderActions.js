@@ -26,10 +26,15 @@ export const confirmQuote = (crypto: string, fiat: string, history: Object) => a
     window.edgeProvider.displayError('Missing Wyre payment method id')
     return
   }
-  const destAddress = state.Wyre.sellAddresses[walletDetails.currencyCode] ? state.Wyre.sellAddresses[walletDetails.currencyCode] : state.Wyre.sellAddresses.ETH
-  const { currencyCode } = walletDetails
-  if (!currencyCode) {
+  const { chainCode, currencyCode } = walletDetails
+  if (!currencyCode || !chainCode) {
     window.edgeProvider.displayError('Missing currencyCode')
+    return
+  }
+
+  const destAddress = state.Wyre.sellAddresses[walletDetails.chainCode]
+  if (!destAddress) {
+    window.edgeProvider.displayError(`Missing deposit address for ${walletDetails.chainCode}`)
     return
   }
 
@@ -44,6 +49,8 @@ export const confirmQuote = (crypto: string, fiat: string, history: Object) => a
     notes:
       'Sell ' +
       currencyCode +
+      ' on chain ' +
+      chainCode +
       ' from ' +
       walletDetails.name +
       ' to Wyre at address: ' +
