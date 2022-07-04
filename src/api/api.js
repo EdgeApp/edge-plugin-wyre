@@ -1,7 +1,15 @@
 // @flow
-import { asArray, asEither, asMap, asNone, asNumber, asObject, asOptional, asString } from 'cleaners'
-
 import { V2_API_URL } from '../env'
+import {
+  type AddBlockChainToAccount,
+  type GetAccount,
+  type GetPaymentMethods,
+  type GetTransferHistory,
+  asAddBlockChainToAccount,
+  asGetAccount,
+  asGetPaymentMethods,
+  asGetTransferHistory
+} from '../types/WyreTypes'
 
 export async function getSellQuoteAPI(token: string, fiat: string, cryptoCurrencyCode: string, address: string, bankAccount: string) {
   const data = {
@@ -24,33 +32,6 @@ export async function getSellQuoteAPI(token: string, fiat: string, cryptoCurrenc
   const newData = result.json()
   return newData
 }
-
-const asGetTransferHistory = asObject({
-  data: asArray(
-    asObject({
-      status: asString,
-      closedAt: asNumber,
-      createdAt: asNumber,
-      id: asString,
-      customId: asEither(asString, asNone),
-      source: asString,
-      dest: asString,
-      sourceCurrency: asString,
-      destCurrency: asString,
-      sourceAmount: asNumber,
-      destAmount: asNumber,
-      fees: asOptional(asMap(asNumber)),
-      sourceName: asString,
-      destName: asString,
-      message: asEither(asString, asNone),
-      exchangeRate: asEither(asNumber, asNone),
-      blockchainTxId: asEither(asString, asNone),
-      destNickname: asEither(asString, asNone)
-    })
-  )
-})
-
-type GetTransferHistory = $Call<typeof asGetTransferHistory>
 
 export async function getTransferHistory(token: string): Promise<GetTransferHistory> {
   const request = {
@@ -85,10 +66,6 @@ export async function getExchangeRates(token: string) {
   return newData
 }
 
-const asAddBlockChainToAccount = asObject({ blockchains: asMap(asString) })
-
-type AddBlockChainToAccount = $Call<typeof asAddBlockChainToAccount>
-
 export async function addBlockChainToAccount(token: string, paymentMethodId: string): Promise<AddBlockChainToAccount> {
   // https://api.sendwyre.com/v2/paymentMethod/:paymentMethodId/attach
   const data = {
@@ -110,21 +87,6 @@ export async function addBlockChainToAccount(token: string, paymentMethodId: str
   return newData
 }
 
-const asGetPaymentMethods = asObject({
-  data: asArray(
-    asObject({
-      status: asString,
-      owner: asString,
-      id: asString,
-      createdAt: asNumber,
-      name: asString,
-      blockchains: asMap(asString)
-    })
-  )
-})
-
-type GetPaymentMethods = $Call<typeof asGetPaymentMethods>
-
 export async function getPaymentMethods(token: string): Promise<GetPaymentMethods> {
   const request = {
     method: 'GET',
@@ -142,10 +104,6 @@ export async function getPaymentMethods(token: string): Promise<GetPaymentMethod
   if (newData.data.length < 1) throw new Error('emptyResponse')
   return newData
 }
-
-const asGetAccount = asObject({ status: asString })
-
-type GetAccount = $Call<typeof asGetAccount>
 
 export async function getAccount(account: string, token: string): Promise<GetAccount> {
   const timestamp = new Date().getMilliseconds()
