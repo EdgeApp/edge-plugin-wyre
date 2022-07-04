@@ -17,8 +17,9 @@ export const changeCrypto = (arg: string, exchangeRate: number) => async (dispat
 
 export const changeFiat = (arg: string, exchangeRate: number) => async (dispatch: Dispatch, getState: GetState) => {
   const state = getState()
-  const wallet = state.Wallet.wallet
-  const crypto = wallet && wallet.currencyCode === 'BTC' ? Math.round((Number(arg) / exchangeRate) * 1000000) / 1000000 : Number(arg) / exchangeRate
+  const walletDetails = state.Wallet.walletDetails
+  const crypto =
+    walletDetails && walletDetails.currencyCode === 'BTC' ? Math.round((Number(arg) / exchangeRate) * 1000000) / 1000000 : Number(arg) / exchangeRate
   dispatch({
     type: 'SET_AMOUNTS',
     data: {
@@ -47,13 +48,13 @@ export const getTransactions = () => async (dispatch: Dispatch, getState: GetSta
 
 export const buyCurrency = () => async (dispatch: Dispatch, getState: GetState) => {
   const state = getState()
-  const wallet = state.Wallet.wallet
+  const walletDetails = state.Wallet.walletDetails
   const wyreAccount = state.Wyre.secretKey
-  if (!wallet && !wyreAccount) {
+  if (!walletDetails && !wyreAccount) {
     return
   }
-  if (wallet) {
-    const { currencyCode } = wallet
+  if (walletDetails) {
+    const { currencyCode } = walletDetails
     const addressPrefix = SUPPORTED_DIGITAL_CURRENCIES[currencyCode]
     try {
       const widget = new window.Wyre.Widget({
@@ -66,7 +67,7 @@ export const buyCurrency = () => async (dispatch: Dispatch, getState: GetState) 
         operation: {
           type: 'onramp',
           destCurrency: currencyCode,
-          dest: `${addressPrefix}${wallet.receiveAddress.publicAddress}`
+          dest: `${addressPrefix}${walletDetails.receiveAddress.publicAddress}`
         }
       })
       widget.open('complete', async function (e) {

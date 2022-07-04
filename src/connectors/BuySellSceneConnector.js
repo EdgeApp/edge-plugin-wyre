@@ -11,7 +11,7 @@ type BuySellOwnProps = {
 }
 const mapStateToProps = (state: State, ownProps: BuySellOwnProps) => {
   return {
-    wallet: state.Wallet.wallet,
+    walletDetails: state.Wallet.walletDetails,
     transactions: state.Transactions.transactions
   }
 }

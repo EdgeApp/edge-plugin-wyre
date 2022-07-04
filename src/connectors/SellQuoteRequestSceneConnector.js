@@ -9,11 +9,11 @@ type SROwnsProps = {
   history: Object
 }
 const mapStateToProps = (state: State, ownProps: SROwnsProps) => {
-  const wallet = state.Wallet.wallet
+  const wallet = state.Wallet.walletDetails
   const pairFrom = wallet && wallet.currencyCode ? wallet.currencyCode + 'USD' : 0
   const pairTo = wallet && wallet.currencyCode ? 'USD' + wallet.currencyCode : 0
   return {
-    wallet: state.Wallet.wallet,
+    wallet: state.Wallet.walletDetails,
     exchangeRatesFrom: state.Wyre.exchangeRates[pairFrom],
     exchangeRatesTo: state.Wyre.exchangeRates[pairTo],
     buyOrSell: 'sell',

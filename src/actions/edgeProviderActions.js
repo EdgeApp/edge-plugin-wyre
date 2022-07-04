@@ -11,10 +11,10 @@ export const selectWallet = () => async (dispatch: Dispatch, getState: GetState)
 }
 export const confirmQuote = (crypto: string, fiat: string, history: Object) => async (dispatch: Dispatch, getState: GetState) => {
   const state = getState()
-  const wallet = state.Wallet.wallet
+  const walletDetails = state.Wallet.walletDetails
   const token = state.Wyre.secretKey
   const paymentId = state.Wyre.paymentMethodId
-  if (!wallet) {
+  if (!walletDetails) {
     window.edgeProvider.displayError('Missing wallet object')
     return
   }
@@ -26,8 +26,8 @@ export const confirmQuote = (crypto: string, fiat: string, history: Object) => a
     window.edgeProvider.displayError('Missing Wyre payment method id')
     return
   }
-  const destAddress = state.Wyre.sellAddresses[wallet.currencyCode] ? state.Wyre.sellAddresses[wallet.currencyCode] : state.Wyre.sellAddresses.ETH
-  const { currencyCode } = wallet
+  const destAddress = state.Wyre.sellAddresses[walletDetails.currencyCode] ? state.Wyre.sellAddresses[walletDetails.currencyCode] : state.Wyre.sellAddresses.ETH
+  const { currencyCode } = walletDetails
   if (!currencyCode) {
     window.edgeProvider.displayError('Missing currencyCode')
     return
@@ -45,7 +45,7 @@ export const confirmQuote = (crypto: string, fiat: string, history: Object) => a
       'Sell ' +
       currencyCode +
       ' from ' +
-      wallet.name +
+      walletDetails.name +
       ' to Wyre at address: ' +
       destAddress +
       '. Sell amount ' +

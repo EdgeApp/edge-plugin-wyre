@@ -12,7 +12,7 @@ import type { WalletDetails, WyreTransaction } from '../types/AppTypes'
 
 type Props = {
   classes: Object,
-  wallet: WalletDetails | null,
+  walletDetails: WalletDetails | null,
   transactions: WyreTransaction[],
   onSellClick(): void,
   selectWallet(): void,
@@ -22,25 +22,25 @@ type State = {}
 
 class BuySellScene extends Component<Props, State> {
   renderButtonInsides = () => {
-    const { classes, wallet } = this.props
-    if (wallet) {
-      return <ChooseWalletButton text={wallet.name} image={wallet.currencyIcon} />
+    const { classes, walletDetails } = this.props
+    if (walletDetails) {
+      return <ChooseWalletButton text={walletDetails.name} image={walletDetails.currencyIcon} />
     }
     return <div className={classes.whiteText}>Choose Wallet</div>
   }
 
   isBuyDisabled = () => {
-    if (!this.props.wallet) {
+    if (!this.props.walletDetails) {
       return true
     }
     return false
   }
 
   isSellDisabled = () => {
-    if (!this.props.wallet) {
+    if (!this.props.walletDetails) {
       return true
     }
-    if (!Object.keys(SUPPORTED_DIGITAL_CURRENCIES).includes(this.props.wallet.currencyCode)) {
+    if (!Object.keys(SUPPORTED_DIGITAL_CURRENCIES).includes(this.props.walletDetails.currencyCode)) {
       return true
     }
     return false
@@ -67,10 +67,10 @@ class BuySellScene extends Component<Props, State> {
   }
 
   render() {
-    const { classes, wallet } = this.props
-    const currencyCode = wallet ? wallet.currencyCode : ''
-    const buyText = this.props.wallet ? 'Buy ' + currencyCode + ' with Wyre ' : 'Buy'
-    const sellText = this.props.wallet ? 'Sell ' + currencyCode + ' with Wyre ' : 'Sell'
+    const { classes, walletDetails } = this.props
+    const currencyCode = walletDetails ? walletDetails.currencyCode : ''
+    const buyText = this.props.walletDetails ? 'Buy ' + currencyCode + ' with Wyre ' : 'Buy'
+    const sellText = this.props.walletDetails ? 'Sell ' + currencyCode + ' with Wyre ' : 'Sell'
     const textStyle = this.isSellDisabled() ? classes.disableText : classes.greenText
     return (
       <div className={classes.container}>
