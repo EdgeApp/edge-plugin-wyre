@@ -1,10 +1,10 @@
 // @flow
 
-import type { Dispatch, State } from '../types/ReduxTypes'
-import { buyCurrency, selectWallet } from '../actions/indexActions'
-
-import BuySellScene from '../scenes/BuySellScene'
 import { connect } from 'react-redux'
+
+import { buyCurrency, selectWallet } from '../actions/indexActions'
+import BuySellScene from '../scenes/BuySellScene'
+import type { Dispatch, State } from '../types/ReduxTypes'
 
 type BuySellOwnProps = {
   onSellClick(): void
@@ -20,7 +20,4 @@ const mapDispatchToProps = (dispatch: Dispatch, ownProps: BuySellOwnProps) => ({
   onSellClick: () => dispatch(ownProps.onSellClick()),
   buy: () => dispatch(buyCurrency())
 })
-export const BuySellSceneConnector = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(BuySellScene)
+export const BuySellSceneConnector = connect(mapStateToProps, mapDispatchToProps)(BuySellScene)

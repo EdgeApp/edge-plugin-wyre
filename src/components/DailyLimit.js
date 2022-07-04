@@ -1,8 +1,9 @@
 // @flow
-import React from 'react'
-import Typography from '@material-ui/core/Typography'
-import { formatRate } from '../utils'
 import { withStyles } from '@material-ui/core/styles'
+import Typography from '@material-ui/core/Typography'
+import React from 'react'
+
+import { formatRate } from '../utils'
 const limitStyles = theme => ({
   p: {
     fontColor: theme.palette.primary.main,

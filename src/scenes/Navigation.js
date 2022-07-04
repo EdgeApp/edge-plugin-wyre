@@ -1,14 +1,14 @@
 // @flow
 
-import React, { Component } from 'react'
-import { Route, HashRouter as Router } from 'react-router-dom'
 import { createMuiTheme, withStyles } from '@material-ui/core/styles'
+import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
+import React, { Component } from 'react'
+import { HashRouter as Router, Route } from 'react-router-dom'
 
 import { ConfirmationScreenConnector as Confirmation } from '../connectors/ConfirmationScreenConnector'
-import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
 import { SellQuoteRequestSceneConnector as SellQuoteRequestScene } from '../connectors/SellQuoteRequestSceneConnector'
 import { StartSceneConnector as StartScene } from '../connectors/StartSceneConnector'
-import history from '../history/history';
+import history from '../history/history'
 
 const theme = createMuiTheme({
   palette: {
@@ -25,21 +25,25 @@ const theme = createMuiTheme({
   shadows: ['none']
 })
 
-export const routes = [{
-  path: '/',
-  main: StartScene,
-  exact: true
-}, {
-  path: '/sellQuoteRequest',
-  main: SellQuoteRequestScene,
-  exact: true
-}, {
-  path: '/ConfirmationScene',
-  main: Confirmation,
-  exact: true
-}]
+export const routes = [
+  {
+    path: '/',
+    main: StartScene,
+    exact: true
+  },
+  {
+    path: '/sellQuoteRequest',
+    main: SellQuoteRequestScene,
+    exact: true
+  },
+  {
+    path: '/ConfirmationScene',
+    main: Confirmation,
+    exact: true
+  }
+]
 
-const appStyles = (theme) => ({
+const appStyles = theme => ({
   content: {
     height: '100%'
   }
@@ -50,18 +54,13 @@ type AppProps = {
 }
 
 class Navigation extends Component<AppProps> {
-  render () {
+  render() {
     return (
       <MuiThemeProvider theme={theme}>
         <Router history={history}>
           <div className={this.props.classes.content}>
             {routes.map((route, index) => (
-              <Route
-                key={index}
-                path={route.path}
-                exact={route.exact}
-                component={route.main}
-              />
+              <Route key={index} path={route.path} exact={route.exact} component={route.main} />
             ))}
           </div>
         </Router>

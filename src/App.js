@@ -1,21 +1,21 @@
 // @flow
 
 import React, { Component } from 'react'
-import { applyMiddleware, createStore } from 'redux'
-
-import Navigation from './scenes/Navigation'
 import { Provider } from 'react-redux'
-import { rootReducer } from './reducers'
+import { applyMiddleware, createStore } from 'redux'
 import thunk from 'redux-thunk'
+
+import { rootReducer } from './reducers'
+import Navigation from './scenes/Navigation'
 
 const createStoreWithMiddleware = applyMiddleware(thunk)(createStore)
 
-
-export default class App extends Component<{},{}> {
-  render () {
-    return <Provider store={createStoreWithMiddleware(rootReducer)}>
-    <Navigation />
-  </Provider>
+export default class App extends Component<{}, {}> {
+  render() {
+    return (
+      <Provider store={createStoreWithMiddleware(rootReducer)}>
+        <Navigation />
+      </Provider>
+    )
   }
 }
-

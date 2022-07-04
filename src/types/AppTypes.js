@@ -37,7 +37,7 @@ export type WyreTransaction = {
   sourceAmount: number,
   destAmount: number,
   fees: {
-      USD: number
+    USD: number
   },
   sourceName: string,
   destName: string,
@@ -49,5 +49,5 @@ export type WyreTransaction = {
 }
 export type CryptoFiatAmounts = {
   cryptoAmount: string,
-   fiatAmount: string
+  fiatAmount: string
 }

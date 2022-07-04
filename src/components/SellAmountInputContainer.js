@@ -1,9 +1,9 @@
 // @flow
+import { withStyles } from '@material-ui/core/styles'
+import TextField from '@material-ui/core/TextField'
 import React, { Component } from 'react'
 
 import THEME from '../constants/themeConstants.js'
-import TextField from '@material-ui/core/TextField'
-import { withStyles } from '@material-ui/core/styles'
 
 type Props = {
   history: Object,
@@ -16,48 +16,48 @@ type Props = {
 }
 type State = {}
 
-class SellAmountInputContainer extends Component <Props, State> {
+class SellAmountInputContainer extends Component<Props, State> {
   renderImage = () => {
     const { classes } = this.props
     if (this.props.image) {
-      return <img src={this.props.image} className={classes.image} alt={'logo'}/>
+      return <img src={this.props.image} className={classes.image} alt="logo" />
     }
     return null
   }
+
   onChange = (event: Object) => {
     this.props.onChange(event.target.value)
   }
-  render () {
+
+  render() {
     const { classes } = this.props
-    return <div className={classes.container}>
-      <div className={classes.inputContainer}>
-        <div className={classes.inputTop} >
-          {this.props.label}:
-        </div>
-        <div className={classes.inputBottom} >
-          <TextField
-            InputProps={{
-              classes: {
-                input: classes.resize
-              },
-              disableUnderline: true,
-              fillWidth: true
-            }}
-            disableUnderline={true}
-            onChange={this.onChange}
-            value={this.props.value}
-            type={'number'}
+    return (
+      <div className={classes.container}>
+        <div className={classes.inputContainer}>
+          <div className={classes.inputTop}>{this.props.label}:</div>
+          <div className={classes.inputBottom}>
+            <TextField
+              InputProps={{
+                classes: {
+                  input: classes.resize
+                },
+                disableUnderline: true,
+                fillWidth: true
+              }}
+              disableUnderline
+              onChange={this.onChange}
+              value={this.props.value}
+              type="number"
             />
+          </div>
+        </div>
+        <div className={classes.currencyContainer}>
+          <div className={classes.vl} />
+          {this.renderImage()}
+          <div className={classes.currencyCode}>{this.props.currencyCode}</div>
         </div>
       </div>
-      <div className={classes.currencyContainer}>
-        <div className={classes.vl}></div>
-        {this.renderImage()}
-        <div className={classes.currencyCode}>
-          {this.props.currencyCode}
-        </div>
-      </div>
-    </div>
+    )
   }
 }
 
@@ -140,13 +140,11 @@ const styles = theme => ({
     paddingRight: '10px',
     fontSize: '21px'
   },
-  inputComponent : {
+  inputComponent: {
     position: 'relative',
     width: '50%',
     fontSize: '21px'
   }
-
-
 })
 
 export default withStyles(styles)(SellAmountInputContainer)

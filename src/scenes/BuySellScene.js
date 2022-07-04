@@ -1,48 +1,47 @@
 // @flow
+import { withStyles } from '@material-ui/core/styles'
 import React, { Component } from 'react'
-import type { WalletDetails, WyreTransaction } from '../types/AppTypes'
 
 import ChooseWalletButton from '../components/ChooseWalletButton'
 import { PoweredBy } from '../components/PoweredBy'
+import { TertiaryButton } from '../components/TertiaryButton'
+import { TransactionItem } from '../components/TransactionItem.js'
 import { SUPPORTED_DIGITAL_CURRENCIES } from '../constants/index'
 import THEME from '../constants/themeConstants.js'
-import { TertiaryButton, } from '../components/TertiaryButton'
-import { TransactionItem } from '../components/TransactionItem.js'
-import { withStyles } from '@material-ui/core/styles'
+import type { WalletDetails, WyreTransaction } from '../types/AppTypes'
 
 type Props = {
   history: Object,
   classes: Object,
   wallet: WalletDetails | null,
-  transactions: Array<WyreTransaction>,
+  transactions: WyreTransaction[],
   onSellClick(): void,
   selectWallet(): void,
   buy(): void
 }
-type State = {
-}
+type State = {}
 
 class BuySellScene extends Component<Props, State> {
   renderButtonInsides = () => {
     const { classes, wallet } = this.props
     if (wallet) {
-      return <ChooseWalletButton text={wallet.name} image={wallet.currencyIcon}/>
+      return <ChooseWalletButton text={wallet.name} image={wallet.currencyIcon} />
     }
-    return <div className={classes.whiteText} >
-      Choose Wallet
-    </div>
+    return <div className={classes.whiteText}>Choose Wallet</div>
   }
-  isBuyDisabled =() => {
-    if(!this.props.wallet) {
+
+  isBuyDisabled = () => {
+    if (!this.props.wallet) {
       return true
     }
     return false
   }
-  isSellDisabled =() => {
-    if(!this.props.wallet) {
+
+  isSellDisabled = () => {
+    if (!this.props.wallet) {
       return true
     }
-    if(!Object.keys(SUPPORTED_DIGITAL_CURRENCIES).includes(this.props.wallet.currencyCode)){
+    if (!Object.keys(SUPPORTED_DIGITAL_CURRENCIES).includes(this.props.wallet.currencyCode)) {
       return true
     }
     return false
@@ -51,6 +50,7 @@ class BuySellScene extends Component<Props, State> {
   onSellClick = () => {
     this.props.onSellClick()
   }
+
   renderItems = () => {
     const { transactions } = this.props
     const items = transactions.map((transaction: WyreTransaction) => {
@@ -58,60 +58,45 @@ class BuySellScene extends Component<Props, State> {
     })
     return items
   }
+
   renderTransactions = () => {
     const { classes, transactions } = this.props
     if (transactions.length > 0) {
-      return <div className={classes.scroller} >
-        {this.renderItems()}
-      </div>
+      return <div className={classes.scroller}>{this.renderItems()}</div>
     }
     return null
   }
-  render () {
+
+  render() {
     const { classes, wallet } = this.props
     const currencyCode = wallet ? wallet.currencyCode : ''
     const buyText = this.props.wallet ? 'Buy ' + currencyCode + ' with Wyre ' : 'Buy'
     const sellText = this.props.wallet ? 'Sell ' + currencyCode + ' with Wyre ' : 'Sell'
     const textStyle = this.isSellDisabled() ? classes.disableText : classes.greenText
-    return <div className={classes.container}>
-
-      <div className={classes.containerInside}>
-        <PoweredBy />
-        <div className={classes.buttonsContainer} >
-          <TertiaryButton
-            onClick={this.props.selectWallet}
-            lineColor={THEME.COLORS.WHITE}
-            disabled={false}
-            isCustom  >
+    return (
+      <div className={classes.container}>
+        <div className={classes.containerInside}>
+          <PoweredBy />
+          <div className={classes.buttonsContainer}>
+            <TertiaryButton onClick={this.props.selectWallet} lineColor={THEME.COLORS.WHITE} disabled={false} isCustom>
               {this.renderButtonInsides()}
-          </TertiaryButton>
-          <div className={classes.space40} />
-          <TertiaryButton
-            onClick={this.props.buy}
-            lineColor={THEME.COLORS.ACCENT_MINT}
-            disabled={this.isBuyDisabled()}>
-            <div className={textStyle} >
-              {buyText}
-            </div>
-          </TertiaryButton>
-          <div className={classes.space10} />
-          <TertiaryButton
-            onClick={this.onSellClick}
-            lineColor={THEME.COLORS.ACCENT_MINT}
-            disabled={this.isSellDisabled()}>
-            <div className={textStyle}>
-              {sellText}
-            </div>
-          </TertiaryButton>
-        </div>
-        <div className={classes.transactionsContainer} >
-          <div className={classes.transactionsTitle} >
-            Transaction History
+            </TertiaryButton>
+            <div className={classes.space40} />
+            <TertiaryButton onClick={this.props.buy} lineColor={THEME.COLORS.ACCENT_MINT} disabled={this.isBuyDisabled()}>
+              <div className={textStyle}>{buyText}</div>
+            </TertiaryButton>
+            <div className={classes.space10} />
+            <TertiaryButton onClick={this.onSellClick} lineColor={THEME.COLORS.ACCENT_MINT} disabled={this.isSellDisabled()}>
+              <div className={textStyle}>{sellText}</div>
+            </TertiaryButton>
           </div>
-          {this.renderTransactions()}
+          <div className={classes.transactionsContainer}>
+            <div className={classes.transactionsTitle}>Transaction History</div>
+            {this.renderTransactions()}
+          </div>
         </div>
       </div>
-    </div>
+    )
   }
 }
 
@@ -128,9 +113,9 @@ const styles = theme => ({
     alignItems: 'center'
   },
   containerInside: {
-    position:'relative',
+    position: 'relative',
     display: 'flex',
-    flexDirection:'column',
+    flexDirection: 'column',
     width: '90%',
     height: '85%',
     paddingTop: '20px'

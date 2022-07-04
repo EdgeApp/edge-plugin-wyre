@@ -1,8 +1,8 @@
 // @flow
 import type { Dispatch as ReduxDispatch, Store as ReduxStore } from 'redux'
 
-import type { Action } from './ActionTypes'
 import type { RootState as State } from '../reducers/index.js'
+import type { Action } from './ActionTypes'
 
 type ThunkDispatch<A> = ((Dispatch, GetState, Imports) => Promise<void> | void) => A
 export type { Action, State }

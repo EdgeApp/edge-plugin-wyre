@@ -1,6 +1,6 @@
 // @flow
-import React from 'react'
 import Typography from '@material-ui/core/Typography'
+import React from 'react'
 
 type HeaderProps = {
   classes: Object,
@@ -14,7 +14,6 @@ const StartHeader = (props: HeaderProps) => {
     </Typography>
   )
 }
-
 
 type ParagraphProps = {
   classes: Object,

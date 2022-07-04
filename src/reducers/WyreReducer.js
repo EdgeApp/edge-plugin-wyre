@@ -1,6 +1,6 @@
 // @flow
-import type { Action } from '../types/ReduxTypes'
 import type { SellAddresses } from '../types/AppTypes'
+import type { Action } from '../types/ReduxTypes'
 
 export type WyreState = {
   secretKey: string | null,
@@ -30,7 +30,7 @@ export const initialState = {
 export const WyreReducer = (state: WyreState = initialState, action: Action): WyreState => {
   switch (action.type) {
     case 'SET_AMOUNTS':
-      return {...state, cryptoAmount: action.data.cryptoAmount, fiatAmount: action.data.fiatAmount}
+      return { ...state, cryptoAmount: action.data.cryptoAmount, fiatAmount: action.data.fiatAmount }
 
     case 'LOCAL_DATA_INIT':
       return {
@@ -43,7 +43,7 @@ export const WyreReducer = (state: WyreState = initialState, action: Action): Wy
         sellAddresses: action.data.sellAddresses
       }
     case 'ON_EXCHANGE_RATE':
-      return {...state , exchangeRates: action.data}
+      return { ...state, exchangeRates: action.data }
     default:
       return state
   }

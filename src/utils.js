@@ -1,4 +1,4 @@
-import {sha256}  from 'js-sha256'
+import { sha256 } from 'js-sha256'
 
 export const encodeGetSig = (url, msg, userApiSecretKey) => {
   const hash = sha256.hmac.create(userApiSecretKey)
@@ -16,7 +16,7 @@ export const genRandomString = (length: number = 32) => {
   }
   return text
 }
-export function formatRate (rate, currency) {
+export function formatRate(rate, currency) {
   if (!rate) {
     return ''
   }
@@ -25,7 +25,7 @@ export function formatRate (rate, currency) {
     currency: currency
   })
 }
-export function formatAmount (rate, currency) {
+export function formatAmount(rate, currency) {
   if (!rate) {
     return ''
   }

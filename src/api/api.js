@@ -1,6 +1,7 @@
 // @flow
+import { asArray, asEither, asMap, asNone, asNumber, asObject, asOptional, asString } from 'cleaners'
+
 import { V2_API_URL } from '../env'
-import { asMap, asArray, asObject, asString, asNone, asEither, asNumber, asOptional } from 'cleaners'
 
 export async function getSellQuoteAPI(token: string, fiat: string, cryptoCurrencyCode: string, address: string, bankAccount: string) {
   const data = {
@@ -12,8 +13,8 @@ export async function getSellQuoteAPI(token: string, fiat: string, cryptoCurrenc
   const request = {
     method: 'POST',
     headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer '+ token,
+      Accept: 'application/json',
+      Authorization: 'Bearer ' + token,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(data)
@@ -25,26 +26,28 @@ export async function getSellQuoteAPI(token: string, fiat: string, cryptoCurrenc
 }
 
 const asGetTransferHistory = asObject({
-  data: asArray(asObject({
-    status: asString,
-    closedAt: asNumber,
-    createdAt: asNumber,
-    id: asString,
-    customId: asEither(asString, asNone),
-    source: asString,
-    dest: asString,
-    sourceCurrency: asString,
-    destCurrency: asString,
-    sourceAmount: asNumber,
-    destAmount: asNumber,
-    fees: asOptional(asMap(asNumber)),
-    sourceName: asString,
-    destName: asString,
-    message: asEither(asString, asNone),
-    exchangeRate: asEither(asNumber, asNone),
-    blockchainTxId: asEither(asString, asNone),
-    destNickname: asEither(asString, asNone)
-  }))
+  data: asArray(
+    asObject({
+      status: asString,
+      closedAt: asNumber,
+      createdAt: asNumber,
+      id: asString,
+      customId: asEither(asString, asNone),
+      source: asString,
+      dest: asString,
+      sourceCurrency: asString,
+      destCurrency: asString,
+      sourceAmount: asNumber,
+      destAmount: asNumber,
+      fees: asOptional(asMap(asNumber)),
+      sourceName: asString,
+      destName: asString,
+      message: asEither(asString, asNone),
+      exchangeRate: asEither(asNumber, asNone),
+      blockchainTxId: asEither(asString, asNone),
+      destNickname: asEither(asString, asNone)
+    })
+  )
 })
 
 type GetTransferHistory = $Call<typeof asGetTransferHistory>
@@ -53,12 +56,12 @@ export async function getTransferHistory(token: string): Promise<GetTransferHist
   const request = {
     method: 'GET',
     headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer '+ token,
+      Accept: 'application/json',
+      Authorization: 'Bearer ' + token,
       'Content-Type': 'application/json'
     }
   }
-  const url ='https://api.sendwyre.com/v3/transfers' // V2_API_URL + 'apiKeys'
+  const url = 'https://api.sendwyre.com/v3/transfers' // V2_API_URL + 'apiKeys'
   const result = await window.fetch(url, request)
   if (!result.ok) {
     throw new Error('getTransferHistory failed')
@@ -71,12 +74,12 @@ export async function getExchangeRates(token: string) {
   const request = {
     method: 'GET',
     headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer '+ token,
+      Accept: 'application/json',
+      Authorization: 'Bearer ' + token,
       'Content-Type': 'application/json'
     }
   }
-  const url ='https://api.sendwyre.com/v3/rates?as=MULTIPLIER' // V2_API_URL + 'apiKeys'
+  const url = 'https://api.sendwyre.com/v3/rates?as=MULTIPLIER' // V2_API_URL + 'apiKeys'
   const result = await window.fetch(url, request)
   const newData = result.json()
   return newData
@@ -87,15 +90,15 @@ const asAddBlockChainToAccount = asObject({ blockchains: asMap(asString) })
 type AddBlockChainToAccount = $Call<typeof asAddBlockChainToAccount>
 
 export async function addBlockChainToAccount(token: string, paymentMethodId: string): Promise<AddBlockChainToAccount> {
-  //https://api.sendwyre.com/v2/paymentMethod/:paymentMethodId/attach
+  // https://api.sendwyre.com/v2/paymentMethod/:paymentMethodId/attach
   const data = {
     blockchain: 'ALL'
   }
   const request = {
     method: 'POST',
     headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer '+ token,
+      Accept: 'application/json',
+      Authorization: 'Bearer ' + token,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(data)
@@ -108,14 +111,16 @@ export async function addBlockChainToAccount(token: string, paymentMethodId: str
 }
 
 const asGetPaymentMethods = asObject({
-  data: asArray(asObject({
-    status: asString,
-    owner: asString,
-    id: asString,
-    createdAt: asNumber,
-    name: asString,
-    blockchains: asMap(asString)
-  }))
+  data: asArray(
+    asObject({
+      status: asString,
+      owner: asString,
+      id: asString,
+      createdAt: asNumber,
+      name: asString,
+      blockchains: asMap(asString)
+    })
+  )
 })
 
 type GetPaymentMethods = $Call<typeof asGetPaymentMethods>
@@ -124,12 +129,12 @@ export async function getPaymentMethods(token: string): Promise<GetPaymentMethod
   const request = {
     method: 'GET',
     headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer '+ token,
+      Accept: 'application/json',
+      Authorization: 'Bearer ' + token,
       'Content-Type': 'application/json'
     }
   }
-  const url ='https://api.sendwyre.com/v2/paymentMethods' // V2_API_URL + 'apiKeys'
+  const url = 'https://api.sendwyre.com/v2/paymentMethods' // V2_API_URL + 'apiKeys'
   const result = await window.fetch(url, request)
   if (!result.ok) throw new Error('fetchError')
   if (result.status === 204) throw new Error('emptyResponse')
@@ -147,8 +152,8 @@ export async function getAccount(account: string, token: string): Promise<GetAcc
   const data = {
     method: 'GET',
     headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer '+ token,
+      Accept: 'application/json',
+      Authorization: 'Bearer ' + token,
       'Content-Type': 'application/json'
     }
   }

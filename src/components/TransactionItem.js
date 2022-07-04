@@ -1,8 +1,9 @@
 // @flow
+import { withStyles } from '@material-ui/core/styles'
 import React from 'react'
+
 import THEME from '../constants/themeConstants.js'
 import type { WyreTransaction } from '../types/AppTypes'
-import { withStyles } from '@material-ui/core/styles'
 const limitStyles = theme => ({
   container: {
     position: 'relative',
@@ -67,31 +68,27 @@ const TransactionItem = withStyles(limitStyles)((props: Props) => {
   const transactionType = transaction.destCurrency === 'USD' ? 'Sell' : 'Buy'
   const moneyClass = transactionType === 'Sell' ? classes.cryptoAmountTextSell : classes.cryptoAmountTextBuy
   const date = new Date(transaction.createdAt)
-  const dateString = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear()
+  const dateString = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear()
   const upDown = transactionType === 'Sell' ? '-' : '+'
   const cryptoCode = transactionType === 'Sell' ? transaction.sourceCurrency : transaction.destCurrency
-  const cryptoAmount =  transactionType === 'Sell' ? transaction.sourceAmount : transaction.destAmount
+  const cryptoAmount = transactionType === 'Sell' ? transaction.sourceAmount : transaction.destAmount
   const fiatAmount = transactionType === 'Sell' ? transaction.destAmount : transaction.sourceAmount
   return (
-    <div className={classes.container} >
-      <div className={classes.containerLeft} >
-        <div className={classes.columnStuff} >
-          <div className={classes.transactionTypeText} >
+    <div className={classes.container}>
+      <div className={classes.containerLeft}>
+        <div className={classes.columnStuff}>
+          <div className={classes.transactionTypeText}>
             {transactionType}: {transaction.status}
           </div>
-          <div className={classes.dateText} >
-           {dateString}
-          </div>
+          <div className={classes.dateText}>{dateString}</div>
         </div>
       </div>
-      <div className={classes.containerRight} >
-        <div className={classes.columnStuff} >
-          <div className={moneyClass} >
+      <div className={classes.containerRight}>
+        <div className={classes.columnStuff}>
+          <div className={moneyClass}>
             {upDown} {cryptoAmount} {cryptoCode}
           </div>
-          <div className={classes.fiatAmountText} >
-            $ {fiatAmount}
-          </div>
+          <div className={classes.fiatAmountText}>$ {fiatAmount}</div>
         </div>
       </div>
     </div>

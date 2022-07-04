@@ -1,19 +1,19 @@
 // @flow
-import type { Dispatch, State } from '../types/ReduxTypes'
-import { changeCrypto, changeFiat, confirmQuote, getExchangeRate, initInfo } from '../actions/indexActions'
-
-import { SellQuoteRequestScene } from '../scenes/SellQuoteRequestScene'
 import { connect } from 'react-redux'
+
+import { changeCrypto, changeFiat, confirmQuote, getExchangeRate, initInfo } from '../actions/indexActions'
+import { SellQuoteRequestScene } from '../scenes/SellQuoteRequestScene'
+import type { Dispatch, State } from '../types/ReduxTypes'
 
 type SROwnsProps = {
   history: Object
 }
 const mapStateToProps = (state: State, ownProps: SROwnsProps) => {
   const wallet = state.Wallet.wallet
-  const pairFrom = wallet && wallet.currencyCode ? wallet.currencyCode+'USD' : 0
-  const pairTo = wallet && wallet.currencyCode ? 'USD'+wallet.currencyCode : 0
+  const pairFrom = wallet && wallet.currencyCode ? wallet.currencyCode + 'USD' : 0
+  const pairTo = wallet && wallet.currencyCode ? 'USD' + wallet.currencyCode : 0
   return {
-    wallet:  state.Wallet.wallet,
+    wallet: state.Wallet.wallet,
     exchangeRatesFrom: state.Wyre.exchangeRates[pairFrom],
     exchangeRatesTo: state.Wyre.exchangeRates[pairTo],
     buyOrSell: 'sell',
@@ -32,9 +32,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   },
   initInfo: () => dispatch(initInfo()),
   getExchangeRate: () => dispatch(getExchangeRate()),
-  confirmQuote: (crypto: string, fiat: string, history: Object) => dispatch(confirmQuote(crypto,fiat, history))
+  confirmQuote: (crypto: string, fiat: string, history: Object) => dispatch(confirmQuote(crypto, fiat, history))
 })
-export const SellQuoteRequestSceneConnector = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SellQuoteRequestScene)
+export const SellQuoteRequestSceneConnector = connect(mapStateToProps, mapDispatchToProps)(SellQuoteRequestScene)

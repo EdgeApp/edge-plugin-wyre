@@ -1,18 +1,17 @@
 // @flow
-import {API_SECRET_KEY, API_URL, V2_API_URL} from './env'
-
+import { API_SECRET_KEY, API_URL, V2_API_URL } from './env'
 import { encodeGetSig } from './utils'
 
 export async function addBlockChainToAccount(token: string) {
-  //https://api.sendwyre.com/v2/paymentMethod/:paymentMethodId/attach
+  // https://api.sendwyre.com/v2/paymentMethod/:paymentMethodId/attach
   const data = {
     blockchain: 'ALL'
   }
   const request = {
     method: 'POST',
     headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer '+ token,
+      Accept: 'application/json',
+      Authorization: 'Bearer ' + token,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(data)
@@ -25,12 +24,12 @@ export async function getPaymentMethods(token: string) {
   const request = {
     method: 'GET',
     headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer '+ token,
+      Accept: 'application/json',
+      Authorization: 'Bearer ' + token,
       'Content-Type': 'application/json'
     }
   }
-  const url ='https://api.sendwyre.com/v2/paymentMethods' // V2_API_URL + 'apiKeys'
+  const url = 'https://api.sendwyre.com/v2/paymentMethods' // V2_API_URL + 'apiKeys'
   console.log(' API -  ', url)
 
   console.log('request', request)
@@ -46,8 +45,8 @@ export async function getAccount(account: string, token: string) {
   const data = {
     method: 'GET',
     headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer '+ token,
+      Accept: 'application/json',
+      Authorization: 'Bearer ' + token,
       'Content-Type': 'application/json'
     }
   }
@@ -56,4 +55,3 @@ export async function getAccount(account: string, token: string) {
   const newData = result.json()
   return newData
 }
-

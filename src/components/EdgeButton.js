@@ -6,7 +6,7 @@ type Props = {
   color: string,
   onClick(): void,
   children: any,
-  disabled? : boolean
+  disabled?: boolean
 }
 
 const EdgeButton = (props: Props) => {

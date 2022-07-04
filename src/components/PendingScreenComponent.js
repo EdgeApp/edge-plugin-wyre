@@ -1,14 +1,14 @@
 // @flow
-import React, { Component } from 'react'
-import { StartHeader, StartParagraph } from '../scenes/components'
-
 import { withStyles } from '@material-ui/core/styles'
+import React, { Component } from 'react'
+
+import { StartHeader, StartParagraph } from '../scenes/components'
 
 type Props = {
   classes: Object
 }
 class PendingScreenComponent extends Component<Props, {}> {
-  render () {
+  render() {
     const classes = this.props.classes
     return (
       <div className={classes.container}>
@@ -18,13 +18,12 @@ class PendingScreenComponent extends Component<Props, {}> {
         <div>
           <StartHeader text="Wyre Account Approval Pending" classes={classes} />
           <StartParagraph classes={classes}>
-          Initial account verification usually takes 1 business day and transactions settle in 3-5 business days.
+            Initial account verification usually takes 1 business day and transactions settle in 3-5 business days.
           </StartParagraph>
         </div>
       </div>
     )
   }
-
 }
 
 const startStyles = (theme: Object) => ({

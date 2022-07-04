@@ -1,6 +1,7 @@
 // @flow
 import Button from '@material-ui/core/Button'
 import React from 'react'
+
 import THEME from '../constants/themeConstants.js'
 import { buttonStyle } from '../styles/styles'
 
@@ -23,7 +24,8 @@ export const PrimaryButton = (props: Props) => {
         backgroundColor: THEME.COLORS.SECONDARY,
         color: THEME.COLORS.WHITE
       }}
-      fullWidth>
+      fullWidth
+    >
       {props.children}
     </Button>
   )
