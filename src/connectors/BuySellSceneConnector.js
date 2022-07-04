@@ -17,7 +17,6 @@ const mapStateToProps = (state: State, ownProps: BuySellOwnProps) => {
 }
 const mapDispatchToProps = (dispatch: Dispatch, ownProps: BuySellOwnProps) => ({
   selectWallet: () => dispatch(selectWallet()),
-  onSellClick: () => dispatch(ownProps.onSellClick()),
   buy: () => dispatch(buyCurrency())
 })
 export const BuySellSceneConnector = connect(mapStateToProps, mapDispatchToProps)(BuySellScene)
