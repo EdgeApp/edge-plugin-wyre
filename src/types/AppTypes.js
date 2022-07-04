@@ -1,5 +1,9 @@
 // @flow
 
+export type SellAddresses = {
+  [key: string]: string
+}
+
 export type WyreAccountDetails = {
   wyreSecret: string,
   wyreAccountStatus: string,
@@ -8,10 +12,6 @@ export type WyreAccountDetails = {
   wyrePaymentMethodName: string,
   sellAddresses: SellAddresses,
   wyreAccountId: string | null // this is the secret key needed for other tasks
-}
-
-export type SellAddresses = {
-  [key: string]: string
 }
 
 export type WalletDetails = {

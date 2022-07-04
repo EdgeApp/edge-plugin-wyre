@@ -23,7 +23,6 @@ export default [
     primaryNativeBalance: 'ETH',
     fiatCurrencyCode: 'USD'
   },
-  ,
   {
     id: 'Nj1u3gHBw3sNrce+JnPkQcPg5IO/Oe1lrIpJuLkPPt8=',
     name: 'My Polygon',

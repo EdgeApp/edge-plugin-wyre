@@ -1,11 +1,10 @@
 // @flow
-import { colors, withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/core/styles'
 import React, { Component } from 'react'
 
 import THEME from '../constants/themeConstants.js'
 
 type Props = {
-  history: Object,
   classes: Object,
   onChange(string): void
 }
@@ -61,7 +60,6 @@ class SellAmountFiatBigInputContainer extends Component<Props, State> {
 
   render() {
     const { classes } = this.props
-    const newWidth = 30 * this.state.value.length
     return (
       <div className={classes.container}>
         <div className={classes.inputBottom}>

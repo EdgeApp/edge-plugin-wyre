@@ -21,7 +21,6 @@ type Props = {
   exchangeRatesTo: number,
   getExchangeRate(): void,
   confirmQuote(string, string, Object): void,
-  changeCrypto(string, number): void,
   changeFiat(string, number): void
 }
 type State = {

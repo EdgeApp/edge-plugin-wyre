@@ -11,7 +11,6 @@ import THEME from '../constants/themeConstants.js'
 import type { WalletDetails, WyreTransaction } from '../types/AppTypes'
 
 type Props = {
-  history: Object,
   classes: Object,
   wallet: WalletDetails | null,
   transactions: WyreTransaction[],
@@ -54,7 +53,7 @@ class BuySellScene extends Component<Props, State> {
   renderItems = () => {
     const { transactions } = this.props
     const items = transactions.map((transaction: WyreTransaction) => {
-      return <TransactionItem transaction={transaction} />
+      return <TransactionItem transaction={transaction} key={transaction.id} />
     })
     return items
   }

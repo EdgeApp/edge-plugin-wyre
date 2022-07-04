@@ -6,7 +6,6 @@ import React, { Component } from 'react'
 import THEME from '../constants/themeConstants.js'
 
 type Props = {
-  history: Object,
   classes: Object,
   image?: string,
   currencyCode: string,

@@ -1,6 +1,5 @@
 // @flow
-import { API_SECRET_KEY, API_URL, V2_API_URL } from './env'
-import { encodeGetSig } from './utils'
+import { V2_API_URL } from './env'
 
 export async function addBlockChainToAccount(token: string) {
   // https://api.sendwyre.com/v2/paymentMethod/:paymentMethodId/attach

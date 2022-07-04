@@ -6,9 +6,6 @@ import THEME from '../constants/themeConstants.js'
 import { buttonStyle } from '../styles/styles'
 
 type Props = {
-  textColor?: string,
-  tabIndex: number,
-  backgroundColor?: string,
   onClick(): void,
   children: any,
   disabled?: boolean
