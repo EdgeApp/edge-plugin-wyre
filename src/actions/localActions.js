@@ -18,11 +18,11 @@ import { type BlockchainMap } from '../types/WyreTypes'
 import { genRandomString } from '../utils'
 
 const WYRE_TO_EDGE_CHAIN_MAP = {
-  BTC: 'BTC',
-  MATIC: 'MATIC',
-  AVAXC: 'AVAX',
-  XLM: 'XLM',
-  ETH: 'ETH'
+  BTC: 'bitcoin',
+  MATIC: 'polygon',
+  AVAXC: 'avalanche',
+  XLM: 'stellar',
+  ETH: 'ethereum'
 }
 
 const translateBlockchains = (chains: BlockchainMap): BlockchainMap => {

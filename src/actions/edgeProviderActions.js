@@ -3,7 +3,11 @@ import { SUPPORTED_DIGITAL_CURRENCIES } from '../constants/index.js'
 import type { Dispatch, GetState } from '../types/ReduxTypes'
 
 export const selectWallet = () => async (dispatch: Dispatch, getState: GetState) => {
-  const currencyCode = await window.edgeProvider.chooseCurrencyWallet(Object.keys(SUPPORTED_DIGITAL_CURRENCIES))
+  const supportedAssets = Object.keys(SUPPORTED_DIGITAL_CURRENCIES).map(key => {
+    const [pluginId, currencyCode] = key.split('-')
+    return { pluginId, currencyCode }
+  })
+  const currencyCode = await window.edgeProvider.chooseCurrencyWallet(supportedAssets)
   if (currencyCode) {
     const wallet = await window.edgeProvider.getCurrentWalletInfo()
     dispatch({ type: 'WALLET_LOADED', data: wallet })
@@ -32,7 +36,7 @@ export const confirmQuote = (crypto: string, fiat: string, history: Object) => a
     return
   }
 
-  const destAddress = state.Wyre.sellAddresses[walletDetails.chainCode]
+  const destAddress = state.Wyre.sellAddresses[walletDetails.pluginId]
   if (!destAddress) {
     window.edgeProvider.displayError(`Missing deposit address for ${walletDetails.chainCode}`)
     return

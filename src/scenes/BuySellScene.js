@@ -24,26 +24,42 @@ class BuySellScene extends Component<Props, State> {
   renderButtonInsides = () => {
     const { classes, walletDetails } = this.props
     if (walletDetails) {
-      return <ChooseWalletButton text={walletDetails.name} image={walletDetails.currencyIcon} />
+      const { chainCode, currencyCode } = walletDetails
+      let topText = ''
+      if (chainCode === currencyCode) {
+        topText = currencyCode
+      } else {
+        topText = `${currencyCode} on chain ${chainCode}`
+      }
+      return <ChooseWalletButton text={topText} image={walletDetails.currencyIcon} />
     }
     return <div className={classes.whiteText}>Choose Wallet</div>
   }
 
   isBuyDisabled = () => {
-    if (!this.props.walletDetails) {
+    const { walletDetails } = this.props
+    if (!walletDetails) {
       return true
     }
-    return false
+    const { pluginId, currencyCode } = walletDetails
+    const currencyObject = SUPPORTED_DIGITAL_CURRENCIES[`${pluginId}-${currencyCode}`]
+    if (currencyObject != null && currencyObject.buy) {
+      return false
+    }
+    return true
   }
 
   isSellDisabled = () => {
-    if (!this.props.walletDetails) {
+    const { walletDetails } = this.props
+    if (!walletDetails) {
       return true
     }
-    if (!Object.keys(SUPPORTED_DIGITAL_CURRENCIES).includes(this.props.walletDetails.currencyCode)) {
-      return true
+    const { pluginId, currencyCode } = walletDetails
+    const currencyObject = SUPPORTED_DIGITAL_CURRENCIES[`${pluginId}-${currencyCode}`]
+    if (currencyObject != null && currencyObject.sell) {
+      return false
     }
-    return false
+    return true
   }
 
   onSellClick = () => {
@@ -71,7 +87,8 @@ class BuySellScene extends Component<Props, State> {
     const currencyCode = walletDetails ? walletDetails.currencyCode : ''
     const buyText = this.props.walletDetails ? 'Buy ' + currencyCode + ' with Wyre ' : 'Buy'
     const sellText = this.props.walletDetails ? 'Sell ' + currencyCode + ' with Wyre ' : 'Sell'
-    const textStyle = this.isSellDisabled() ? classes.disableText : classes.greenText
+    const sellTextStyle = this.isSellDisabled() ? classes.disableText : classes.greenText
+    const buyTextStyle = this.isBuyDisabled() ? classes.disableText : classes.greenText
     return (
       <div className={classes.container}>
         <div className={classes.containerInside}>
@@ -82,11 +99,11 @@ class BuySellScene extends Component<Props, State> {
             </TertiaryButton>
             <div className={classes.space40} />
             <TertiaryButton onClick={this.props.buy} lineColor={THEME.COLORS.ACCENT_MINT} disabled={this.isBuyDisabled()}>
-              <div className={textStyle}>{buyText}</div>
+              <div className={buyTextStyle}>{buyText}</div>
             </TertiaryButton>
             <div className={classes.space10} />
             <TertiaryButton onClick={this.onSellClick} lineColor={THEME.COLORS.ACCENT_MINT} disabled={this.isSellDisabled()}>
-              <div className={textStyle}>{sellText}</div>
+              <div className={sellTextStyle}>{sellText}</div>
             </TertiaryButton>
           </div>
           <div className={classes.transactionsContainer}>

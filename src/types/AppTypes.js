@@ -19,6 +19,7 @@ export type WalletDetails = {
   receiveAddress: {
     publicAddress: string
   },
+  pluginId: string,
   chainCode: string,
   currencyCode: string,
   fiatCurrencyCode: string,

@@ -54,9 +54,11 @@ export const buyCurrency = () => async (dispatch: Dispatch, getState: GetState) 
     return
   }
   if (walletDetails) {
-    const { currencyCode } = walletDetails
-    const addressPrefix = SUPPORTED_DIGITAL_CURRENCIES[currencyCode]
+    const { pluginId, currencyCode } = walletDetails
+    const currencyObject = SUPPORTED_DIGITAL_CURRENCIES[`${pluginId}-${currencyCode}`]
     try {
+      const { wyrePrefix, wyreCode } = currencyObject
+
       const widget = new window.Wyre.Widget({
         env: 'production',
         accountId: 'AC-FJN8L976EW4',
@@ -66,8 +68,8 @@ export const buyCurrency = () => async (dispatch: Dispatch, getState: GetState) 
         },
         operation: {
           type: 'onramp',
-          destCurrency: currencyCode,
-          dest: `${addressPrefix}${walletDetails.receiveAddress.publicAddress}`
+          destCurrency: wyreCode,
+          dest: `${wyrePrefix}${walletDetails.receiveAddress.publicAddress}`
         }
       })
       widget.open('complete', async function (e) {
