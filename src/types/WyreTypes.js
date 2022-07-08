@@ -32,6 +32,11 @@ export const asGetPaymentMethods = asObject({
   data: asArray(
     asObject({
       status: asString,
+      waitingPrompts: asArray(
+        asObject({
+          type: asString
+        })
+      ),
       owner: asString,
       id: asString,
       createdAt: asNumber,

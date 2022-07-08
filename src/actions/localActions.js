@@ -93,6 +93,16 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
       continue
     }
 
+    if (paymentMethods.data[i].waitingPrompts.length > 0) {
+      const prompt = paymentMethods.data[i].waitingPrompts.find(wp => wp.type === 'RECONNECT_BANK')
+      if (prompt != null) {
+        // XXX HACK: Change status to AWAITING_FOLLOWUP which it should have been in the first place
+        paymentMethods.data[i].status = 'AWAITING_FOLLOWUP'
+        inactivePaymentMethodArray.push(paymentMethods.data[i])
+        continue
+      }
+    }
+
     // Always make sure active payment method is attached to all available blockchains
     const sellAddresses = paymentMethods.data[i].blockchains
     let addBlockChainResult
