@@ -45,7 +45,7 @@ const getStyle = (lineColor, isCustom = false, isDisabled = false) => {
 }
 export const TertiaryButton = (props: Props) => {
   return (
-    <Button variant="raised" onClick={props.onClick} disabled={props.disabled} style={getStyle(props.lineColor, props.isCustom, props.disabled)} fullWidth>
+    <Button onClick={props.onClick} disabled={props.disabled} style={getStyle(props.lineColor, props.isCustom, props.disabled)} fullWidth>
       {props.children}
     </Button>
   )

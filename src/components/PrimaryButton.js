@@ -14,7 +14,6 @@ type Props = {
 export const PrimaryButton = (props: Props) => {
   return (
     <Button
-      variant="raised"
       onClick={props.onClick}
       disabled={props.disabled}
       style={{

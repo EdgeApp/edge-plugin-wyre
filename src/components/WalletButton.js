@@ -15,7 +15,6 @@ type Props = {
 export const WalletButton = (props: Props) => {
   return (
     <Button
-      variant="raised"
       onClick={props.onClick}
       disabled={props.disabled}
       style={{

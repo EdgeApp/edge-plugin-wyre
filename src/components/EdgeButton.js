@@ -12,7 +12,6 @@ type Props = {
 const EdgeButton = (props: Props) => {
   return (
     <Button
-      variant="raised"
       color={props.color || 'default'}
       onClick={props.onClick}
       disabled={props.disabled}
