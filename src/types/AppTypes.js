@@ -20,7 +20,6 @@ export type WalletDetails = {
     publicAddress: string
   },
   currencyCode: string,
-  pluginId: string,
   fiatCurrencyCode: string,
   currencyIcon: string,
   currencyIconDark: string

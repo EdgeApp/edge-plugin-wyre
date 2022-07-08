@@ -4,8 +4,9 @@ import type { Dispatch, GetState } from '../types/ReduxTypes'
 import { SUPPORTED_DIGITAL_CURRENCIES } from '../constants/index.js'
 
 export const selectWallet = () => async (dispatch: Dispatch, getState: GetState) => {
-  const wallet = await window.edgeProvider.chooseWallet(SUPPORTED_DIGITAL_CURRENCIES)
-  if (wallet != null) {
+  const currencyCode = await window.edgeProvider.chooseCurrencyWallet(Object.keys(SUPPORTED_DIGITAL_CURRENCIES))
+  if (currencyCode) {
+    const wallet = await window.edgeProvider.getCurrentWalletInfo()
     dispatch({type: 'WALLET_LOADED', data: wallet})
   }
 }
