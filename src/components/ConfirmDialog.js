@@ -1,14 +1,14 @@
 // @flow
-import React, {Component} from 'react'
-
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Dialog from '@material-ui/core/Dialog'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
-import { EdgeButton } from './EdgeButton'
-import Typography from '@material-ui/core/Typography'
 import { withStyles } from '@material-ui/core/styles'
+import Typography from '@material-ui/core/Typography'
+import React, { Component } from 'react'
+
+import { EdgeButton } from './EdgeButton'
 
 const confirmStyles = theme => ({
   title: {
@@ -39,7 +39,7 @@ type State = {
 }
 
 class ConfirmUnstyled extends Component<Props, State> {
-  constructor (props: Props) {
+  constructor(props: Props) {
     super(props)
     this.state = {
       loading: false
@@ -53,7 +53,7 @@ class ConfirmUnstyled extends Component<Props, State> {
     this.props.onAccept()
   }
 
-  render () {
+  render() {
     return (
       <Dialog open={this.props.open} onClose={this.props.onClose}>
         <DialogTitle id="alert-confirm-title" disableTypography>

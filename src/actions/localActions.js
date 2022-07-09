@@ -1,11 +1,38 @@
 // @flow
-import { APPROVED, NEED_WIDGET, AWAITING_FOLLOWUP, NOT_STARTED, PENDING, PAYMENT_METHOD_PENDING, REJECTED, AWAITING_DEPOSIT_VERIFICATION, DISABLED } from '../constants/index'
-import type { Dispatch, GetState } from '../types/ReduxTypes'
-import { getAccount, getPaymentMethods, addBlockChainToAccount } from '../api/api'
-
-import type { WyreAccountDetails } from '../types/AppTypes'
-import { genRandomString } from '../utils'
 import { getTransactions } from '../actions/indexActions'
+import { addBlockChainToAccount, getAccount, getPaymentMethods } from '../api/api'
+import {
+  APPROVED,
+  AWAITING_DEPOSIT_VERIFICATION,
+  AWAITING_FOLLOWUP,
+  DISABLED,
+  NEED_WIDGET,
+  NOT_STARTED,
+  PAYMENT_METHOD_PENDING,
+  PENDING,
+  REJECTED
+} from '../constants/index'
+import type { WyreAccountDetails } from '../types/AppTypes'
+import type { Dispatch, GetState } from '../types/ReduxTypes'
+import { type BlockchainMap } from '../types/WyreTypes'
+import { genRandomString } from '../utils'
+
+const WYRE_TO_EDGE_CHAIN_MAP = {
+  BTC: 'bitcoin',
+  MATIC: 'polygon',
+  AVAXC: 'avalanche',
+  XLM: 'stellar',
+  ETH: 'ethereum'
+}
+
+const translateBlockchains = (chains: BlockchainMap): BlockchainMap => {
+  return Object.entries(chains).reduce((prev, curr) => {
+    const [key, val] = curr
+    const newKey = WYRE_TO_EDGE_CHAIN_MAP[key]
+    if (newKey == null) return prev
+    return { ...prev, [newKey]: val }
+  }, {})
+}
 
 export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => {
   let wyreAccountDetails: WyreAccountDetails = {
@@ -24,14 +51,14 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
     if (wyreAccountDetails.wyreSecret == null) {
       if (wyreAccountDetails.wyreAccountId == null) {
         wyreAccountDetails.wyreSecret = genRandomString(32)
-        await window.edgeProvider.writeData({wyreSecret: wyreAccountDetails.wyreSecret})
+        await window.edgeProvider.writeData({ wyreSecret: wyreAccountDetails.wyreSecret })
         wyreAccountDetails.wyreAccountStatus = NOT_STARTED
-        dispatch({type: 'LOCAL_DATA_INIT', data: wyreAccountDetails})
+        dispatch({ type: 'LOCAL_DATA_INIT', data: wyreAccountDetails })
         return
       } else {
         wyreAccountDetails.wyreSecret = wyreAccountDetails.wyreAccountId
       }
-    } 
+    }
   } catch (e) {
     await window.edgeProvider.displayError('Failed to read data on disk')
     await window.edgeProvider.exitPlugin()
@@ -49,7 +76,7 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
     }
     // If getPaymentMethod fails, send user to info screen with Create Account button
     wyreAccountDetails.wyreAccountStatus = NOT_STARTED
-    dispatch({type: 'LOCAL_DATA_INIT', data: wyreAccountDetails})
+    dispatch({ type: 'LOCAL_DATA_INIT', data: wyreAccountDetails })
     return
   }
   wyreAccountDetails.wyreAccountName = paymentMethods.data[0].owner.substring(8)
@@ -60,7 +87,7 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
     account = await getAccount(wyreAccountDetails.wyreAccountName, wyreAccountDetails.wyreSecret)
     wyreAccountDetails.wyreAccountStatus = account.status
     if (wyreAccountDetails.wyreAccountStatus === PENDING) {
-      dispatch({type: 'LOCAL_DATA_INIT', data: wyreAccountDetails})
+      dispatch({ type: 'LOCAL_DATA_INIT', data: wyreAccountDetails })
       return
     }
   } catch (e) {
@@ -70,23 +97,32 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
     }
     // If user has already created account but is not APPROVED send directly to widget
     wyreAccountDetails.wyreAccountStatus = NEED_WIDGET
-    dispatch({type: 'LOCAL_DATA_INIT', data: wyreAccountDetails})
+    dispatch({ type: 'LOCAL_DATA_INIT', data: wyreAccountDetails })
     return
   }
 
   // Gather payment methods
-  let activePaymentMethodArray = []
-  let inactivePaymentMethodArray = []
+  const activePaymentMethodArray = []
+  const inactivePaymentMethodArray = []
   for (let i = 0; i < paymentMethods.data.length; i++) {
-
     // Skip all inactive payment methods
     if (paymentMethods.data[i].status !== 'ACTIVE') {
-      inactivePaymentMethodArray.push( paymentMethods.data[i] )
+      inactivePaymentMethodArray.push(paymentMethods.data[i])
       continue
     }
 
+    if (paymentMethods.data[i].waitingPrompts.length > 0) {
+      const prompt = paymentMethods.data[i].waitingPrompts.find(wp => wp.type === 'RECONNECT_BANK')
+      if (prompt != null) {
+        // XXX HACK: Change status to AWAITING_FOLLOWUP which it should have been in the first place
+        paymentMethods.data[i].status = 'AWAITING_FOLLOWUP'
+        inactivePaymentMethodArray.push(paymentMethods.data[i])
+        continue
+      }
+    }
+
     // Always make sure active payment method is attached to all available blockchains
-    let sellAddresses = paymentMethods.data[i].blockchains
+    const sellAddresses = paymentMethods.data[i].blockchains
     let addBlockChainResult
     try {
       addBlockChainResult = await addBlockChainToAccount(wyreAccountDetails.wyreSecret, paymentMethods.data[i].id)
@@ -96,7 +132,7 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
     } catch (e) {
       window.edgeProvider.consoleLog(`wyre Failed to attach sellAddresses ${JSON.stringify(e)}`)
     }
-    activePaymentMethodArray.push( paymentMethods.data[i] )
+    activePaymentMethodArray.push(paymentMethods.data[i])
   }
 
   // Find the most recently approved payment method
@@ -110,7 +146,6 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
 
   // If no active payment methods exist, show the status of the most recently added payment method
   if (activePaymentMethodArray.length === 0) {
-
     // Find the most recently added inactive payment method
     while (inactivePaymentMethodArray.length > 1) {
       if (inactivePaymentMethodArray[0].createdAt < inactivePaymentMethodArray[1].createdAt) {
@@ -124,7 +159,7 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
     wyreAccountDetails.wyreAccountStatus = NEED_WIDGET
 
     // Show error with recent payment method status
-    switch(inactivePaymentMethodArray[0].status) {
+    switch (inactivePaymentMethodArray[0].status) {
       case PENDING:
         window.edgeProvider.displayError('Your payment method is pending and awaiting approval')
         wyreAccountDetails.wyreAccountStatus = PAYMENT_METHOD_PENDING
@@ -148,10 +183,10 @@ export const initInfo = () => async (dispatch: Dispatch, getState: GetState) => 
     // Save active payment method details to redux
     wyreAccountDetails.wyrePaymentMethodId = activePaymentMethodArray[0].id
     wyreAccountDetails.wyrePaymentMethodName = activePaymentMethodArray[0].name
-    wyreAccountDetails.sellAddresses = activePaymentMethodArray[0].blockchains
+    wyreAccountDetails.sellAddresses = translateBlockchains(activePaymentMethodArray[0].blockchains)
   }
-  
-  dispatch({type: 'LOCAL_DATA_INIT', data: wyreAccountDetails})
+
+  dispatch({ type: 'LOCAL_DATA_INIT', data: wyreAccountDetails })
   if (wyreAccountDetails.wyreAccountStatus === APPROVED) {
     dispatch(getTransactions())
   }

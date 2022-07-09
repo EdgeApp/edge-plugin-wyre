@@ -1,14 +1,14 @@
 // @flow
-import React, { Component } from 'react'
-import { StartHeader, StartParagraph } from '../scenes/components'
-
 import { withStyles } from '@material-ui/core/styles'
+import React, { Component } from 'react'
+
+import { StartHeader, StartParagraph } from '../scenes/components'
 
 type Props = {
   classes: Object
 }
 class PendingPaymentMethodScreenComponent extends Component<Props, {}> {
-  render () {
+  render() {
     const classes = this.props.classes
     return (
       <div className={classes.container}>
@@ -18,13 +18,12 @@ class PendingPaymentMethodScreenComponent extends Component<Props, {}> {
         <div>
           <StartHeader text="Wyre Payment Method Approval Pending" classes={classes} />
           <StartParagraph classes={classes}>
-          Initial payment method verification usually takes 1 business day but can take up to 3-5 business days.
+            Initial payment method verification usually takes 1 business day but can take up to 3-5 business days.
           </StartParagraph>
         </div>
       </div>
     )
   }
-
 }
 
 const startStyles = (theme: Object) => ({

@@ -1,44 +1,38 @@
 // @flow
+import { withStyles } from '@material-ui/core/styles'
 import React, { Component } from 'react'
 
-import { PrimaryButton } from './components'
 import THEME from '../constants/themeConstants.js'
-import { withStyles } from '@material-ui/core/styles'
+import { PrimaryButton } from './components'
 
 type Props = {
   history: Object,
   classes: Object,
   startOver(Object): void
 }
-type State = {
-}
+type State = {}
 
 class ConfirmationScene extends Component<Props, State> {
   onClick = () => {
     this.props.startOver(this.props.history)
   }
-  render () {
-    const { classes } = this.props
-    return <div className={classes.container} >
-      <div className={classes.containerTop} >
-        <div >
-          <div className={classes.bigText} >
-            Congratulations
-          </div>
-          <div className={classes.smallText} >
-            Transaction was successful.
-          </div>
-          <div className={classes.smallText} >
-          Funds will show in your bank account in 4-5 business days.
-          </div>
 
+  render() {
+    const { classes } = this.props
+    return (
+      <div className={classes.container}>
+        <div className={classes.containerTop}>
+          <div>
+            <div className={classes.bigText}>Congratulations</div>
+            <div className={classes.smallText}>Transaction was successful.</div>
+            <div className={classes.smallText}>Funds will show in your bank account in 4-5 business days.</div>
+          </div>
+        </div>
+        <div className={classes.containerBottom}>
+          <PrimaryButton onClick={this.onClick}>Done</PrimaryButton>
         </div>
       </div>
-      <div className={classes.containerBottom} >
-        <PrimaryButton onClick={this.onClick}>Done</PrimaryButton>
-      </div>
-    </div>
-
+    )
   }
 }
 const styles = theme => ({
@@ -52,8 +46,8 @@ const styles = theme => ({
   containerTop: {
     display: 'flex',
     flexGrow: 1,
-    flexDirection:'column',
-    width:'90%',
+    flexDirection: 'column',
+    width: '90%',
     alignItems: 'center',
     justifyContent: 'space-around'
   },

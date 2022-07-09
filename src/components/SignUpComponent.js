@@ -1,16 +1,16 @@
 // @flow
-import { PrimaryButton, StartHeader, StartParagraph, SupportLink } from '../scenes/components'
-import React, { Component } from 'react'
-
 import Divider from '@material-ui/core/Divider'
 import { withStyles } from '@material-ui/core/styles'
+import React, { Component } from 'react'
+
+import { PrimaryButton, StartHeader, StartParagraph, SupportLink } from '../scenes/components'
 
 type Props = {
   classes: Object,
   onPress(): void
 }
 class SignUpComponent extends Component<Props, {}> {
-  render () {
+  render() {
     const classes = this.props.classes
     return (
       <div className={classes.container}>
@@ -27,7 +27,7 @@ class SignUpComponent extends Component<Props, {}> {
         <div>
           <StartHeader text="Fee" classes={classes} />
           <StartParagraph classes={classes}>
-          The following fees are applied for buying and selling cryptocurrency with Wyre:
+            The following fees are applied for buying and selling cryptocurrency with Wyre:
             <ul className={classes.feeList}>
               <li>Edge Wallet 0.5%</li>
               <li>Wyre 0.5%</li>
@@ -55,7 +55,6 @@ class SignUpComponent extends Component<Props, {}> {
       </div>
     )
   }
-
 }
 
 const startStyles = (theme: Object) => ({

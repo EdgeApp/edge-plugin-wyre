@@ -1,5 +1,9 @@
 // @flow
 
+export type SellAddresses = {
+  [key: string]: string
+}
+
 export type WyreAccountDetails = {
   wyreSecret: string,
   wyreAccountStatus: string,
@@ -10,15 +14,13 @@ export type WyreAccountDetails = {
   wyreAccountId: string | null // this is the secret key needed for other tasks
 }
 
-export type SellAddresses = {
-  [key: string]: string
-}
-
 export type WalletDetails = {
   name: string,
   receiveAddress: {
     publicAddress: string
   },
+  pluginId: string,
+  chainCode: string,
   currencyCode: string,
   fiatCurrencyCode: string,
   currencyIcon: string,
@@ -37,7 +39,7 @@ export type WyreTransaction = {
   sourceAmount: number,
   destAmount: number,
   fees: {
-      USD: number
+    USD: number
   },
   sourceName: string,
   destName: string,
@@ -49,5 +51,5 @@ export type WyreTransaction = {
 }
 export type CryptoFiatAmounts = {
   cryptoAmount: string,
-   fiatAmount: string
+  fiatAmount: string
 }

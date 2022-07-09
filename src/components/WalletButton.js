@@ -1,6 +1,7 @@
 // @flow
 import Button from '@material-ui/core/Button'
 import React from 'react'
+
 import { buttonStyle } from '../styles/styles'
 
 type Props = {
@@ -14,7 +15,6 @@ type Props = {
 export const WalletButton = (props: Props) => {
   return (
     <Button
-      variant="raised"
       onClick={props.onClick}
       disabled={props.disabled}
       style={{
@@ -25,10 +25,9 @@ export const WalletButton = (props: Props) => {
         borderRadius: '0',
         borderTop: '1px solid #d8d6d8'
       }}
-      fullWidth>
+      fullWidth
+    >
       {props.children}
     </Button>
   )
 }
-
-

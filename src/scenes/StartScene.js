@@ -2,15 +2,15 @@
 
 import './inline.css'
 
-import { APPROVED, NOT_STARTED, PENDING, PAYMENT_METHOD_PENDING } from '../constants/index'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import { withStyles } from '@material-ui/core/styles'
 import React, { Component } from 'react'
 
-import { BuySellSceneConnector } from '../connectors/BuySellSceneConnector'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import PendingScreenComponent from '../components/PendingScreenComponent'
 import PendingMethodPendingScreenComponent from '../components/PendingPaymentMethodScreenComponent'
+import PendingScreenComponent from '../components/PendingScreenComponent'
 import SignUpComponent from '../components/SignUpComponent'
-import { withStyles } from '@material-ui/core/styles'
+import { BuySellSceneConnector } from '../connectors/BuySellSceneConnector'
+import { APPROVED, NOT_STARTED, PAYMENT_METHOD_PENDING, PENDING } from '../constants/index'
 
 type StartSceneProps = {
   history: Object,
@@ -20,13 +20,9 @@ type StartSceneProps = {
   initInfo(): void
 }
 
-type StartSceneState = {
-}
-
-
+type StartSceneState = {}
 
 class StartScene extends Component<StartSceneProps, StartSceneState> {
-
   componentDidMount = async () => {
     this.props.initInfo()
   }
@@ -45,44 +41,45 @@ class StartScene extends Component<StartSceneProps, StartSceneState> {
         destCurrency: 'BTC'
       }
     })
-    widget.open('complete', async function(e) {
-      await window.edgeProvider.writeData({wyreAccountStatus: PENDING})
-      await window.edgeProvider.writeData({wyreAccountId_id: e.accountId})
-      await window.edgeProvider.writeData({wyrePaymentMethodId: e.paymentMethodId})
-      await window.edgeProvider.writeData({wyrePaymentMethodId: e.wyreNetworkTxId})
+    widget.open('complete', async function (e) {
+      await window.edgeProvider.writeData({ wyreAccountStatus: PENDING })
+      await window.edgeProvider.writeData({ wyreAccountId_id: e.accountId })
+      await window.edgeProvider.writeData({ wyrePaymentMethodId: e.paymentMethodId })
+      await window.edgeProvider.writeData({ wyrePaymentMethodId: e.wyreNetworkTxId })
       this.setState({
         accountStatus: PENDING
       })
-    });
+    })
   }
 
   gotoSell = () => {
     this.props.history.push(`/sellQuoteRequest`)
   }
 
-  render () {
+  render() {
     const classes = this.props.classes
     if (!this.props.accountStatus) {
-      return <div className={classes.containerSpinner}>
-      <CircularProgress size={60} />
-    </div>
+      return (
+        <div className={classes.containerSpinner}>
+          <CircularProgress size={60} />
+        </div>
+      )
     }
-    if(this.props.accountStatus === APPROVED) {
-      return <BuySellSceneConnector onSellClick={this.gotoSell}/>
-
+    if (this.props.accountStatus === APPROVED) {
+      return <BuySellSceneConnector onSellClick={this.gotoSell} />
     }
-    if(this.props.accountStatus === PENDING) {
+    if (this.props.accountStatus === PENDING) {
       return <PendingScreenComponent />
     }
-    if(this.props.accountStatus === PAYMENT_METHOD_PENDING) {
+    if (this.props.accountStatus === PAYMENT_METHOD_PENDING) {
       return <PendingMethodPendingScreenComponent />
     }
-    if(this.props.accountStatus === NOT_STARTED) {
-      return <SignUpComponent  onPress={this.initUser}/>
+    if (this.props.accountStatus === NOT_STARTED) {
+      return <SignUpComponent onPress={this.initUser} />
     }
     // NEED_WIDGET/unrecognized/default - Account statuses that require existing user to update account info via widget
     this.initUser()
-    return
+    return null
   }
 }
 
@@ -119,6 +116,5 @@ const startStyles = (theme: Object) => ({
     listStyleType: '-'
   }
 })
-
 
 export default withStyles(startStyles)(StartScene)

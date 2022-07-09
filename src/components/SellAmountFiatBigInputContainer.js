@@ -1,21 +1,19 @@
 // @flow
+import { withStyles } from '@material-ui/core/styles'
 import React, { Component } from 'react'
-import { colors, withStyles } from '@material-ui/core/styles'
 
 import THEME from '../constants/themeConstants.js'
 
 type Props = {
-  history: Object,
   classes: Object,
   onChange(string): void
 }
 type State = {
   value: string,
   clicked: boolean
-
 }
 
-class SellAmountFiatBigInputContainer extends Component <Props, State> {
+class SellAmountFiatBigInputContainer extends Component<Props, State> {
   inputRef: any
   constructor(props: Props) {
     super(props)
@@ -26,6 +24,7 @@ class SellAmountFiatBigInputContainer extends Component <Props, State> {
     // $FlowFixMe
     this.inputRef = React.createRef()
   }
+
   onChange = (event: Object) => {
     const val = event.target.value
     this.setState({
@@ -33,31 +32,37 @@ class SellAmountFiatBigInputContainer extends Component <Props, State> {
     })
     this.props.onChange(val)
   }
+
   componentDidUpdate() {
-    if(this.inputRef.current) {
+    if (this.inputRef.current) {
       this.inputRef.current.focus()
     }
   }
+
   onClick = () => {
-   this.setState({
+    this.setState({
       clicked: true
     })
   }
+
   renderOptions = () => {
     const { classes } = this.props
-    if(this.state.clicked) {
-      return <div className={classes.doRow}>
+    if (this.state.clicked) {
+      return (
+        <div className={classes.doRow}>
           <div className={classes.dollar}>$</div>
           <div className={classes.inputWrapper}>{this.state.value}</div>
-      </div>
+        </div>
+      )
     }
     return <div className={classes.static}>Enter Amount</div>
   }
-  render () {
+
+  render() {
     const { classes } = this.props
-    const newWidth = 30 * this.state.value.length
-    return <div className={classes.container}>
-        <div className={classes.inputBottom} >
+    return (
+      <div className={classes.container}>
+        <div className={classes.inputBottom}>
           <div className={classes.innerDiv} onClick={this.onClick}>
             {this.renderOptions()}
           </div>
@@ -65,15 +70,15 @@ class SellAmountFiatBigInputContainer extends Component <Props, State> {
             ref={this.inputRef} // {(input) => { this.myRef = input }}
             type="tel"
             className={classes.inputHidden}
-            style={{width: '2px', height: '2px', opacity: 0}}
+            style={{ width: '2px', height: '2px', opacity: 0 }}
             value={this.state.value}
             onChange={this.onChange}
           />
         </div>
-    </div>
+      </div>
+    )
   }
 }
-
 
 const styles = theme => ({
   doRow: {

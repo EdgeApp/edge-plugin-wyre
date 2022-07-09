@@ -5,7 +5,6 @@ export const styles = {
   secondaryButton: {
     backgroundColor: '#909091'
   }
-
 }
 export const buttonStyle = {
   textTransform: 'none',
@@ -57,11 +56,11 @@ export const sceneMainContainer = {
 
 export const sceneButtonBottom = {
   display: 'flex',
-    position: 'relative',
-    flexShrink: 1,
-    minHeight: 60,
-    width: '100%',
-    maxHeight: 70
+  position: 'relative',
+  flexShrink: 1,
+  minHeight: 60,
+  width: '100%',
+  maxHeight: 70
 }
 export const containerSpinner = {
   display: 'flex',
@@ -76,6 +75,3 @@ export const logo = {
   position: 'relative',
   width: '100%'
 }
-
-
-

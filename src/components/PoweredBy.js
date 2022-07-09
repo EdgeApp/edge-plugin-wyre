@@ -1,7 +1,8 @@
 // @flow
-import React from 'react'
-import THEME from '../constants/themeConstants.js'
 import { withStyles } from '@material-ui/core/styles'
+import React from 'react'
+
+import THEME from '../constants/themeConstants.js'
 const powerThemes = theme => ({
   container: {
     position: 'relative',
@@ -38,7 +39,7 @@ const powerThemes = theme => ({
   },
   p2: {
     color: THEME.COLORS.OPACITY_WHITE_TWO,
-    textAlign: 'right',
+    textAlign: 'right'
   }
 })
 type Props = {
@@ -50,17 +51,12 @@ const onClick = () => {
 const PoweredBy = withStyles(powerThemes)((props: Props) => {
   return (
     <div className={props.classes.container} onClick={onClick}>
-      <div className={props.classes.containerInner} >
-        <div className={props.classes.p} >
-          Powered by
-        </div>
-        <div className={props.classes.p} >
-          support@sendwyre.com
-        </div>
-
+      <div className={props.classes.containerInner}>
+        <div className={props.classes.p}>Powered by</div>
+        <div className={props.classes.p}>support@sendwyre.com</div>
       </div>
       <div className={props.classes.shim} />
-      <div className={props.classes.logoWrapper} >
+      <div className={props.classes.logoWrapper}>
         <div className={`iconLogo ${props.classes.logo}`} />
       </div>
     </div>

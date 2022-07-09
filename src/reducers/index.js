@@ -1,10 +1,10 @@
 // @flow
 import { type Reducer, combineReducers } from 'redux'
-import { type TransactionState, TransactionReducer as Transactions } from './TransactionReducer.js'
-import { WalletReducer as Wallet, type WalletState } from './WalletReducer.js'
-import { WyreReducer as Wyre, type WyreState } from './WyreReducer.js'
 
 import { type Action } from '../types/ReduxTypes.js'
+import { type TransactionState, TransactionReducer as Transactions } from './TransactionReducer.js'
+import { type WalletState, WalletReducer as Wallet } from './WalletReducer.js'
+import { type WyreState, WyreReducer as Wyre } from './WyreReducer.js'
 
 export type RootState = {
   +Wyre: WyreState,

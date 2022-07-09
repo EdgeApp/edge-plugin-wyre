@@ -1,9 +1,9 @@
 // @flow
-import { buttonStyle, buttonStyleHollow } from '../styles/styles'
-
 import Button from '@material-ui/core/Button'
 import React from 'react'
+
 import THEME from '../constants/themeConstants.js'
+import { buttonStyle, buttonStyleHollow } from '../styles/styles'
 
 type Props = {
   onClick(): void,
@@ -19,7 +19,7 @@ const getStyle = (lineColor, isCustom = false, isDisabled = false) => {
       backgroundColor: THEME.COLORS.CLEAR,
       height: '50px',
       color: THEME.COLORS.ACCENT_MINT,
-      border: `1px solid ${lineColor}`,
+      border: `1px solid ${lineColor}`
     }
   }
   if (isDisabled) {
@@ -28,7 +28,7 @@ const getStyle = (lineColor, isCustom = false, isDisabled = false) => {
       backgroundColor: THEME.COLORS.CLEAR,
       height: '50px',
       color: THEME.COLORS.GRAY_2,
-      border: `1px solid ${THEME.COLORS.GRAY_2}`,
+      border: `1px solid ${THEME.COLORS.GRAY_2}`
     }
   }
   return {
@@ -39,18 +39,13 @@ const getStyle = (lineColor, isCustom = false, isDisabled = false) => {
     height: '50px',
     disabledButton: {
       border: `1px solid ${THEME.COLORS.GRAY_2}`,
-      color: THEME.COLORS.GRAY_2,
+      color: THEME.COLORS.GRAY_2
     }
   }
 }
 export const TertiaryButton = (props: Props) => {
   return (
-    <Button
-      variant="raised"
-      onClick={props.onClick}
-      disabled={props.disabled}
-      style={getStyle(props.lineColor, props.isCustom, props.disabled)}
-      fullWidth>
+    <Button onClick={props.onClick} disabled={props.disabled} style={getStyle(props.lineColor, props.isCustom, props.disabled)} fullWidth>
       {props.children}
     </Button>
   )

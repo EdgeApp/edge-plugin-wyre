@@ -1,4 +1,3 @@
-
 export const colors = {
   gradient: {
     light: '#3b7ada',
@@ -30,7 +29,6 @@ export const font = {
 }
 
 export const THEME = {
-
   FOOTER_TABS_HEIGHT: 50,
 
   FONTS: {

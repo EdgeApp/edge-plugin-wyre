@@ -1,19 +1,13 @@
 // @flow
-import { PoweredBy, PrimaryButton } from './components'
-import React, { Component } from 'react'
-import {
-  containerSpinner,
-  poweredByRow,
-  sceneButtonBottom,
-  sceneContainer,
-  sceneMainContainer
-} from '../styles/styles'
-
 import CircularProgress from '@material-ui/core/CircularProgress'
-import THEME from '../constants/themeConstants'
-import TextField from '@material-ui/core/TextField'
-import type { WalletDetails } from '../types/AppTypes'
 import { withStyles } from '@material-ui/core/styles'
+import TextField from '@material-ui/core/TextField'
+import React, { Component } from 'react'
+
+import THEME from '../constants/themeConstants'
+import { containerSpinner, poweredByRow, sceneButtonBottom, sceneContainer, sceneMainContainer } from '../styles/styles'
+import type { WalletDetails } from '../types/AppTypes'
+import { PoweredBy, PrimaryButton } from './components'
 
 type Props = {
   history: Object,
@@ -26,8 +20,7 @@ type Props = {
   exchangeRatesFrom: number,
   exchangeRatesTo: number,
   getExchangeRate(): void,
-  confirmQuote(string,string, Object): void,
-  changeCrypto(string, number): void,
+  confirmQuote(string, string, Object): void,
   changeFiat(string, number): void
 }
 type State = {
@@ -46,25 +39,30 @@ class SellQuoteRequestSceneComponent extends Component<Props, State> {
     // $FlowFixMe
     this.inputRef = React.createRef()
   }
-  componentDidMount () {
+
+  componentDidMount() {
     this.props.getExchangeRate()
   }
+
   componentDidUpdate() {
-   if (this.inputRef.current && this.state.clicked > 0) {
-    this.inputRef.current.focus()
-   }
+    if (this.inputRef.current && this.state.clicked > 0) {
+      this.inputRef.current.focus()
+    }
   }
+
   onClick = () => {
     const cl = this.state.clicked + 1
     this.setState({
       clicked: cl
     })
   }
+
   onNext = () => {
-    if(this.props.fiatAmount !== ''){
+    if (this.props.fiatAmount !== '') {
       this.props.confirmQuote(this.props.cryptoAmount, this.props.fiatAmount, this.props.history)
     }
   }
+
   onChange = (event: Object) => {
     const val = event.target.value
     this.setState({
@@ -72,83 +70,93 @@ class SellQuoteRequestSceneComponent extends Component<Props, State> {
     })
     const exchangeRate = this.props.buyOrSell === 'sell' ? this.props.exchangeRatesFrom : this.props.exchangeRatesTo
     this.props.changeFiat(val, exchangeRate)
-  }//
+  } //
+
   renderReceive = () => {
     const { classes } = this.props
-    if(this.state.value !== '') {
-      return <div className={classes.receiveAmount} >
-      You will {this.props.buyOrSell} {this.props.cryptoAmount} {this.props.wallet.currencyCode}
-    </div>
+    if (this.state.value !== '') {
+      return (
+        <div className={classes.receiveAmount}>
+          You will {this.props.buyOrSell} {this.props.cryptoAmount} {this.props.wallet.currencyCode}
+        </div>
+      )
     }
-    return <div className={classes.receiveAmount} >You will {this.props.buyOrSell} 0 {this.props.wallet.currencyCode}</div>
+    return (
+      <div className={classes.receiveAmount}>
+        You will {this.props.buyOrSell} 0 {this.props.wallet.currencyCode}
+      </div>
+    )
   }
+
   renderOptions = () => {
     const { classes } = this.props
-    if(this.state.clicked > 0) {
-      return <div className={classes.doRow}>
-        <div className={classes.dollar}>$</div>
-        <div className={classes.inputWrapper}>{this.state.value}</div>
-       </div>
+    if (this.state.clicked > 0) {
+      return (
+        <div className={classes.doRow}>
+          <div className={classes.dollar}>$</div>
+          <div className={classes.inputWrapper}>{this.state.value}</div>
+        </div>
+      )
     }
     return <div className={classes.static}>Enter Amount</div>
   }
-  render () {
+
+  render() {
     const { classes } = this.props
     console.log('exchange Rates From ', this.props.exchangeRatesFrom)
     if (!this.props.exchangeRatesFrom) {
-      return <div className={classes.containerSpinner}>
-      <CircularProgress size={60} />
-    </div>
+      return (
+        <div className={classes.containerSpinner}>
+          <CircularProgress size={60} />
+        </div>
+      )
     }
-    return <div className={classes.container}>
-      <div className={classes.containerMain} onClick={this.onClick}>
-            <div className={classes.poweredByRow}>
-              <PoweredBy />
-            </div>
-            {this.renderInvisible()}
-            <div className={classes.amountContainer}>
-              <div className={classes.innerDiv} >
-                {this.renderOptions()}
-              </div>
-            </div>
-            {this.renderReceive()}
-            <div className={classes.depositBox} >
-              <div className={classes.dpLeft} >
-                Deposit To:
-              </div>
-              <div className={classes.dpRight} >
-                {this.props.bankName}
-              </div>
-            </div>
-            <div className={classes.disclaimer} >
-              Sell amount is an estimate. Actual rate is determined at the time funds are received.
-            </div>
+    return (
+      <div className={classes.container}>
+        <div className={classes.containerMain} onClick={this.onClick}>
+          <div className={classes.poweredByRow}>
+            <PoweredBy />
+          </div>
+          {this.renderInvisible()}
+          <div className={classes.amountContainer}>
+            <div className={classes.innerDiv}>{this.renderOptions()}</div>
+          </div>
+          {this.renderReceive()}
+          <div className={classes.depositBox}>
+            <div className={classes.dpLeft}>Deposit To:</div>
+            <div className={classes.dpRight}>{this.props.bankName}</div>
+          </div>
+          <div className={classes.disclaimer}>Sell amount is an estimate. Actual rate is determined at the time funds are received.</div>
+        </div>
+        <div className={classes.containerBottom}>
+          <PrimaryButton onClick={this.onNext}>Next </PrimaryButton>
+        </div>
       </div>
-      <div className={classes.containerBottom}>
-        <PrimaryButton onClick={this.onNext} >Next </PrimaryButton>
-      </div>
-    </div>
+    )
   }
+
   renderInvisible = () => {
     const { classes } = this.props
-   return  <TextField
-      inputRef={this.inputRef}
-      id="standard-uncontrolled"
-      label="Phone Number"
-      type="tel"
-      tabIndex='0'
-      fullWidth
-      InputProps={{
-        classes: {
-          input: classes.resize,
-        },
-      }}
-      style={{width: '2px', height: '2px', opacity: 0, fontSize: 2, position: 'absolute', top: 0}}
-      value={this.state.value}
-      className={classes.textField}
-      margin="normal"
-      onChange={this.onChange}
-    />
+    return (
+      <TextField
+        inputRef={this.inputRef}
+        id="standard-uncontrolled"
+        label="Phone Number"
+        type="tel"
+        tabIndex="0"
+        fullWidth
+        InputProps={{
+          classes: {
+            input: classes.resize
+          }
+        }}
+        style={{ width: '2px', height: '2px', opacity: 0, fontSize: 2, position: 'absolute', top: 0 }}
+        value={this.state.value}
+        className={classes.textField}
+        margin="normal"
+        onChange={this.onChange}
+      />
+    )
   }
 }
 const styles = theme => ({
@@ -210,7 +218,7 @@ const styles = theme => ({
     marginRight: 3
   },
   inputWrapper: {
-    fontSize: 68,
+    fontSize: 68
   },
   textField: {
     position: 'relative',
@@ -276,7 +284,7 @@ const styles = theme => ({
   },
   resize: {
     fontSize: 2
-  },
+  }
 })
 const SellQuoteRequestScene = withStyles(styles)(SellQuoteRequestSceneComponent)
 export { SellQuoteRequestScene }

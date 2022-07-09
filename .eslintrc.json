@@ -1,13 +1,20 @@
 {
-  "extends": ["standard", "plugin:flowtype/recommended", "plugin:react/recommended", "standard"],
-  "parser": "babel-eslint",
-  "plugins": ["flowtype", "standard", "react"],
+  "extends": [
+    "standard-kit/prettier",
+    "standard-kit/prettier/jsx",
+    "standard-kit/prettier/flow",
+    "standard-kit/prettier/node",
+    "standard-kit/prettier/react"
+  ],
+  "globals": {
+    "fetch": true
+  },
+  "plugins": [ "simple-import-sort" ],
   "rules": {
-    "camelcase": "warn",
-    "flowtype/generic-spacing": "off",
-    "no-throw-literal": "error",
-    "no-var": "error",
-    "prefer-const": "error",
-    "prefer-promise-reject-errors": "warn"
+    "react/jsx-handler-names": "off",
+    "simple-import-sort/imports": "error"
+  },
+  "settings": {
+    "react": { "pragma": "React", "version": "16.8.0", "flowVersion": "0.66" }
   }
 }

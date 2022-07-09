@@ -1,19 +1,19 @@
 // @flow
-import type { Action } from '../types/ReduxTypes'
 import type { WalletDetails } from '../types/AppTypes'
+import type { Action } from '../types/ReduxTypes'
 
 export type WalletState = {
-  wallet: WalletDetails | null
+  walletDetails: WalletDetails | null
 }
 
 export const initialState = {
-  wallet: null
+  walletDetails: null
 }
 
 export const WalletReducer = (state: WalletState = initialState, action: Action): WalletState => {
   switch (action.type) {
     case 'WALLET_LOADED':
-      return {...state, wallet: action.data}
+      return { ...state, walletDetails: action.data }
     default:
       return state
   }
