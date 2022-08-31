@@ -13,7 +13,7 @@ export const NEED_WIDGET: string = 'NEED_WIDGET'
 // https://docs.sendwyre.com/v1/docs/srns
 export const SUPPORTED_DIGITAL_CURRENCIES: { [code: string]: { wyrePrefix: string, wyreCode: string, buy: boolean, sell: boolean } } = {
   'bitcoin-BTC': { wyrePrefix: 'bitcoin:', wyreCode: 'BTC', buy: true, sell: true },
-  'ethereum-ETH': { wyrePrefix: 'bitcoin:', wyreCode: 'ETH', buy: true, sell: true },
+  'ethereum-ETH': { wyrePrefix: 'ethereum:', wyreCode: 'ETH', buy: true, sell: true },
   'polygon-MATIC': { wyrePrefix: 'matic:', wyreCode: 'MATIC', buy: false, sell: true },
   'polygon-USDC': { wyrePrefix: 'matic:', wyreCode: 'mUSDC', buy: false, sell: true },
   'ethereum-AAVE': { wyrePrefix: 'ethereum:', wyreCode: 'AAVE', buy: true, sell: true },
